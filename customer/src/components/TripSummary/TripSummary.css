@@ -1,0 +1,162 @@
+.trip-summary-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #eaedf0;
+  border-radius: 16px;
+  padding: 16px 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+  gap: 24px;
+}
+
+.trip-bus-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 220px;
+}
+
+.bus-thumb-wrapper {
+  width: 80px;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #eaedf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.bus-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.bus-name-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.trip-operator-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.trip-bus-type {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Timeline */
+.trip-route-timeline {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+  max-width: 360px;
+  justify-content: center;
+}
+
+.trip-time-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.city-text {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.trip-duration-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.duration-text {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.timeline-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.timeline-fill {
+  flex: 1;
+  height: 2px;
+  background: #d1d5db;
+}
+
+.timeline-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6b7280;
+}
+
+.trip-date-block {
+  padding: 0 20px;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.trip-price-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.seat-price-val {
+  font-size: 24px;
+  font-weight: 900;
+  color: #111827;
+  line-height: 1;
+}
+
+.per-seat-lbl {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+  .trip-summary-card {
+    flex-wrap: wrap;
+    padding: 16px 20px;
+  }
+
+  .trip-date-block {
+    border: none;
+    padding: 0;
+  }
+}

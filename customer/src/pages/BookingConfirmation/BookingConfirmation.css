@@ -1,0 +1,450 @@
+/* ================================
+   Booking Confirmation Page (Review & Confirm)
+================================ */
+
+.booking-confirmation-page {
+  min-height: calc(100vh - 72px);
+  background: #f8fafc;
+  padding: 28px 20px 56px;
+}
+
+.booking-confirmation-container {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* Top Bar: Subtle Back Link + Centered Lock Timer Strip */
+.top-nav-timer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.subtle-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  color: #475569;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  letter-spacing: -0.1px;
+}
+
+.subtle-back-link:hover {
+  color: #e53935 !important;
+}
+
+.seat-lock-strip {
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  color: #725200;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lock-clock-icon {
+  font-size: 14px;
+}
+
+.timer-val {
+  color: #e53935;
+  font-weight: 700;
+}
+
+.top-bar-spacer {
+  width: 100px;
+}
+
+/* Page Header */
+.confirmation-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.page-title {
+  font-size: 30px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+
+.page-subtext {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Single Main Review Card */
+.main-review-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.review-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 16px;
+  letter-spacing: -0.2px;
+}
+
+.grid-info-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.info-label {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.meta-date-inline {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 13px;
+  margin-left: 2px;
+}
+
+.section-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 22px 0;
+}
+
+/* Passenger Rows List */
+.passenger-rows-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.passenger-item-row {
+  background: #f8fafc;
+  border: 1px solid #edf2f7;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.passenger-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.passenger-num-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.passenger-seat-badge {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.passenger-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.passenger-name-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: right;
+}
+
+.passenger-meta-val {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+  text-align: right;
+}
+
+.contact-mobile-block {
+  margin-top: 14px;
+}
+
+/* Total Amount Tinted Box */
+.total-amount-tinted-box {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.total-amount-label {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+}
+
+.total-amount-val {
+  font-size: 26px;
+  font-weight: 900;
+  color: #e53935;
+  letter-spacing: -0.4px;
+}
+
+/* Action Buttons Row */
+.action-buttons-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.secondary-edit-btn {
+  width: 180px;
+  height: 48px;
+  background: #ffffff !important;
+  border: 1px solid #d9dee7 !important;
+  outline: none !important;
+  border-radius: 8px;
+  color: #0f172a !important;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.secondary-edit-btn:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+.primary-confirm-btn {
+  width: 240px;
+  height: 48px;
+  background: #e53935 !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 8px;
+  color: #ffffff !important;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 14px rgba(229, 57, 53, 0.25);
+}
+
+.primary-confirm-btn:hover {
+  background: #d32f2f !important;
+  box-shadow: 0 6px 18px rgba(229, 57, 53, 0.35);
+}
+
+.primary-confirm-btn:active {
+  transform: translateY(1px);
+}
+
+/* Seat Lock Footer Note */
+.seats-reserved-footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.lock-icon {
+  font-size: 13px;
+}
+
+/* Not Found Card */
+.not-found-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  max-width: 500px;
+  margin: 40px auto 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .top-nav-timer-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .top-bar-spacer {
+    display: none;
+  }
+
+  .main-review-card {
+    padding: 20px 18px;
+  }
+
+  .info-row {
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .booking-confirmation-page {
+    padding: 16px 12px 36px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .info-value {
+    margin-bottom: 6px;
+  }
+
+  .action-buttons-row {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .secondary-edit-btn,
+  .primary-confirm-btn {
+    width: 100%;
+  }
+
+  .total-amount-tinted-box {
+    padding: 14px 16px;
+  }
+
+  .total-amount-val {
+    font-size: 22px;
+  }
+}
+
+/* Guest Booking Banner Styles */
+.guest-booking-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.05);
+}
+
+.guest-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.guest-banner-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.guest-banner-text strong {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 2px;
+}
+
+.guest-banner-text p {
+  margin: 0;
+  font-size: 13px;
+  color: #3b82f6;
+}
+
+.guest-login-cta-btn {
+  background: #ffffff;
+  border: 1.5px solid #2563eb;
+  border-radius: 8px;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.guest-login-cta-btn:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .guest-booking-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .guest-login-cta-btn {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+}
+

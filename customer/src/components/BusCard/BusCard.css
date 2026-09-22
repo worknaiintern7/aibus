@@ -1,0 +1,263 @@
+.bus-card {
+  background: #ffffff;
+  border: 1px solid #eaedf0;
+  border-radius: 16px;
+  padding: 22px 26px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 16px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.bus-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.bus-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+}
+
+/* Left Section: Operator & Rating */
+.bus-operator-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.operator-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.bus-type-text {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.rating-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.star-icon {
+  color: #f59e0b;
+  font-size: 14px;
+}
+
+.rating-score {
+  font-weight: 700;
+  color: #111827;
+}
+
+.reviews-count {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Middle Section: Timings & Amenities */
+.bus-middle-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bus-timing-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.time-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.city-name {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.duration-line-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  max-width: 160px;
+}
+
+.duration-label {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.line-with-dots {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.line-with-dots .line {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+}
+
+.line-with-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d1d5db;
+}
+
+/* Amenities Row */
+.amenities-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.amenity-svg {
+  width: 15px;
+  height: 15px;
+  color: #6b7280;
+}
+
+/* Right Section: Price & Action Button */
+.bus-price-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.price-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.2px;
+}
+
+.price-amount {
+  display: flex;
+  align-items: baseline;
+  line-height: 1;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+.price-currency {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-right: 2px;
+  letter-spacing: -0.5px;
+}
+
+.price-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+}
+
+.compact-select-seats-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #e53935;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 150px;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+  margin-top: 4px;
+}
+
+.compact-select-seats-btn:hover {
+  background: #d9322f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(229, 57, 53, 0.35);
+}
+
+.compact-select-seats-btn .arrow-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .bus-card-content {
+    flex-wrap: wrap;
+  }
+
+  .bus-operator-section {
+    width: 100%;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .bus-middle-section {
+    width: 100%;
+  }
+
+  .bus-price-section {
+    width: 100%;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+  }
+}

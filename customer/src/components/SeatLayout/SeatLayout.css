@@ -1,0 +1,268 @@
+.seat-layout-card {
+  background: #ffffff;
+  border: 1px solid #eaedf0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Automated Gender Safety Notice Banner */
+.gender-warning-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #eff6ff;
+  border: 1px solid #93c5fd;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  color: #1e40af;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.dismiss-warning-btn {
+  background: transparent;
+  border: none;
+  color: #1e40af;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Overall Front Driver Bar */
+.overall-driver-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.driver-steer-icon {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* Decks Side-by-Side Row Layout */
+.decks-side-by-side-row {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.bus-deck-column {
+  flex: 1;
+  min-width: 0;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Deck Subtitle Label Above Each Bus Frame */
+.deck-title-lbl {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Bus Body Frame Contour */
+.bus-body-frame {
+  width: 100%;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  padding: 20px 16px;
+  position: relative;
+}
+
+.bus-interior-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.bus-interior-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.berth-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Central Aisle Gap */
+.aisle-gap {
+  width: 28px;
+  flex-shrink: 0;
+}
+
+/* Ultra-Clean Single-Label Seat Element */
+.seat-element {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+}
+
+/* Sleeper Berths (Elongated shape) */
+.seat-element.sleeper-berth {
+  width: 58px;
+  height: 38px;
+}
+
+/* Seater & Semi-Sleeper Seats (Square shape) */
+.seat-element.seater-berth,
+.seat-element.semi_sleeper-berth {
+  width: 42px;
+  height: 42px;
+}
+
+/* Clean Seat Code Label */
+.seat-code-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  line-height: 1;
+}
+
+/* Hover State */
+.seat-element.available:hover {
+  border-color: #e53935;
+  background: #fff5f5;
+  transform: translateY(-1px);
+}
+
+.seat-element.available:hover .seat-code-label {
+  color: #e53935;
+}
+
+/* Selected State */
+.seat-element.selected {
+  background: #e53935;
+  border-color: #e53935;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.35);
+}
+
+.seat-element.selected .seat-code-label {
+  color: #ffffff;
+}
+
+/* Booked & Blocked States */
+.seat-element.booked-male {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  cursor: not-allowed;
+}
+
+.seat-element.booked-male .seat-code-label {
+  color: #0284c7;
+}
+
+.seat-element.booked-female {
+  background: #fce7f3;
+  border-color: #f472b6;
+  cursor: not-allowed;
+}
+
+.seat-element.booked-female .seat-code-label {
+  color: #db2777;
+}
+
+.seat-element.blocked {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.seat-element.blocked .seat-code-label {
+  color: #94a3b8;
+  font-size: 15px;
+}
+
+/* Overall Exit / Entrance Bar */
+.overall-exit-bar {
+  margin-top: 18px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 900px) {
+  .decks-side-by-side-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .bus-deck-column {
+    max-width: 400px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .seat-layout-card {
+    padding: 16px 10px;
+  }
+
+  .seat-element.sleeper-berth {
+    width: 52px;
+    height: 36px;
+  }
+
+  .seat-element.seater-berth {
+    width: 36px;
+    height: 36px;
+  }
+
+  .seat-code-label {
+    font-size: 11.5px;
+  }
+}

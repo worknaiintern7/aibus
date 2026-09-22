@@ -1,0 +1,260 @@
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1.4;
+  min-width: 0;
+}
+
+.date-input-group label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  color: #6b7280;
+}
+
+.date-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 140px;
+  height: 48px;
+  border: 1px solid #dfe3e8;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0 12px 0 34px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.date-input-wrapper:hover {
+  border-color: #9ca3af;
+}
+
+.date-input-wrapper.active-focus {
+  border-color: #e53935;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.15);
+}
+
+.date-input-wrapper .input-icon {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.custom-date-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #171717;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.custom-date-text.placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.calendar-chevron {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+
+.calendar-chevron.open {
+  transform: rotate(180deg);
+  color: #e53935;
+}
+
+/* Custom Floating Dropdown Calendar */
+.custom-calendar-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 290px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  padding: 16px;
+  z-index: 1000;
+  animation: calendarFadeIn 0.18s ease-out;
+}
+
+@keyframes calendarFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-month-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.calendar-nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.calendar-nav-btn:hover:not(:disabled) {
+  background: #e53935;
+  border-color: #e53935;
+  color: #ffffff;
+}
+
+.calendar-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: #f3f4f6;
+  background: #f3f4f6;
+}
+
+.calendar-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.day-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-cell {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-cell.day-btn {
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.calendar-cell.day-btn:hover:not(.disabled):not(.selected) {
+  background: #ffebee;
+  color: #e53935;
+}
+
+.calendar-cell.day-btn.disabled {
+  color: #d1d5db;
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: transparent;
+}
+
+.calendar-cell.day-btn.is-today:not(.selected) {
+  border: 1px solid #e53935;
+  color: #e53935;
+}
+
+.calendar-cell.day-btn.selected {
+  background: #e53935;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.35);
+}
+
+/* Today & Tomorrow Shortcuts */
+.date-shortcuts {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.date-shortcut-btn {
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.date-shortcut-btn:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.date-shortcut-btn.active {
+  background: #ffebee;
+  border-color: #ffcdd2;
+  color: #e53935;
+}
+
+@media (max-width: 1100px) {
+  .date-input-row {
+    flex-wrap: wrap;
+  }
+
+  .date-shortcuts {
+    width: 100%;
+  }
+
+  .date-shortcut-btn {
+    flex: 1;
+    height: 40px;
+  }
+}

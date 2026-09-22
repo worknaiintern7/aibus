@@ -1,0 +1,269 @@
+/* ================================
+   AIBus - Login Page
+================================ */
+
+.login-page {
+  min-height: calc(100vh - 72px);
+  background: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px 40px;
+  box-sizing: border-box;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Back Link - Exactly aligned with left edge of Login card */
+.back-button {
+  align-self: flex-start;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.back-button:hover {
+  color: #ef4444;
+}
+
+/* Login Card */
+.login-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login-title {
+  margin: 0 0 6px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  margin: 0 0 28px 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Form Group & Inputs */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Combined Mobile Input Wrapper (+91 | Enter mobile number) */
+.mobile-input-wrapper {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  border: 1px solid #d7dde6;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mobile-input-wrapper:focus-within {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.08);
+}
+
+.country-code {
+  flex: 0 0 54px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  border-right: 1px solid #e5e7eb;
+  background: #f8fafc;
+  user-select: none;
+}
+
+.mobile-input-wrapper input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  padding: 0 14px;
+  font-size: 15px;
+  color: #0f172a;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.mobile-input-wrapper input::placeholder {
+  color: #94a3b8;
+}
+
+/* OTP Input */
+.otp-input-wrapper input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #d7dde6;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 15px;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.otp-input-wrapper input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.08);
+}
+
+.otp-input-wrapper input::placeholder {
+  color: #94a3b8;
+}
+
+/* Error Message */
+.login-error {
+  margin: 8px 0 0 0;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Primary Send OTP / Verify OTP Button */
+.login-submit-button {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 18px;
+  transition: background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-submit-button:hover {
+  background: #dc2626;
+}
+
+/* Secondary Actions for OTP step */
+.resend-otp-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  font-size: 13.5px;
+  color: #64748b;
+}
+
+.resend-timer {
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.resend-otp-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: #ef4444;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resend-otp-button:hover {
+  text-decoration: underline;
+}
+
+.change-number-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.change-number-button:hover {
+  color: #0f172a;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 20px 16px 32px;
+  }
+
+  .login-card {
+    padding: 20px;
+  }
+
+  .login-title {
+    font-size: 24px;
+  }
+
+  .login-subtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .country-code {
+    flex: 0 0 50px;
+    font-size: 13.5px;
+  }
+
+  .mobile-input-wrapper input {
+    font-size: 15px;
+  }
+
+  .resend-otp-container {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

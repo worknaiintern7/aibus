@@ -1,0 +1,84 @@
+.booking-stepper-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.booking-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+}
+
+.stepper-item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f0f2f5;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.stepper-item.active .step-circle {
+  background: #e53935;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+}
+
+.stepper-item.completed .step-circle {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.stepper-item.active .step-label {
+  color: #e53935;
+  font-weight: 700;
+}
+
+.stepper-line {
+  width: 48px;
+  height: 2px;
+  background: #e5e7eb;
+  border-radius: 2px;
+}
+
+@media (max-width: 800px) {
+  .step-label {
+    display: none;
+  }
+  
+  .stepper-line {
+    width: 24px;
+  }
+
+  .stepper-item.active .step-label {
+    display: inline-block;
+    font-size: 12px;
+  }
+}

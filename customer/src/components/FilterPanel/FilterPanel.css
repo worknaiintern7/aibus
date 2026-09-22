@@ -1,0 +1,130 @@
+.filter-panel {
+  width: 270px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #eaedf0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  height: fit-content;
+}
+
+.filter-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0f2f5;
+  margin-bottom: 16px;
+}
+
+.filter-panel-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.clear-all-btn {
+  background: transparent;
+  border: none;
+  color: #e53935;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease;
+}
+
+.clear-all-btn:hover {
+  text-decoration: underline;
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.filter-section.border-none {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.filter-section h3 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.2px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #4b5563;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #e53935;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 0;
+}
+
+.checkbox-label:hover {
+  color: #111827;
+}
+
+.checkbox-label.active span {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Red Range Slider */
+.price-slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.red-range-input {
+  width: 100%;
+  height: 4px;
+  background: #fee2e2;
+  border-radius: 4px;
+  outline: none;
+  accent-color: #e53935;
+  cursor: pointer;
+}
+
+.price-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.current-max-price {
+  color: #111827;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .filter-panel {
+    width: 100%;
+  }
+}

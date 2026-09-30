@@ -72,6 +72,9 @@
   flex-shrink: 0;
   position: sticky;
   top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* ========================================================
@@ -139,24 +142,47 @@
   .mobile-seat-total-price {
     font-size: 20px;
     font-weight: 800;
-    color: #e53935;
+    color: var(--gold-700, #9A7B1C);
   }
 
   .mobile-sticky-continue-btn {
-    background: #e53935;
-    color: #ffffff;
+    background: var(--gradient-gold, linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%));
+    color: #1a1608;
     border: none;
     border-radius: 10px;
     padding: 10px 22px;
     font-size: 14.5px;
-    font-weight: 700;
+    font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
-    transition: all 0.15s ease;
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
+    transition: all 0.2s ease;
   }
 
   .mobile-sticky-continue-btn:hover {
-    background: #d9322f;
+    background: var(--gradient-gold-hover, linear-gradient(135deg, #FFF08A 0%, #E5C158 50%, #CFA01E 100%));
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5);
+  }
+
+  .mobile-sticky-continue-btn:disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .mobile-sticky-left {
+    min-width: 0;
+    margin-right: 12px;
+  }
+
+  .mobile-seat-count-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-sticky-continue-btn {
+    flex-shrink: 0;
   }
 }
 

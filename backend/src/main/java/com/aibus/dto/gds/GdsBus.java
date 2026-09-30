@@ -1,6 +1,7 @@
 package com.aibus.dto.gds;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 public class GdsBus {
 
@@ -52,7 +53,40 @@ public class GdsBus {
     @JsonProperty("BusStatus")
     private GdsBusStatus busStatus;
 
+    @JsonProperty("BusType")
+    private GdsBusType busType;
+
+    @JsonProperty("Pickups")
+    private List<GdsPickup> pickups;
+
+    @JsonProperty("Dropoffs")
+    private List<GdsDropoff> dropoffs;
+
     public GdsBus() {
+    }
+
+    public GdsBusType getBusType() {
+        return busType;
+    }
+
+    public void setBusType(GdsBusType busType) {
+        this.busType = busType;
+    }
+
+    public List<GdsPickup> getPickups() {
+        return pickups;
+    }
+
+    public void setPickups(List<GdsPickup> pickups) {
+        this.pickups = pickups;
+    }
+
+    public List<GdsDropoff> getDropoffs() {
+        return dropoffs;
+    }
+
+    public void setDropoffs(List<GdsDropoff> dropoffs) {
+        this.dropoffs = dropoffs;
     }
 
     public String getCompanyName() {

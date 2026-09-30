@@ -105,7 +105,6 @@ DB_PASSWORD=YourSuperStrongPassword123!
 AIBUS_AUTH_URL=https://partnerapi.iamgds.com/ota/v1/Auth
 AIBUS_CLIENT_ID=50
 AIBUS_CLIENT_SECRET=d66de12fa3473a93415b02494253f088
-AIBUS_ACCESS_TOKEN=189A0DFBA93BF32232AE8467372D2A96|50-S|202609301355||FFFF
 
 # Allowed CORS Origins (आपके डोमेन)
 ALLOWED_ORIGINS=https://aibusbooking.com,https://www.aibusbooking.com,https://admin.aibusbooking.com

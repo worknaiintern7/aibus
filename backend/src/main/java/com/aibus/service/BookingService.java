@@ -8,6 +8,7 @@ import com.aibus.exception.ResourceNotFoundException;
 import com.aibus.exception.SeatUnavailableException;
 import com.aibus.mapper.BookingMapper;
 import com.aibus.repository.*;
+import com.aibus.service.gds.GdsBookingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class BookingService {
     private final BookingPassengerRepository bookingPassengerRepository;
     private final PaymentService paymentService;
     private final BookingMapper bookingMapper;
+    private final GdsBookingService gdsBookingService;
 
     public BookingService(UserRepository userRepository,
                           BusScheduleRepository busScheduleRepository,
@@ -34,7 +36,8 @@ public class BookingService {
                           BookingRepository bookingRepository,
                           BookingPassengerRepository bookingPassengerRepository,
                           PaymentService paymentService,
-                          BookingMapper bookingMapper) {
+                          BookingMapper bookingMapper,
+                          GdsBookingService gdsBookingService) {
         this.userRepository = userRepository;
         this.busScheduleRepository = busScheduleRepository;
         this.scheduleSeatRepository = scheduleSeatRepository;
@@ -42,6 +45,7 @@ public class BookingService {
         this.bookingPassengerRepository = bookingPassengerRepository;
         this.paymentService = paymentService;
         this.bookingMapper = bookingMapper;
+        this.gdsBookingService = gdsBookingService;
     }
 
     @Transactional
@@ -112,8 +116,13 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public BookingDetailsResponse getBookingDetails(String bookingReference) {
-        Booking booking = bookingRepository.findByBookingReference(bookingReference)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with reference: " + bookingReference));
+        Optional<Booking> localBooking = bookingRepository.findByBookingReference(bookingReference);
+        if (localBooking.isEmpty()) {
+            // Not one of our own schedules: look for a booking made with the GDS provider
+            return gdsBookingService.findBookingDetails(bookingReference)
+                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found with reference: " + bookingReference));
+        }
+        Booking booking = localBooking.get();
 
         List<BookingPassenger> passengers = bookingPassengerRepository.findByBookingId(booking.getId());
         return bookingMapper.toBookingDetailsResponse(booking, passengers);
@@ -126,16 +135,26 @@ public class BookingService {
         }
 
         List<Booking> bookings = bookingRepository.findByUserIdOrderByCreatedAtDesc(userId);
-        return bookings.stream().map(b -> {
+        List<BookingDetailsResponse> responses = bookings.stream().map(b -> {
             List<BookingPassenger> passengers = bookingPassengerRepository.findByBookingId(b.getId());
             return bookingMapper.toBookingDetailsResponse(b, passengers);
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toCollection(ArrayList::new));
+
+        // Bookings made with the GDS provider, newest first together with our own
+        responses.addAll(gdsBookingService.getUserBookings(userId));
+        responses.sort(Comparator.comparing(BookingDetailsResponse::getCreatedAt,
+                Comparator.nullsLast(Comparator.reverseOrder())));
+        return responses;
     }
 
     @Transactional
     public CancelBookingResponse cancelBooking(String bookingReference) {
-        Booking booking = bookingRepository.findByBookingReference(bookingReference)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with reference: " + bookingReference));
+        Optional<Booking> localBooking = bookingRepository.findByBookingReference(bookingReference);
+        if (localBooking.isEmpty()) {
+            return gdsBookingService.cancelBooking(bookingReference)
+                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found with reference: " + bookingReference));
+        }
+        Booking booking = localBooking.get();
 
         if (booking.getStatus() == BookingStatus.CANCELLED) {
             throw new InvalidBookingException("Booking is already cancelled");

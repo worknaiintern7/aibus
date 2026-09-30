@@ -22,38 +22,43 @@
   margin: 0 0 6px;
 }
 
-.offers-header .text-red {
-  color: #e53935;
+.offers-header .text-red,
+.offers-header .text-gold {
+  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
 }
 
 .offers-subtitle {
   margin: 0;
   font-size: 15px;
-  color: #6b7280;
+  color: #64748b;
 }
 
 .view-all-offers-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 38px;
-  padding: 0 20px;
-  border: 1.5px solid #e53935;
+  height: 40px;
+  padding: 0 22px;
+  border: 1.5px solid #D4AF37;
   border-radius: 9999px;
-  background: #ffffff;
-  color: #e53935;
-  font-size: 13px;
-  font-weight: 600;
+  background: #FFFDF5;
+  color: #854D0E;
+  font-size: 13.5px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   white-space: nowrap;
 }
 
 .view-all-offers-btn:hover {
-  background: #e53935;
-  color: #ffffff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.2);
+  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  color: #0F172A;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
 }
 
 /* Grid Layout */
@@ -89,9 +94,10 @@
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
-.card-red {
-  background: #fff5f5;
-  border: 1px solid #fee2e2;
+.card-red,
+.card-gold {
+  background: #FFFDF5;
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
 }
 
 .card-blue {
@@ -126,9 +132,10 @@
   height: 20px;
 }
 
-.badge-red {
-  background: #fee2e2;
-  color: #e53935;
+.badge-red,
+.badge-gold {
+  background: #FEF8E2;
+  color: #854D0E;
 }
 
 .badge-blue {
@@ -166,7 +173,7 @@
   align-items: center;
   justify-content: space-between;
   background: #ffffff;
-  border: 1px dashed #fca5a5;
+  border: 1.5px dashed rgba(212, 175, 55, 0.6);
   border-radius: 8px;
   padding: 6px 12px;
   font-size: 12px;
@@ -176,7 +183,8 @@
 }
 
 .code-box strong {
-  color: #e53935;
+  color: #854D0E;
+  font-weight: 800;
 }
 
 .copy-btn {
@@ -225,16 +233,20 @@
   line-height: 1.2;
 }
 
-.btn-solid-red {
-  background: #e53935;
-  color: #ffffff;
+.btn-solid-red,
+.btn-solid-gold {
+  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  color: #0F172A;
+  font-weight: 800;
   border: none;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
 }
 
-.btn-solid-red:hover {
-  background: #d9322f;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+.btn-solid-red:hover,
+.btn-solid-gold:hover {
+  background: linear-gradient(135deg, #FFF089 0%, #E5BF47 50%, #C9961B 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5);
 }
 
 .btn-outline-blue {
@@ -310,8 +322,9 @@
   z-index: 1;
 }
 
-.graphic-red {
-  color: #e53935;
+.graphic-red,
+.graphic-gold {
+  color: #D4AF37;
 }
 
 .graphic-blue {
@@ -610,8 +623,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: #fff5f5;
-  border: 1.5px dashed #fca5a5;
+  background: #FFFDF5;
+  border: 1.5px dashed rgba(212, 175, 55, 0.6);
   padding: 5px 12px;
   border-radius: 8px;
 }
@@ -620,18 +633,18 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 13px;
   font-weight: 800;
-  color: #e53935;
+  color: #854D0E;
   letter-spacing: 0.6px;
 }
 
 .modal-copy-btn {
   background: #ffffff;
-  border: 1px solid #fca5a5;
+  border: 1px solid rgba(212, 175, 55, 0.5);
   border-radius: 6px;
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 700;
-  color: #e53935;
+  color: #854D0E;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -641,8 +654,8 @@
 }
 
 .modal-copy-btn:hover {
-  background: #e53935;
-  color: #ffffff;
+  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  color: #0F172A;
 }
 
 .modal-copy-btn.copied {

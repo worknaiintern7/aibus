@@ -1,5 +1,6 @@
 import { useState } from "react";
 import SeatLegend from "../SeatLegend/SeatLegend";
+import LiveSeatMap from "./LiveSeatMap";
 import "./SeatLayout.css";
 
 // Helper to compute dynamic row-based price (Front premium, Middle standard, Rear discount)
@@ -243,7 +244,15 @@ function SingleBusFrame({ deckTitle, gridData, selectedSeats, onSeatClick, seats
 }
 
 
-function SeatLayout({ bus, selectedSeats = [], onSeatClick }) {
+function SeatLayout(props) {
+  // Live GDS buses come with the operator's real seat chart
+  if (props.bus?.decks?.length > 0) {
+    return <LiveSeatMap {...props} />;
+  }
+  return <GeneratedSeatLayout {...props} />;
+}
+
+function GeneratedSeatLayout({ bus, selectedSeats = [], onSeatClick }) {
   const [genderNotice, setGenderNotice] = useState("");
   const [activeMobileDeck, setActiveMobileDeck] = useState("LOWER");
 

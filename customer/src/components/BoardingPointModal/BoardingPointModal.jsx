@@ -59,12 +59,21 @@ function BoardingPointModal({
   const latNum = Number(current.latitude || 18.5308);
   const lonNum = Number(current.longitude || 73.8475);
 
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latNum},${lonNum}`;
+  // Live pickup points have no coordinates: the map is looked up by place name instead
+  const placeQuery = current.latitude == null && current.mapQuery
+    ? encodeURIComponent(current.mapQuery)
+    : null;
+
+  const directionsUrl = placeQuery
+    ? `https://www.google.com/maps/dir/?api=1&destination=${placeQuery}`
+    : `https://www.google.com/maps/dir/?api=1&destination=${latNum},${lonNum}`;
 
   // OpenStreetMap embed bounding box
   const delta = 0.005;
   const bbox = `${lonNum - delta}%2C${latNum - delta}%2C${lonNum + delta}%2C${latNum + delta}`;
-  const mapEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${latNum}%2C${lonNum}`;
+  const mapEmbedUrl = placeQuery
+    ? `https://maps.google.com/maps?q=${placeQuery}&z=15&output=embed`
+    : `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${latNum}%2C${lonNum}`;
 
   const handleConfirmSelection = () => {
     if (onSelectPoint) {
@@ -186,10 +195,12 @@ function BoardingPointModal({
 
             {/* Landmark & Short Address */}
             <div className="boarding-landmark-box">
-              <div className="landmark-item">
-                <span className="landmark-label">Landmark:</span>
-                <strong className="landmark-value">{current.landmark}</strong>
-              </div>
+              {current.landmark && (
+                <div className="landmark-item">
+                  <span className="landmark-label">Landmark:</span>
+                  <strong className="landmark-value">{current.landmark}</strong>
+                </div>
+              )}
               <div className="landmark-item address-item">
                 <span className="landmark-label">Address:</span>
                 <span className="address-value">{current.address}</span>

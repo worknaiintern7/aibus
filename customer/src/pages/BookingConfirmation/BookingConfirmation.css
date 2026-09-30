@@ -447,4 +447,48 @@
     padding: 10px;
   }
 }
-
+
+/* Operator cancellation policy (live buses) */
+.policy-table {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.policy-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  color: #334155;
+  border-top: 1px solid #f1f5f9;
+}
+
+.policy-row strong {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.policy-row.policy-head {
+  border-top: none;
+  background: #f8fafc;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.policy-note {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: #64748b;
+}
+
+.total-tax-note {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #64748b;
+}

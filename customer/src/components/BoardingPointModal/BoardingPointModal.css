@@ -74,7 +74,7 @@
   gap: 5px;
   font-size: 12px;
   font-weight: 700;
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -166,15 +166,15 @@
 }
 
 .boarding-point-card:hover {
-  border-color: #fca5a5;
-  background: #fff5f5;
+  border-color: var(--gold-300, #FCD34D);
+  background: var(--gold-50, #FFFDF5);
   transform: translateY(-1px);
 }
 
 .boarding-point-card.selected {
-  border-color: #e53935;
-  background: #fef2f2;
-  box-shadow: 0 2px 8px rgba(229, 57, 53, 0.12);
+  border-color: var(--gold-500, #D4AF37);
+  background: var(--gold-50, #FFFDF5);
+  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.2);
 }
 
 .point-card-radio {
@@ -193,7 +193,7 @@
 }
 
 .radio-outer.checked {
-  border-color: #e53935;
+  border-color: var(--gold-500, #D4AF37);
   background: #ffffff;
 }
 
@@ -201,7 +201,7 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #e53935;
+  background: var(--gold-500, #D4AF37);
 }
 
 .point-card-content {
@@ -231,8 +231,8 @@
 .point-time-badge {
   font-size: 11px;
   font-weight: 700;
-  color: #b91c1c;
-  background: #fee2e2;
+  color: var(--gold-800, #854D0E);
+  background: var(--gold-100, #FEF3C7);
   padding: 1px 7px;
   border-radius: 6px;
   white-space: nowrap;
@@ -255,9 +255,9 @@
 .selected-badge {
   font-size: 10.5px;
   font-weight: 700;
-  color: #e53935;
+  color: var(--gold-800, #854D0E);
   background: #ffffff;
-  border: 1px solid #fca5a5;
+  border: 1px solid var(--gold-300, #FCD34D);
   padding: 2px 7px;
   border-radius: 6px;
   white-space: nowrap;
@@ -292,21 +292,21 @@
 .directions-link-btn {
   font-size: 12px;
   font-weight: 700;
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 3px 8px;
-  background: #fef2f2;
+  background: var(--gold-50, #FFFDF5);
   border-radius: 6px;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--gold-200, #FDE68A);
   transition: all 0.15s ease;
 }
 
 .directions-link-btn:hover {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--gold-100, #FEF3C7);
+  color: var(--gold-800, #854D0E);
 }
 
 .boarding-map-wrapper {
@@ -352,22 +352,22 @@
 .pulse-dot {
   width: 8px;
   height: 8px;
-  background-color: #e53935;
+  background-color: var(--gold-500, #D4AF37);
   border-radius: 50%;
-  box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.7);
+  box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
   animation: pulsePin 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
   flex-shrink: 0;
 }
 
 @keyframes pulsePin {
   0% {
-    box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.7);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(229, 57, 53, 0);
+    box-shadow: 0 0 0 8px rgba(212, 175, 55, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(229, 57, 53, 0);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
   }
 }
 
@@ -375,7 +375,7 @@
 .boarding-landmark-box {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-left: 3.5px solid #e53935;
+  border-left: 3.5px solid var(--gold-500, #D4AF37);
   border-radius: 10px;
   padding: 8px 12px;
   display: flex;
@@ -430,15 +430,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
-  color: #ffffff;
+  background: var(--gradient-gold, linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%));
+  color: #1a1608;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 11px 18px;
   border-radius: 10px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(229, 57, 53, 0.28);
+  box-shadow: 0 3px 12px rgba(212, 175, 55, 0.35);
   transition: all 0.2s ease;
   white-space: nowrap;
   overflow: hidden;
@@ -446,9 +446,9 @@
 }
 
 .boarding-btn-confirm:hover {
-  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+  background: var(--gradient-gold-hover, linear-gradient(135deg, #FFF08A 0%, #E5C158 50%, #CFA01E 100%));
   transform: translateY(-1px);
-  box-shadow: 0 5px 14px rgba(229, 57, 53, 0.38);
+  box-shadow: 0 5px 16px rgba(212, 175, 55, 0.48);
 }
 
 .boarding-btn-close {

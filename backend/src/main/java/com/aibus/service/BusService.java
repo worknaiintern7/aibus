@@ -11,16 +11,23 @@ import com.aibus.exception.ResourceNotFoundException;
 import com.aibus.mapper.BusMapper;
 import com.aibus.repository.BusScheduleRepository;
 import com.aibus.repository.ScheduleSeatRepository;
+import com.aibus.dto.gds.GdsSearchResponse;
 import com.aibus.service.gds.GdsApiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class BusService {
+
+    private static final Logger log = LoggerFactory.getLogger(BusService.class);
 
     private final BusScheduleRepository busScheduleRepository;
     private final ScheduleSeatRepository scheduleSeatRepository;
@@ -43,26 +50,6 @@ public class BusService {
             String destination,
             LocalDate date) {
 
-        /*
-         * TEMPORARY GDS TEST
-         *
-         * This calls the GDS provider API.
-         * We are not converting the GDS response to our DTO yet.
-         */
-        com.aibus.dto.gds.GdsSearchResponse gdsResponse = gdsApiService.searchBuses(
-                4292,
-                4562,
-                date.toString()
-        );
-
-        System.out.println("========== GDS API RESPONSE ==========");
-        System.out.println(gdsResponse);
-        System.out.println("======================================");
-
-        /*
-         * Existing database search is kept for now.
-         * Next step will replace this with GDS response mapping.
-         */
         List<BusSchedule> schedules = busScheduleRepository
                 .findByRouteSourceIgnoreCaseAndRouteDestinationIgnoreCaseAndJourneyDateAndStatus(
                         source,
@@ -71,7 +58,7 @@ public class BusService {
                         ScheduleStatus.SCHEDULED
                 );
 
-        return schedules.stream()
+        List<BusSearchResponse> results = schedules.stream()
                 .map(schedule -> {
                     long availableSeats = scheduleSeatRepository
                             .countByBusScheduleIdAndStatus(
@@ -84,7 +71,56 @@ public class BusService {
                             availableSeats
                     );
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        results.addAll(searchGdsBuses(source, destination, date));
+
+        return results;
+    }
+
+    /*
+     * Live buses from the GDS provider. A provider failure must not break
+     * the search, so our own schedules are still returned in that case.
+     */
+    private List<BusSearchResponse> searchGdsBuses(
+            String source,
+            String destination,
+            LocalDate date) {
+
+        if (!gdsApiService.isConfigured()) {
+            return List.of();
+        }
+
+        try {
+            Optional<Integer> fromCityId = gdsApiService.findCityId(source);
+            Optional<Integer> toCityId = gdsApiService.findCityId(destination);
+
+            if (fromCityId.isEmpty() || toCityId.isEmpty()) {
+                log.info("GDS search skipped, city not found in GDS city list: {} -> {}", source, destination);
+                return List.of();
+            }
+
+            GdsSearchResponse gdsResponse = gdsApiService.searchBuses(
+                    fromCityId.get(),
+                    toCityId.get(),
+                    date.toString()
+            );
+
+            if (gdsResponse == null
+                    || !gdsResponse.isSuccess()
+                    || gdsResponse.getData() == null
+                    || gdsResponse.getData().getBuses() == null) {
+                return List.of();
+            }
+
+            return gdsResponse.getData().getBuses().stream()
+                    .map(bus -> busMapper.toBusSearchResponse(bus, source, destination, date))
+                    .collect(Collectors.toList());
+
+        } catch (RuntimeException ex) {
+            log.warn("GDS search failed for {} -> {} on {}: {}", source, destination, date, ex.getMessage());
+            return List.of();
+        }
     }
 
     @Transactional(readOnly = true)

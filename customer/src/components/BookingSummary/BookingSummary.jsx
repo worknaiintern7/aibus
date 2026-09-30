@@ -1,6 +1,13 @@
 import "./BookingSummary.css";
 
-function BookingSummary({ selectedSeats = [], price = 580, onClear, onContinue }) {
+function BookingSummary({
+  selectedSeats = [],
+  price = 580,
+  isLive = false,
+  canContinue,
+  onClear,
+  onContinue,
+}) {
   const hasSeats = selectedSeats.length > 0;
 
   // Calculate actual total sum from selected seat objects (or default to count * price)
@@ -54,7 +61,7 @@ function BookingSummary({ selectedSeats = [], price = 580, onClear, onContinue }
         <div className="selection-divider" />
 
         <div className="selection-row">
-          <span className="row-label">Base fare from</span>
+          <span className="row-label">{isLive ? "Fare per seat from" : "Base fare from"}</span>
           <span className="price-val">₹{price}</span>
         </div>
 
@@ -65,7 +72,7 @@ function BookingSummary({ selectedSeats = [], price = 580, onClear, onContinue }
 
         <button
           type="button"
-          disabled={!hasSeats}
+          disabled={canContinue != null ? !canContinue : !hasSeats}
           className="proceed-btn"
           onClick={onContinue}
         >
@@ -74,9 +81,11 @@ function BookingSummary({ selectedSeats = [], price = 580, onClear, onContinue }
         </button>
 
         <div className="selection-tip-box">
-          <span className="tip-icon">💡</span>
+          <span className="tip-icon">{isLive ? "ℹ️" : "💡"}</span>
           <span className="tip-text">
-            Front rows (+₹100) & Rear rows (-₹60) have location-based pricing.
+            {isLive
+              ? "Fares are set by the operator and include taxes."
+              : "Front rows (+₹100) & Rear rows (-₹60) have location-based pricing."}
           </span>
         </div>
       </div>

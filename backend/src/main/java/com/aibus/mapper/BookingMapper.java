@@ -5,6 +5,8 @@ import com.aibus.dto.booking.BookingResponse;
 import com.aibus.dto.booking.PassengerResponse;
 import com.aibus.entity.Booking;
 import com.aibus.entity.BookingPassenger;
+import com.aibus.entity.GdsBooking;
+import com.aibus.entity.GdsBookingPassenger;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -66,6 +68,49 @@ public class BookingMapper {
 
         List<String> seats = passengers.stream()
                 .map(BookingPassenger::getSeatNumber)
+                .collect(Collectors.toList());
+        response.setSelectedSeats(seats);
+
+        return response;
+    }
+
+    /**
+     * A GDS booking in the same shape as a local one, plus the operator PNR and ticket number.
+     */
+    public BookingDetailsResponse toBookingDetailsResponse(GdsBooking booking, List<GdsBookingPassenger> passengers) {
+        if (booking == null) return null;
+        BookingDetailsResponse response = new BookingDetailsResponse();
+        response.setProvider("GDS");
+        response.setBookingReference(booking.getBookingReference());
+        response.setBookingStatus(booking.getStatus());
+        response.setUser(userMapper.toUserResponse(booking.getUser()));
+        response.setBusName(booking.getBusName());
+        response.setBusNumber(booking.getBusNumber());
+        response.setBusType(booking.getBusType());
+        response.setSource(booking.getSource());
+        response.setDestination(booking.getDestination());
+        response.setJourneyDate(booking.getJourneyDate());
+        response.setDepartureTime(booking.getDepartureTime());
+        response.setArrivalTime(booking.getArrivalTime());
+        response.setBoardingPoint(booking.getPickupName());
+        response.setBoardingTime(booking.getPickupTime());
+        response.setDroppingPoint(booking.getDropoffName());
+        response.setTotalAmount(booking.getTotalAmount());
+        response.setCreatedAt(booking.getCreatedAt());
+        response.setPnrNo(booking.getPnrNo());
+        response.setTicketNo(booking.getTicketNo());
+        response.setContactMobile(booking.getContactMobile());
+        response.setContactEmail(booking.getContactEmail());
+        response.setRefundAmount(booking.getRefundAmount());
+        response.setCancellationCharge(booking.getCancellationCharge());
+
+        List<PassengerResponse> passengerResponses = passengers.stream()
+                .map(p -> new PassengerResponse(p.getName(), p.getAge(), p.getGender(), p.getSeatNumber(), booking.getContactMobile()))
+                .collect(Collectors.toList());
+        response.setPassengers(passengerResponses);
+
+        List<String> seats = passengers.stream()
+                .map(GdsBookingPassenger::getSeatNumber)
                 .collect(Collectors.toList());
         response.setSelectedSeats(seats);
 

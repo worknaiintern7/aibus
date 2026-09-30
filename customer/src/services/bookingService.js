@@ -4,6 +4,17 @@ const SEAT_LOCK_KEY = "activeSeatLock";
 const LOCK_DURATION_MS = 5 * 60 * 1000; // 5 minutes in milliseconds
 const GUEST_BOOKINGS_KEY = "guestBookings";
 
+// Seats already held with the operator while the confirm step is retried
+let pendingLiveHold = null;
+
+const STATUS_LABELS = {
+  CONFIRMED: "Confirmed",
+  CANCELLED: "Cancelled",
+  PENDING: "Pending",
+  FAILED: "Failed",
+  COMPLETED: "Completed",
+};
+
 function formatBusType(type) {
   if (!type) return "AC Seater";
   const str = type.toString().toUpperCase();
@@ -46,7 +57,18 @@ function mapBackendBooking(b) {
   return {
     bookingId: b.bookingReference,
     bookingReference: b.bookingReference,
-    userMobile: b.user?.mobile || primaryPassenger.mobile || "",
+    // Live (GDS) bookings carry the operator PNR and ticket number
+    provider: b.provider || "LOCAL",
+    isLive: b.provider === "GDS",
+    pnrNo: b.pnrNo || "",
+    ticketNo: b.ticketNo || "",
+    boardingPoint: b.boardingPoint || "",
+    boardingTime: b.boardingTime || "",
+    droppingPoint: b.droppingPoint || "",
+    contactEmail: b.contactEmail || "",
+    refundAmount: b.refundAmount != null ? Number(b.refundAmount) : null,
+    cancellationCharge: b.cancellationCharge != null ? Number(b.cancellationCharge) : null,
+    userMobile: b.contactMobile || b.user?.mobile || primaryPassenger.mobile || "",
     bus: {
       id: b.scheduleId,
       operator: b.busName || "AIBus Travels",
@@ -67,12 +89,7 @@ function mapBackendBooking(b) {
     },
     seats: b.selectedSeats || [],
     totalAmount: Number(b.totalAmount || 0),
-    status:
-      b.bookingStatus === "CONFIRMED"
-        ? "Confirmed"
-        : b.bookingStatus === "CANCELLED"
-        ? "Cancelled"
-        : b.bookingStatus || "Confirmed",
+    status: STATUS_LABELS[b.bookingStatus] || b.bookingStatus || "Confirmed",
     bookingDate: b.createdAt || new Date().toISOString(),
     isGuest: b.isGuest || false,
   };
@@ -226,6 +243,86 @@ export const bookingService = {
     return fullBookingData;
   },
 
+  // ----------------------------------------------------
+  // 🚌 Live (GDS) Booking: hold the seats, then book them
+  // ----------------------------------------------------
+  createLiveBooking: async ({
+    bus,
+    travellers,
+    seats,
+    pickupId,
+    dropoffId,
+    contactMobile,
+    contactEmail,
+    userId,
+    isGuest = false,
+  }) => {
+    const holdKey = [bus.id, bus.date, seats.join(","), pickupId, dropoffId].join("|");
+
+    // Step 1: hold the seats with the operator (skipped when a retry already holds them)
+    if (!pendingLiveHold || pendingLiveHold.key !== holdKey) {
+      const holdResponse = await api.post(
+        "/api/gds/bookings/hold",
+        {
+          userId: userId || null,
+          source: bus.from,
+          destination: bus.to,
+          journeyDate: bus.date,
+          busId: bus.gdsBusId,
+          pickupId,
+          dropoffId,
+          contactMobile,
+          contactEmail: contactEmail || null,
+          passengers: (travellers || []).map((t, idx) => ({
+            name: t.name,
+            age: parseInt(t.age, 10),
+            gender: t.gender,
+            seatNumber: t.seat || seats[idx],
+            mobile: contactMobile,
+          })),
+        },
+        { timeout: 60000 }
+      );
+      pendingLiveHold = { key: holdKey, reference: holdResponse.data?.data?.bookingReference };
+    }
+
+    // Payment collection belongs here, between hold and confirm.
+
+    // Step 2: issue the ticket
+    let confirmed;
+    try {
+      const confirmResponse = await api.post(
+        `/api/gds/bookings/${pendingLiveHold.reference}/confirm`,
+        null,
+        { timeout: 90000 }
+      );
+      confirmed = confirmResponse.data?.data;
+    } catch (err) {
+      // A definite failure releases the hold reference; anything else can be retried as is
+      if (/^Booking failed|can no longer be confirmed|not found/i.test(err.message || "")) {
+        pendingLiveHold = null;
+      }
+      throw err;
+    }
+
+    pendingLiveHold = null;
+    bookingService.clearSeatLock();
+
+    const booking = { ...mapBackendBooking(confirmed), isGuest };
+    if (isGuest || !userId) {
+      bookingService.saveGuestBooking(booking);
+    }
+    return booking;
+  },
+
+  // Refund the customer would get if a live booking is cancelled right now
+  getCancellationQuote: async (bookingReference) => {
+    const response = await api.get(`/api/gds/bookings/${bookingReference}/cancellation`, {
+      timeout: 40000,
+    });
+    return response.data?.data;
+  },
+
   getBookingById: async (bookingReference) => {
     if (!bookingReference) return null;
 
@@ -256,12 +353,29 @@ export const bookingService = {
 
   cancelBooking: async (bookingReference) => {
     if (!bookingReference) return null;
+    const guestList = bookingService.getGuestBookings();
+    const guestCopy = guestList.find((b) => (b.bookingId || b.bookingReference) === bookingReference);
+
     try {
-      const response = await api.post(`/api/bookings/${bookingReference}/cancel`);
-      return response.data?.data;
-    } catch {
+      const response = await api.post(`/api/bookings/${bookingReference}/cancel`, null, {
+        timeout: 60000,
+      });
+      const result = response.data?.data;
+      if (guestCopy) {
+        const synced = guestList.map((b) =>
+          (b.bookingId || b.bookingReference) === bookingReference ? { ...b, status: "Cancelled" } : b
+        );
+        localStorage.setItem(GUEST_BOOKINGS_KEY, JSON.stringify(synced));
+        window.dispatchEvent(new Event("guestBookingsChanged"));
+      }
+      return result;
+    } catch (err) {
+      // A live ticket is only cancelled when the operator says so: never fake it locally
+      if (!guestCopy || guestCopy.isLive) {
+        throw err;
+      }
+
       // Local guest booking cancellation
-      const guestList = bookingService.getGuestBookings();
       const updated = guestList.map((b) =>
         (b.bookingId || b.bookingReference) === bookingReference
           ? { ...b, status: "Cancelled" }

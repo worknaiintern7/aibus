@@ -3,16 +3,36 @@ package com.aibus.mapper;
 import com.aibus.dto.bus.BoardingPointResponse;
 import com.aibus.dto.bus.BusDetailsResponse;
 import com.aibus.dto.bus.BusSearchResponse;
+import com.aibus.dto.bus.GdsBusDetailsResponse;
+import com.aibus.dto.bus.GdsDeckResponse;
+import com.aibus.dto.bus.GdsSeatResponse;
 import com.aibus.dto.bus.SeatResponse;
+import com.aibus.dto.gds.GdsBus;
+import com.aibus.dto.gds.GdsBusStatus;
+import com.aibus.dto.gds.GdsBusType;
+import com.aibus.dto.gds.GdsChartData;
+import com.aibus.dto.gds.GdsDropoff;
+import com.aibus.dto.gds.GdsPickup;
 import com.aibus.entity.BusSchedule;
+import com.aibus.entity.BusType;
 import com.aibus.entity.ScheduleSeat;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 @Component
 public class BusMapper {
+
+    private static final DateTimeFormatter BOARDING_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
 
     public BusSearchResponse toBusSearchResponse(BusSchedule schedule, long availableSeatsCount) {
         if (schedule == null) return null;
@@ -33,6 +53,237 @@ public class BusMapper {
         response.setFare(schedule.getBaseFare());
         response.setAvailableSeats(availableSeatsCount);
         return response;
+    }
+
+    /**
+     * Maps a live GDS bus to the same search DTO the customer app already uses.
+     * GDS buses have no local schedule, so scheduleId / busId stay null.
+     */
+    public BusSearchResponse toBusSearchResponse(GdsBus bus, String source, String destination, LocalDate journeyDate) {
+        if (bus == null) return null;
+        BusSearchResponse response = new BusSearchResponse();
+        fillFromGdsBus(response, bus, source, destination, journeyDate);
+        return response;
+    }
+
+    /**
+     * A live GDS bus together with its seat chart. Pickups, dropoffs and seat
+     * availability come from the chart, which is more detailed than the search result.
+     */
+    public GdsBusDetailsResponse toGdsBusDetailsResponse(GdsBus bus, GdsChartData chart, String source,
+                                                         String destination, LocalDate journeyDate) {
+        if (bus == null || chart == null) return null;
+        GdsBusDetailsResponse response = new GdsBusDetailsResponse();
+        fillFromGdsBus(response, bus, source, destination, journeyDate);
+        response.setBusLabel(bus.getDisplayBusType() != null && !bus.getDisplayBusType().isBlank()
+                ? bus.getDisplayBusType()
+                : bus.getBusLabel());
+
+        if (chart.getPickups() != null && !chart.getPickups().isEmpty()) {
+            List<BoardingPointResponse> boardingPoints = toBoardingPoints(chart.getPickups(), source);
+            response.setBoardingPoints(boardingPoints);
+            response.setBoardingPoint(boardingPoints.get(0));
+        }
+
+        List<GdsDropoff> dropoffs = chart.getDropoffs() != null ? chart.getDropoffs() : bus.getDropoffs();
+        List<BoardingPointResponse> droppingPoints = new ArrayList<>();
+        if (dropoffs != null) {
+            for (GdsDropoff dropoff : dropoffs) {
+                LocalTime dropoffTime = toLocalTime(dropoff.getDropoffTime());
+                droppingPoints.add(new BoardingPointResponse(
+                        dropoff.getDropoffCode(),
+                        dropoff.getDropoffName(),
+                        dropoffTime != null ? dropoffTime.format(BOARDING_TIME_FORMAT) : null,
+                        destination,
+                        dropoff.getDropoffName() + ", " + destination,
+                        null,
+                        null,
+                        null));
+            }
+        }
+        response.setDroppingPoints(droppingPoints);
+
+        List<GdsDeckResponse> decks = toDecks(chart);
+        response.setDecks(decks);
+        response.setAvailableSeats(decks.stream()
+                .flatMap(deck -> deck.getSeats().stream())
+                .filter(seat -> "AVAILABLE".equals(seat.getStatus()))
+                .count());
+        // The search result only knows base fares; the chart has the payable fare per seat.
+        decks.stream()
+                .flatMap(deck -> deck.getSeats().stream())
+                .map(GdsSeatResponse::getFare)
+                .filter(fare -> fare != null && fare.signum() > 0)
+                .min(Comparator.naturalOrder())
+                .ifPresent(response::setFare);
+
+        response.setMaxSeatsPerBooking(chart.getMaxAllowedSeats() != null && chart.getMaxAllowedSeats() > 0
+                ? chart.getMaxAllowedSeats()
+                : 6);
+
+        List<GdsBusDetailsResponse.CancellationSlab> policy = new ArrayList<>();
+        if (chart.getCancellation() != null) {
+            for (GdsChartData.CancellationSlab slab : chart.getCancellation()) {
+                policy.add(new GdsBusDetailsResponse.CancellationSlab(slab.getMins(), slab.getPct()));
+            }
+            policy.sort(Comparator.comparingInt(
+                    GdsBusDetailsResponse.CancellationSlab::getMinutesBeforeDeparture).reversed());
+        }
+        response.setCancellationPolicy(policy);
+        return response;
+    }
+
+    /*
+     * Chart layout: each seat is [seq_no, row, col, width, height, seat_type].
+     * Seat number, status and fare are looked up by seq_no.
+     */
+    private List<GdsDeckResponse> toDecks(GdsChartData chart) {
+        List<GdsDeckResponse> decks = new ArrayList<>();
+        if (chart.getChartLayout() == null || chart.getChartLayout().getLayout() == null) return decks;
+
+        List<String> seatNumbers = chart.getChartSeats() != null ? chart.getChartSeats().getSeats() : null;
+        List<Integer> statuses = chart.getSeatsStatus() != null ? chart.getSeatsStatus().getStatus() : null;
+        List<List<Double>> fares = chart.getSeatsStatus() != null ? chart.getSeatsStatus().getFares() : null;
+
+        for (String deckName : List.of("Lower", "Upper")) {
+            List<List<Integer>> layout = chart.getChartLayout().getLayout().get(deckName);
+            if (layout == null || layout.isEmpty()) continue;
+
+            List<GdsSeatResponse> seats = new ArrayList<>();
+            int rows = 0;
+            int columns = 0;
+            for (List<Integer> cell : layout) {
+                if (cell == null || cell.size() < 6) continue;
+                int seqNo = cell.get(0);
+                if (seatNumbers == null || seqNo < 0 || seqNo >= seatNumbers.size()) continue;
+
+                GdsSeatResponse seat = new GdsSeatResponse();
+                seat.setSeatNumber(seatNumbers.get(seqNo));
+                seat.setRow(cell.get(1));
+                seat.setColumn(cell.get(2));
+                seat.setWidth(Math.max(1, cell.get(3)));
+                seat.setHeight(Math.max(1, cell.get(4)));
+                seat.setSeatTypeId(cell.get(5));
+                seat.setSeatType(cell.get(5) == 2 ? "SLEEPER" : cell.get(5) == 4 ? "SEMI_SLEEPER" : "SEATER");
+
+                // 1 = free, 2 = free for male, 3 = free for female, -2 / -3 = booked by male / female, 0 = not available
+                int status = statuses != null && seqNo < statuses.size() && statuses.get(seqNo) != null
+                        ? statuses.get(seqNo)
+                        : 0;
+                seat.setStatus(status > 0 ? "AVAILABLE" : "BOOKED");
+                if (status == 2) seat.setReservedFor("MALE");
+                if (status == 3) seat.setReservedFor("FEMALE");
+                if (status == -2) seat.setBookedBy("MALE");
+                if (status == -3) seat.setBookedBy("FEMALE");
+
+                // [total_fare, base_fare, ...]
+                List<Double> fare = fares != null && seqNo < fares.size() ? fares.get(seqNo) : null;
+                if (fare != null && !fare.isEmpty() && fare.get(0) != null) {
+                    seat.setFare(BigDecimal.valueOf(fare.get(0)));
+                    seat.setBaseFare(fare.size() > 1 && fare.get(1) != null ? BigDecimal.valueOf(fare.get(1)) : null);
+                }
+
+                rows = Math.max(rows, seat.getRow() + seat.getHeight());
+                columns = Math.max(columns, seat.getColumn() + seat.getWidth());
+                seats.add(seat);
+            }
+            decks.add(new GdsDeckResponse(deckName.toUpperCase(), rows, columns, seats));
+        }
+        return decks;
+    }
+
+    private void fillFromGdsBus(BusSearchResponse response, GdsBus bus, String source, String destination,
+                                LocalDate journeyDate) {
+        response.setProvider("GDS");
+        response.setGdsBusId(bus.getRouteBusId());
+        response.setBusName(bus.getCompanyNameWithoutSuffix() != null && !bus.getCompanyNameWithoutSuffix().isBlank()
+                ? bus.getCompanyNameWithoutSuffix()
+                : bus.getCompanyName());
+        response.setBusNumber(bus.getBusTripId() != null ? bus.getBusTripId() : bus.getTripId());
+        response.setBusType(toBusType(bus.getBusType()));
+        response.setSource(source);
+        response.setDestination(destination);
+        response.setJourneyDate(journeyDate);
+        response.setDepartureTime(toLocalTime(bus.getDeptTime()));
+        response.setArrivalTime(toLocalTime(bus.getArrTime()));
+
+        List<BoardingPointResponse> boardingPoints = toBoardingPoints(bus.getPickups(), source);
+        response.setBoardingPoints(boardingPoints);
+        response.setBoardingPoint(boardingPoints.isEmpty() ? null : boardingPoints.get(0));
+
+        if (bus.getDropoffs() != null && !bus.getDropoffs().isEmpty()) {
+            response.setDroppingPoint(bus.getDropoffs().get(0).getDropoffName());
+        }
+
+        GdsBusStatus status = bus.getBusStatus();
+        if (status != null) {
+            response.setAvailableSeats(status.getAvailability());
+            response.setFare(lowestFare(status));
+        }
+    }
+
+    private List<BoardingPointResponse> toBoardingPoints(List<GdsPickup> pickups, String source) {
+        List<BoardingPointResponse> boardingPoints = new ArrayList<>();
+        if (pickups == null) return boardingPoints;
+        for (GdsPickup pickup : pickups) {
+            LocalTime pickupTime = toLocalTime(pickup.getPickupTime());
+            String area = pickup.getPickupArea() != null && !pickup.getPickupArea().isBlank()
+                    ? pickup.getPickupArea()
+                    : source;
+            String address = pickup.getAddress() != null && !pickup.getAddress().isBlank()
+                    ? pickup.getAddress()
+                    : pickup.getPickupName() + ", " + source;
+            String landmark = pickup.getLandmark() != null && !pickup.getLandmark().isBlank()
+                    ? pickup.getLandmark()
+                    : null;
+            boardingPoints.add(new BoardingPointResponse(
+                    pickup.getPickupCode(),
+                    pickup.getPickupName(),
+                    pickupTime != null ? pickupTime.format(BOARDING_TIME_FORMAT) : null,
+                    area,
+                    address,
+                    landmark,
+                    null,
+                    null));
+        }
+        return boardingPoints;
+    }
+
+    // BaseFares / DiscFares hold one fare per seat category, 0 when the category is absent.
+    private BigDecimal lowestFare(GdsBusStatus status) {
+        List<Double> fares = status.getDiscFares() != null && !status.getDiscFares().isEmpty()
+                ? status.getDiscFares()
+                : status.getBaseFares();
+        if (fares == null) return null;
+        return fares.stream()
+                .filter(fare -> fare != null && fare > 0)
+                .min(Double::compare)
+                .map(BigDecimal::valueOf)
+                .orElse(null);
+    }
+
+    private BusType toBusType(GdsBusType gdsBusType) {
+        if (gdsBusType == null) return null;
+        boolean ac = "AC".equalsIgnoreCase(gdsBusType.getIsAc());
+        String seating = gdsBusType.getSeating() != null ? gdsBusType.getSeating().toUpperCase() : "";
+        // A semi sleeper is a reclining seat, not a berth.
+        String berths = seating.replace("SEMI_SLEEPER", "");
+        boolean sleeper = berths.contains("SLEEPER");
+        boolean seater = seating.contains("SEATER") || seating.contains("SEMI_SLEEPER");
+
+        if (sleeper && seater && ac) return BusType.AC_SEATER_SLEEPER;
+        if (sleeper) return ac ? BusType.AC_SLEEPER : BusType.NON_AC_SLEEPER;
+        return ac ? BusType.AC_SEATER : BusType.NON_AC_SEATER;
+    }
+
+    // GDS sends "yyyy-MM-dd HH:mm:ss" (older responses: "yyyy-MM-ddTHH:mm:ss.SSSZ").
+    private LocalTime toLocalTime(String gdsDateTime) {
+        if (gdsDateTime == null || gdsDateTime.length() < 16) return null;
+        try {
+            return LocalTime.parse(gdsDateTime.substring(11, 16));
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
     }
 
     public BusDetailsResponse toBusDetailsResponse(BusSchedule schedule, long availableSeatsCount, List<SeatResponse> seats) {

@@ -6,12 +6,16 @@ import BookingStepper from "../../components/BookingStepper/BookingStepper";
 import TripSummary from "../../components/TripSummary/TripSummary";
 import SeatLayout from "../../components/SeatLayout/SeatLayout";
 import BookingSummary from "../../components/BookingSummary/BookingSummary";
+import JourneyPoints from "../../components/JourneyPoints/JourneyPoints";
 import "./SeatSelection.css";
 
 function SeatSelection() {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Live buses only: the operator needs a boarding and a dropping point to hold seats
+  const [pickupId, setPickupId] = useState("");
+  const [dropoffId, setDropoffId] = useState("");
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -20,6 +24,7 @@ function SeatSelection() {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
   const date = searchParams.get("date");
+  const pickupParam = searchParams.get("pickup");
 
   // Fetch bus details and live seat availability from backend
   useEffect(() => {
@@ -31,6 +36,12 @@ function SeatSelection() {
       .then((bus) => {
         if (isMounted) {
           setSelectedBus(bus);
+          if (bus?.isLive) {
+            const points = bus.boardingPoints || [];
+            const preselected = points.find((p) => p.id === pickupParam) || points[0];
+            setPickupId(preselected?.id || "");
+            setDropoffId(bus.droppingPoints?.[0]?.id || "");
+          }
           setLoading(false);
         }
       })
@@ -44,7 +55,7 @@ function SeatSelection() {
     return () => {
       isMounted = false;
     };
-  }, [busId, from, to, date]);
+  }, [busId, from, to, date, pickupParam]);
 
   // Clear any stale seat locks when opening seat selection
   useEffect(() => {
@@ -99,8 +110,15 @@ function SeatSelection() {
     }
   };
 
+  const isLive = Boolean(selectedBus.isLive);
+  const selectedTotal = selectedSeats.reduce(
+    (sum, s) => sum + (typeof s === "object" ? s.price : selectedBus.price),
+    0
+  );
+  const canContinue = selectedSeats.length > 0 && (!isLive || (pickupId && dropoffId));
+
   const handleContinue = () => {
-    if (selectedSeats.length === 0) return;
+    if (!canContinue) return;
 
     const seatCodes = selectedSeats.map((s) =>
       typeof s === "object" ? s.display || s.id : s
@@ -119,6 +137,7 @@ function SeatSelection() {
       ...(selectedBus.from && { from: selectedBus.from }),
       ...(selectedBus.to && { to: selectedBus.to }),
       ...(selectedBus.date && { date: selectedBus.date }),
+      ...(isLive && { pickup: pickupId, dropoff: dropoffId }),
     });
 
     navigate(`/traveller-details?${params.toString()}`);
@@ -146,9 +165,21 @@ function SeatSelection() {
 
           {/* Right Column: Booking Summary Card */}
           <div className="selection-card-column">
+            {isLive && (
+              <JourneyPoints
+                boardingPoints={selectedBus.boardingPoints}
+                droppingPoints={selectedBus.droppingPoints}
+                pickupId={pickupId}
+                dropoffId={dropoffId}
+                onPickupChange={setPickupId}
+                onDropoffChange={setDropoffId}
+              />
+            )}
             <BookingSummary
               selectedSeats={selectedSeats}
               price={selectedBus.price}
+              isLive={isLive}
+              canContinue={canContinue}
               onClear={() => setSelectedSeats([])}
               onContinue={handleContinue}
             />
@@ -166,12 +197,13 @@ function SeatSelection() {
                   .join(", ")}
               </span>
               <strong className="mobile-seat-total-price">
-                ₹{(selectedSeats.length * selectedBus.price).toLocaleString("en-IN")}
+                ₹{selectedTotal.toLocaleString("en-IN")}
               </strong>
             </div>
             <button
               type="button"
               className="mobile-sticky-continue-btn"
+              disabled={!canContinue}
               onClick={handleContinue}
             >
               Continue →

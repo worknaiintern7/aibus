@@ -23,8 +23,27 @@ public class BusSearchResponse {
     private String droppingPoint;
     private BigDecimal fare;
     private long availableSeats;
+    // "LOCAL" = schedule from our database, "GDS" = live bus from the GDS provider
+    private String provider = "LOCAL";
+    private Integer gdsBusId;
 
     public BusSearchResponse() {
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public Integer getGdsBusId() {
+        return gdsBusId;
+    }
+
+    public void setGdsBusId(Integer gdsBusId) {
+        this.gdsBusId = gdsBusId;
     }
 
     public Long getScheduleId() {

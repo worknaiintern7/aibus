@@ -126,7 +126,7 @@
 .seat-price-val {
   font-size: 22px;
   font-weight: 900;
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
   line-height: 1;
 }
 

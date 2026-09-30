@@ -1,0 +1,283 @@
+/* Live seat chart (real operator layout). Builds on SeatLayout.css. */
+
+.live-seat-card {
+  --live-cell: 46px;
+  --live-gap: 8px;
+  align-items: stretch;
+}
+
+.live-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.live-map-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.live-map-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.live-map-sub {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.live-chart-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #FFFDF5;
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  color: #854D0E;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #D4AF37;
+  box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.55);
+  animation: livePulse 1.8s ease-out infinite;
+}
+
+@keyframes livePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+  }
+}
+
+.live-single-deck {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.live-decks-row {
+  gap: 28px;
+}
+
+.live-seat-card .bus-deck-column {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
+/* Bus body hugs the seat grid, so it never stretches wider than the real layout */
+.live-bus-frame {
+  width: auto;
+  max-width: 100%;
+  padding: 14px 16px 18px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.live-front-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1.5px dashed #e2e8f0;
+}
+
+.live-steering,
+.live-front-spacer {
+  width: 30px;
+  height: 30px;
+}
+
+.live-steering {
+  color: #94a3b8;
+  display: inline-flex;
+}
+
+.live-steering svg {
+  width: 100%;
+  height: 100%;
+}
+
+.live-seat-grid {
+  display: grid;
+  gap: var(--live-gap);
+  justify-content: center;
+}
+
+/* Seats fill their grid area: a sleeper berth simply spans two rows */
+.seat-element.live-seat {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: inherit;
+}
+
+.seat-element.live-seat:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Backrest hint on seats */
+.seat-element.live-seater::after,
+.seat-element.live-semi_sleeper::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  bottom: 4px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.22;
+}
+
+.seat-element.live-seat {
+  color: #64748b;
+}
+
+/* Pillow hint on berths */
+.live-pillow {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 56%;
+  height: 7px;
+  transform: translateX(-50%);
+  border-radius: 4px;
+  border: 1.5px solid currentColor;
+  opacity: 0.35;
+}
+
+.live-seat-fare {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1;
+}
+
+.seat-element.live-seat.selected {
+  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%) !important;
+  border-color: #854D0E !important;
+  color: #0F172A !important;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.45);
+}
+
+.seat-element.live-seat.selected .live-seat-fare {
+  color: #0F172A !important;
+  font-weight: 800;
+}
+
+.seat-element.live-seat.available:hover .live-seat-fare {
+  color: #854D0E;
+}
+
+/* Booked by someone (gender not disclosed) */
+.seat-element.live-booked {
+  background: #eef1f5;
+  border-color: #dde3ea;
+  cursor: not-allowed;
+  color: #b6c0cc;
+}
+
+.seat-element.live-booked .seat-code-label {
+  color: #a3aebb;
+  text-decoration: line-through;
+}
+
+/* Free, but reserved for one gender */
+.seat-element.live-ladies {
+  border-color: #f472b6;
+  background: #fff7fb;
+}
+
+.seat-element.live-ladies .seat-code-label {
+  color: #be185d;
+}
+
+.seat-element.live-gents {
+  border-color: #60a5fa;
+  background: #f5f9ff;
+}
+
+.seat-element.live-gents .seat-code-label {
+  color: #1d4ed8;
+}
+
+.seat-element.live-seat.booked-male,
+.seat-element.live-seat.booked-female {
+  color: transparent;
+}
+
+/* Legend */
+.live-legend {
+  margin-top: 20px;
+}
+
+.legend-sample.live-booked {
+  background: #eef1f5;
+  border: 1px solid #dde3ea;
+}
+
+.legend-sample.live-ladies {
+  background: #fff7fb;
+  border: 1.5px solid #f472b6;
+}
+
+.legend-sample.live-gents {
+  background: #f5f9ff;
+  border: 1.5px solid #60a5fa;
+}
+
+@media (max-width: 768px) {
+  .live-seat-card {
+    --live-cell: 44px;
+  }
+
+  .live-seat-card .mobile-deck-switcher-tabs {
+    align-self: center;
+  }
+
+  .live-map-title {
+    font-size: 16.5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .live-seat-card {
+    --live-gap: 7px;
+  }
+
+  .live-bus-frame {
+    padding: 12px 10px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+}

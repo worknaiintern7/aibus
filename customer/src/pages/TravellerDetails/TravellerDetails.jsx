@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import busService from "../../services/busService";
+import busService, { getSeatsTotal } from "../../services/busService";
 import bookingService from "../../services/bookingService";
 import authService from "../../services/authService";
 import BookingStepper from "../../components/BookingStepper/BookingStepper";
@@ -35,10 +35,23 @@ function TravellerDetails() {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
   const date = searchParams.get("date");
+  // Live buses only: chosen boarding / dropping point
+  const pickupId = searchParams.get("pickup") || "";
+  const dropoffId = searchParams.get("dropoff") || "";
 
   const [selectedBus, setSelectedBus] = useState(null);
   const [loading, setLoading] = useState(true);
   const selectedSeats = seatsParam ? seatsParam.split(",").map((s) => s.trim()) : ["8D", "9D"];
+
+  // Automatically generate passenger forms = selectedSeats.length
+  const [travellers, setTravellers] = useState(() =>
+    selectedSeats.map((seat, index) => ({
+      seat,
+      name: index === 0 && loggedInUser?.name ? loggedInUser.name : "",
+      age: "",
+      gender: "Male",
+    }))
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -47,6 +60,14 @@ function TravellerDetails() {
       .then((bus) => {
         if (isMounted) {
           setSelectedBus(bus);
+          // Seats reserved for women start with the matching gender
+          if (bus?.isLive) {
+            setTravellers((current) =>
+              current.map((t) =>
+                bus.seatInfo?.[t.seat]?.reservedFor === "FEMALE" ? { ...t, gender: "Female" } : t
+              )
+            );
+          }
           setLoading(false);
         }
       })
@@ -60,19 +81,10 @@ function TravellerDetails() {
     };
   }, [busId, from, to, date]);
 
-  // Automatically generate passenger forms = selectedSeats.length
-  const [travellers, setTravellers] = useState(() =>
-    selectedSeats.map((seat, index) => ({
-      seat,
-      name: index === 0 && loggedInUser?.name ? loggedInUser.name : "",
-      age: "",
-      gender: "Male",
-    }))
-  );
-
   const [contactMobile, setContactMobile] = useState(
     loggedInUser?.mobile || ""
   );
+  const [contactEmail, setContactEmail] = useState("");
 
   const [error, setError] = useState("");
 
@@ -178,10 +190,19 @@ function TravellerDetails() {
     return !isNaN(num) && num >= 1 && num <= 120;
   };
   const isValidMobile = (mob) => /^[6-9]\d{9}$/.test(mob);
+  const isValidEmail = (mail) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail);
 
-  const isFormValid =
-    travellers.every((t) => isValidName(t.name) && isValidAge(t.age)) &&
-    isValidMobile(contactMobile);
+  const isLive = Boolean(selectedBus.isLive);
+  // The operator only accepts Male / Female, and some seats are reserved for one gender
+  const genderOptions = isLive ? ["Male", "Female"] : ["Male", "Female", "Other"];
+  const reservedGenderFor = (seat) => {
+    const reservedFor = isLive ? selectedBus.seatInfo?.[seat]?.reservedFor : null;
+    if (reservedFor === "FEMALE") return "Female";
+    if (reservedFor === "MALE") return "Male";
+    return null;
+  };
+  const boardingPoint = isLive ? selectedBus.boardingPoints?.find((p) => p.id === pickupId) : null;
+  const droppingPoint = isLive ? selectedBus.droppingPoints?.find((p) => p.id === dropoffId) : null;
 
   const handleContinue = () => {
     // Validate each passenger
@@ -206,6 +227,12 @@ function TravellerDetails() {
         setError(`Please enter a valid age (1-120) for Passenger ${i + 1}.`);
         return;
       }
+
+      const requiredGender = reservedGenderFor(p.seat);
+      if (requiredGender && p.gender !== requiredGender) {
+        setError(`Seat ${p.seat} is reserved for ${requiredGender.toLowerCase()} passengers.`);
+        return;
+      }
     }
 
     if (!contactMobile.trim()) {
@@ -218,6 +245,11 @@ function TravellerDetails() {
       return;
     }
 
+    if (contactEmail.trim() && !isValidEmail(contactEmail.trim())) {
+      setError("Please enter a valid email address, or leave it empty.");
+      return;
+    }
+
     setError("");
 
     const params = new URLSearchParams({
@@ -225,6 +257,8 @@ function TravellerDetails() {
       seats: selectedSeats.join(","),
       travellersData: JSON.stringify(travellers),
       contactMobile,
+      ...(contactEmail.trim() && { contactEmail: contactEmail.trim() }),
+      ...(isLive && { pickup: pickupId, dropoff: dropoffId }),
       ...(selectedBus.from && { from: selectedBus.from }),
       ...(selectedBus.to && { to: selectedBus.to }),
       ...(selectedBus.date && { date: selectedBus.date }),
@@ -236,7 +270,7 @@ function TravellerDetails() {
   const displayFrom = from || selectedBus.from || "Bengaluru";
   const displayTo = to || selectedBus.to || "Pune";
   const displayDate = formatTripDate(date || selectedBus.date);
-  const totalFare = selectedSeats.length * selectedBus.price;
+  const totalFare = getSeatsTotal(selectedBus, selectedSeats);
 
   return (
     <main className="traveller-details-page">
@@ -269,11 +303,16 @@ function TravellerDetails() {
                 const nameHasErr = passenger.name.length > 0 && !isValidName(passenger.name);
                 const ageHasErr = passenger.age.length > 0 && !isValidAge(passenger.age);
 
+                const requiredGender = reservedGenderFor(passenger.seat);
+
                 return (
                   <div key={passenger.seat} className="passenger-card">
                     <div className="passenger-card-header">
                       <h3 className="passenger-title">Passenger {idx + 1}</h3>
-                      <span className="passenger-seat-badge">Seat {passenger.seat}</span>
+                      <span className="passenger-seat-badge">
+                        Seat {passenger.seat}
+                        {requiredGender === "Female" ? " · Ladies seat" : ""}
+                      </span>
                     </div>
 
                     <div className="card-form-body">
@@ -322,10 +361,11 @@ function TravellerDetails() {
                         <div className="form-group gender-group">
                           <label>Gender</label>
                           <div className="gender-segmented-control">
-                            {["Male", "Female", "Other"].map((g) => (
+                            {genderOptions.map((g) => (
                               <button
                                 key={g}
                                 type="button"
+                                disabled={Boolean(requiredGender) && g !== requiredGender}
                                 className={`gender-tab-btn ${
                                   passenger.gender === g ? "selected" : ""
                                 }`}
@@ -381,6 +421,28 @@ function TravellerDetails() {
                   </span>
                 )}
               </div>
+
+              {isLive && (
+                <div className="form-group full-width contact-email-group">
+                  <label htmlFor="contact-email">Email (optional)</label>
+                  <input
+                    id="contact-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    maxLength="80"
+                    placeholder="For a copy of your ticket"
+                    value={contactEmail}
+                    className={
+                      contactEmail.trim() && !isValidEmail(contactEmail.trim()) ? "input-error" : ""
+                    }
+                    onChange={(e) => {
+                      setContactEmail(e.target.value);
+                      setError("");
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -429,6 +491,30 @@ function TravellerDetails() {
                 </div>
               </div>
 
+              {/* Boarding & dropping point chosen for a live bus */}
+              {isLive && (boardingPoint || droppingPoint) && (
+                <div className="summary-points-block">
+                  {boardingPoint && (
+                    <div className="summary-point-row">
+                      <span className="meta-lbl">Boarding</span>
+                      <strong className="meta-val">
+                        {boardingPoint.name}
+                        {boardingPoint.time ? ` · ${boardingPoint.time}` : ""}
+                      </strong>
+                    </div>
+                  )}
+                  {droppingPoint && (
+                    <div className="summary-point-row">
+                      <span className="meta-lbl">Dropping</span>
+                      <strong className="meta-val">
+                        {droppingPoint.name}
+                        {droppingPoint.time ? ` · ${droppingPoint.time}` : ""}
+                      </strong>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Highlighted Selected Seats Box */}
               <div className="selected-seats-highlight-box">
                 <span className="box-lbl">Selected Seats</span>
@@ -457,7 +543,7 @@ function TravellerDetails() {
               {/* Seat Lock Timer Footer */}
               <div className="seats-reserved-timer-badge">
                 <span className="lock-icon">🔒</span>
-                <span>Your seats are reserved for </span>
+                <span>{isLive ? "Complete your booking within " : "Your seats are reserved for "}</span>
                 <strong className="timer-counter">{formatTimer(timeLeft)}</strong>
               </div>
             </div>

@@ -59,9 +59,9 @@ function PopularOffers() {
         <div className="offers-header">
           <div>
             <h2>
-              <span className="text-red">Offers & More</span> for Your Journey
+              <span className="text-gold">Exclusive Offers</span> & Intelligent Travel
             </h2>
-            <p className="offers-subtitle">Save more, travel smarter.</p>
+            <p className="offers-subtitle">AI-driven savings, dynamic price drops, and partner rewards.</p>
           </div>
 
           <button
@@ -77,7 +77,7 @@ function PopularOffers() {
         <div className="offers-grid">
           {/* CARD 1: Flat 100 OFF */}
           <article
-            className="offer-card card-red clickable-card"
+            className="offer-card card-gold clickable-card"
             onClick={() => setActiveModal("offers")}
             tabIndex={0}
             role="button"
@@ -90,7 +90,7 @@ function PopularOffers() {
             }}
           >
             <div className="card-content">
-              <div className="card-badge badge-red">
+              <div className="card-badge badge-gold">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
                   <line x1="7" y1="7" x2="7.01" y2="7" />
@@ -98,7 +98,7 @@ function PopularOffers() {
               </div>
 
               <h3>Flat ₹100 OFF</h3>
-              <p>On all bus bookings</p>
+              <p>On all live GDS bus bookings</p>
 
               <div className="code-box" onClick={(e) => e.stopPropagation()}>
                 <span>Use Code <strong>AIBUS100</strong></span>
@@ -122,7 +122,7 @@ function PopularOffers() {
 
               <button
                 type="button"
-                className="action-btn btn-solid-red"
+                className="action-btn btn-solid-gold"
                 onClick={(e) => {
                   e.stopPropagation();
                   setActiveModal("offers");
@@ -132,7 +132,7 @@ function PopularOffers() {
               </button>
             </div>
 
-            <div className="card-graphic graphic-red">%</div>
+            <div className="card-graphic graphic-gold">%</div>
           </article>
 
           {/* CARD 2: Buses Near You */}

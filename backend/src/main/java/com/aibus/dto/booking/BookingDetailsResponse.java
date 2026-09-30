@@ -28,8 +28,82 @@ public class BookingDetailsResponse {
     private List<PassengerResponse> passengers;
     private BigDecimal totalAmount;
     private LocalDateTime createdAt;
+    // "LOCAL" = our own schedule, "GDS" = booked with the GDS provider
+    private String provider = "LOCAL";
+    // Only for GDS bookings
+    private String pnrNo;
+    private String ticketNo;
+    private String boardingTime;
+    private String contactMobile;
+    private String contactEmail;
+    private BigDecimal refundAmount;
+    private BigDecimal cancellationCharge;
 
     public BookingDetailsResponse() {
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getPnrNo() {
+        return pnrNo;
+    }
+
+    public void setPnrNo(String pnrNo) {
+        this.pnrNo = pnrNo;
+    }
+
+    public String getTicketNo() {
+        return ticketNo;
+    }
+
+    public void setTicketNo(String ticketNo) {
+        this.ticketNo = ticketNo;
+    }
+
+    public String getBoardingTime() {
+        return boardingTime;
+    }
+
+    public void setBoardingTime(String boardingTime) {
+        this.boardingTime = boardingTime;
+    }
+
+    public String getContactMobile() {
+        return contactMobile;
+    }
+
+    public void setContactMobile(String contactMobile) {
+        this.contactMobile = contactMobile;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
+    public BigDecimal getCancellationCharge() {
+        return cancellationCharge;
+    }
+
+    public void setCancellationCharge(BigDecimal cancellationCharge) {
+        this.cancellationCharge = cancellationCharge;
     }
 
     public String getBookingReference() {

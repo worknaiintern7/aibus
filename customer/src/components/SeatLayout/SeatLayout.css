@@ -169,24 +169,25 @@
 
 /* Hover State */
 .seat-element.available:hover {
-  border-color: #e53935;
-  background: #fff5f5;
+  border-color: #D4AF37;
+  background: #FEF8E2;
   transform: translateY(-1px);
 }
 
 .seat-element.available:hover .seat-code-label {
-  color: #e53935;
+  color: #854D0E;
 }
 
 /* Selected State */
 .seat-element.selected {
-  background: #e53935;
-  border-color: #e53935;
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.35);
+  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%) !important;
+  border-color: #854D0E !important;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.45);
 }
 
 .seat-element.selected .seat-code-label {
-  color: #ffffff;
+  color: #0F172A !important;
+  font-weight: 800;
 }
 
 /* Booked & Blocked States */
@@ -279,8 +280,8 @@
 
   .deck-tab-btn.active {
     background: #ffffff;
-    color: #e53935;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    color: #854D0E;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
   }
 
   /* Only display the selected deck on mobile */

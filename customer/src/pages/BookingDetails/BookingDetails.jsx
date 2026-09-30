@@ -13,6 +13,10 @@ function BookingDetails() {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+  // Live bookings: refund preview from the operator, shown before cancelling
+  const [cancelQuote, setCancelQuote] = useState(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
+  const [cancelError, setCancelError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -37,18 +41,40 @@ function BookingDetails() {
     };
   }, [bookingId]);
 
+  // Live booking: ask the operator what would be refunded, then show it for confirmation
+  const handleRequestLiveCancel = async () => {
+    try {
+      setQuoteLoading(true);
+      setCancelError("");
+      const quote = await bookingService.getCancellationQuote(booking.bookingId);
+      if (!quote?.cancellable) {
+        setCancelError("This ticket can no longer be cancelled as per the operator's policy.");
+        return;
+      }
+      setCancelQuote(quote);
+    } catch (err) {
+      setCancelError(err.message || "Could not check the cancellation charges. Please try again.");
+    } finally {
+      setQuoteLoading(false);
+    }
+  };
+
   const handleCancelBooking = async () => {
     if (!booking) return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to cancel booking ${booking.bookingId}?`
-    );
+    if (!booking.isLive) {
+      const confirmed = window.confirm(
+        `Are you sure you want to cancel booking ${booking.bookingId}?`
+      );
 
-    if (!confirmed) return;
+      if (!confirmed) return;
+    }
 
     try {
       setCancelling(true);
+      setCancelError("");
       await bookingService.cancelBooking(booking.bookingId);
+      setCancelQuote(null);
       const updated = await bookingService.getBookingById(booking.bookingId);
       if (updated) {
         setBooking(updated);
@@ -56,7 +82,11 @@ function BookingDetails() {
         setBooking({ ...booking, status: "Cancelled" });
       }
     } catch (err) {
-      alert(err.message || "Failed to cancel booking. Please try again.");
+      if (booking.isLive) {
+        setCancelError(err.message || "Failed to cancel booking. Please try again.");
+      } else {
+        alert(err.message || "Failed to cancel booking. Please try again.");
+      }
     } finally {
       setCancelling(false);
     }
@@ -100,6 +130,10 @@ function BookingDetails() {
 
   const statusStr = booking.status || "Confirmed";
   const isCancelled = statusStr.toLowerCase() === "cancelled";
+  // Only an issued ticket can be cancelled
+  const canCancel = !isCancelled && !["failed", "pending"].includes(statusStr.toLowerCase());
+  const statusClass = statusStr.toLowerCase() === "confirmed" ? "confirmed" : statusStr.toLowerCase() === "pending" ? "pending" : "cancelled";
+  const formatMoney = (value) => `₹${Number(value || 0).toLocaleString("en-IN")}`;
   const passengers =
     Array.isArray(booking.travellers) && booking.travellers.length > 0
       ? booking.travellers
@@ -134,7 +168,7 @@ function BookingDetails() {
             </span>
           </div>
 
-          <span className={`status-pill-badge ${isCancelled ? "cancelled" : "confirmed"}`}>
+          <span className={`status-pill-badge ${statusClass}`}>
             {statusStr}
           </span>
         </div>
@@ -173,6 +207,37 @@ function BookingDetails() {
               </div>
             </div>
           </section>
+
+          {/* Operator ticket details (live bookings) */}
+          {booking.isLive && (
+            <>
+              <hr className="details-card-divider" />
+              <section className="card-section">
+                <h2 className="section-title">Ticket Details</h2>
+                <div className="details-two-col-grid">
+                  <div className="grid-cell">
+                    <span className="cell-label">Operator PNR</span>
+                    <strong className="cell-value ticket-code">{booking.pnrNo || "—"}</strong>
+                  </div>
+                  <div className="grid-cell">
+                    <span className="cell-label">Ticket No.</span>
+                    <strong className="cell-value ticket-code">{booking.ticketNo || "—"}</strong>
+                  </div>
+                  <div className="grid-cell">
+                    <span className="cell-label">Boarding Point</span>
+                    <strong className="cell-value">
+                      {booking.boardingPoint || "—"}
+                      {booking.boardingTime ? ` (${booking.boardingTime})` : ""}
+                    </strong>
+                  </div>
+                  <div className="grid-cell">
+                    <span className="cell-label">Dropping Point</span>
+                    <strong className="cell-value">{booking.droppingPoint || "—"}</strong>
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
 
           <hr className="details-card-divider" />
 
@@ -231,7 +296,66 @@ function BookingDetails() {
             <span className="total-label">Total Amount</span>
             <strong className="total-val">₹{booking.totalAmount}</strong>
           </div>
+
+          {/* Refund of a cancelled live booking */}
+          {isCancelled && booking.refundAmount != null && (
+            <div className="refund-summary-box">
+              <div className="refund-line">
+                <span>Cancellation charge</span>
+                <strong>{formatMoney(booking.cancellationCharge)}</strong>
+              </div>
+              <div className="refund-line refund-total">
+                <span>Refund amount</span>
+                <strong>{formatMoney(booking.refundAmount)}</strong>
+              </div>
+            </div>
+          )}
         </div>
+
+        {cancelError && (
+          <div className="cancel-error-banner" role="alert">
+            {cancelError}
+          </div>
+        )}
+
+        {/* Refund preview before a live ticket is cancelled */}
+        {cancelQuote && !isCancelled && (
+          <div className="cancel-quote-card" role="dialog" aria-label="Confirm cancellation">
+            <h2 className="cancel-quote-title">Cancel this ticket?</h2>
+            <div className="refund-line">
+              <span>Ticket fare</span>
+              <strong>{formatMoney(cancelQuote.totalFare)}</strong>
+            </div>
+            <div className="refund-line">
+              <span>Cancellation charge</span>
+              <strong>
+                {cancelQuote.chargePercent != null ? `${Number(cancelQuote.chargePercent)}%` : "—"}
+              </strong>
+            </div>
+            <div className="refund-line refund-total">
+              <span>You will be refunded</span>
+              <strong>{formatMoney(cancelQuote.refundAmount)}</strong>
+            </div>
+            <div className="cancel-quote-actions">
+              <button
+                type="button"
+                className="btn-secondary-outline"
+                disabled={cancelling}
+                onClick={() => setCancelQuote(null)}
+              >
+                Keep Booking
+              </button>
+              <button
+                type="button"
+                className="btn-primary-red"
+                disabled={cancelling}
+                onClick={handleCancelBooking}
+              >
+                {cancelling ? "Cancelling..." : "Confirm Cancellation"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons Row */}
         <div className="booking-details-actions-row">
@@ -243,14 +367,18 @@ function BookingDetails() {
             Back to {loggedInUser ? "My Bookings" : "Home"}
           </button>
 
-          {!isCancelled && (
+          {canCancel && !cancelQuote && (
             <button
               type="button"
               className="btn-primary-red"
-              disabled={cancelling}
-              onClick={handleCancelBooking}
+              disabled={cancelling || quoteLoading}
+              onClick={booking.isLive ? handleRequestLiveCancel : handleCancelBooking}
             >
-              {cancelling ? "Cancelling..." : "Cancel Booking"}
+              {quoteLoading
+                ? "Checking refund..."
+                : cancelling
+                ? "Cancelling..."
+                : "Cancel Booking"}
             </button>
           )}
         </div>

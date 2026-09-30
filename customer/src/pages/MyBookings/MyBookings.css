@@ -472,3 +472,12 @@
     text-align: center;
   }
 }
+
+.booking-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.booking-details strong {
+  overflow-wrap: anywhere;
+}

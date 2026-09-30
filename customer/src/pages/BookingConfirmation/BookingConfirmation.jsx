@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import busService from "../../services/busService";
+import busService, { getSeatsTotal } from "../../services/busService";
 import bookingService from "../../services/bookingService";
 import authService from "../../services/authService";
 import "./BookingConfirmation.css";
@@ -65,6 +65,10 @@ function BookingConfirmation() {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
   const date = searchParams.get("date");
+  // Live buses only
+  const pickupId = searchParams.get("pickup") || "";
+  const dropoffId = searchParams.get("dropoff") || "";
+  const contactEmail = searchParams.get("contactEmail") || "";
 
   const [selectedBus, setSelectedBus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -193,7 +197,16 @@ function BookingConfirmation() {
   const displayTo = to || selectedBus.to || "Pune";
   const displayDate = formatTripDate(date || selectedBus.date);
   const arrivalDateStr = getArrivalDateStr(date || selectedBus.date, selectedBus.departureTime, selectedBus.arrivalTime);
-  const totalAmount = selectedSeats.length * selectedBus.price;
+  const totalAmount = getSeatsTotal(selectedBus, selectedSeats);
+
+  const isLive = Boolean(selectedBus.isLive);
+  const boardingPoint = isLive ? selectedBus.boardingPoints?.find((p) => p.id === pickupId) : null;
+  const droppingPoint = isLive ? selectedBus.droppingPoints?.find((p) => p.id === dropoffId) : null;
+  const cancellationPolicy = isLive ? selectedBus.cancellationPolicy || [] : [];
+
+  // "12 hrs" / "30 mins" before departure
+  const formatPolicyTime = (minutes) =>
+    minutes % 60 === 0 ? `${minutes / 60} hrs` : `${minutes} mins`;
 
   const handleConfirmBooking = async () => {
     const userMobile = loggedInUser?.mobile || contactMobile;
@@ -203,15 +216,28 @@ function BookingConfirmation() {
       setBookingError("");
 
       const isGuest = !loggedInUser;
-      const newBooking = await bookingService.createBooking({
-        bus: selectedBus,
-        travellers,
-        seats: selectedSeats,
-        totalAmount,
-        userMobile,
-        userId: loggedInUser?.id || null,
-        isGuest,
-      });
+      const newBooking = isLive
+        ? // Live bus: seats are held with the operator and then booked
+          await bookingService.createLiveBooking({
+            bus: selectedBus,
+            travellers,
+            seats: selectedSeats,
+            pickupId,
+            dropoffId,
+            contactMobile,
+            contactEmail,
+            userId: loggedInUser?.id || null,
+            isGuest,
+          })
+        : await bookingService.createBooking({
+            bus: selectedBus,
+            travellers,
+            seats: selectedSeats,
+            totalAmount,
+            userMobile,
+            userId: loggedInUser?.id || null,
+            isGuest,
+          });
 
       navigate(`/booking-success?bookingId=${newBooking.bookingId}&isGuest=${isGuest}`);
     } catch (err) {
@@ -238,7 +264,7 @@ function BookingConfirmation() {
           {/* Centered Seat Lock Timer Strip */}
           <div className="seat-lock-strip">
             <span className="lock-clock-icon">⏱️</span>
-            <span>Seats locked for </span>
+            <span>{isLive ? "Time left to confirm " : "Seats locked for "}</span>
             <strong className="timer-val">{formatTimer(timeLeft)}</strong>
             <span> mins</span>
           </div>
@@ -254,13 +280,14 @@ function BookingConfirmation() {
 
         {/* Booking Error Banner */}
         {bookingError && (
-          <div style={{
-            background: "#fee2e2",
-            color: "#b91c1c",
+          <div role="alert" style={{
+            background: "#fffbeb",
+            color: "#92400e",
+            border: "1px solid #fde68a",
             padding: "12px 16px",
             borderRadius: "8px",
             marginBottom: "20px",
-            fontWeight: "500",
+            fontWeight: "600",
             textAlign: "center"
           }}>
             ⚠️ {bookingError}
@@ -301,6 +328,28 @@ function BookingConfirmation() {
                 <span className="info-label">Duration</span>
                 <strong className="info-value">{selectedBus.duration}</strong>
               </div>
+              {boardingPoint && (
+                <div className="info-row">
+                  <span className="info-label">Boarding Point</span>
+                  <strong className="info-value">
+                    {boardingPoint.name}
+                    {boardingPoint.time && (
+                      <span className="meta-date-inline"> ({boardingPoint.time})</span>
+                    )}
+                  </strong>
+                </div>
+              )}
+              {droppingPoint && (
+                <div className="info-row">
+                  <span className="info-label">Dropping Point</span>
+                  <strong className="info-value">
+                    {droppingPoint.name}
+                    {droppingPoint.time && (
+                      <span className="meta-date-inline"> ({droppingPoint.time})</span>
+                    )}
+                  </strong>
+                </div>
+              )}
             </div>
           </div>
 
@@ -318,7 +367,12 @@ function BookingConfirmation() {
                   </div>
                   <div className="passenger-item-right">
                     <strong className="passenger-name-val">{p.name}</strong>
-                    <span className="passenger-meta-val">{p.age} yrs • {p.gender}</span>
+                    <span className="passenger-meta-val">
+                      {p.age} yrs • {p.gender}
+                      {isLive && selectedBus.seatFares?.[p.seat] != null
+                        ? ` • ₹${selectedBus.seatFares[p.seat]}`
+                        : ""}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -330,6 +384,12 @@ function BookingConfirmation() {
                 <span className="info-label">Contact Mobile</span>
                 <strong className="info-value">+91 {contactMobile}</strong>
               </div>
+              {isLive && contactEmail && (
+                <div className="info-row">
+                  <span className="info-label">Email</span>
+                  <strong className="info-value">{contactEmail}</strong>
+                </div>
+              )}
             </div>
           </div>
 
@@ -350,9 +410,52 @@ function BookingConfirmation() {
             </div>
           </div>
 
+          {/* Operator cancellation policy (live buses) */}
+          {cancellationPolicy.length > 0 && (
+            <>
+              <div className="section-divider" />
+              <div className="review-section">
+                <h2 className="section-title">Cancellation Policy</h2>
+                <div className="policy-table" role="table" aria-label="Cancellation charges">
+                  <div className="policy-row policy-head" role="row">
+                    <span role="columnheader">Time before departure</span>
+                    <span role="columnheader">Cancellation charge</span>
+                  </div>
+                  {cancellationPolicy.map((slab, idx) => {
+                    const earlier = cancellationPolicy[idx - 1];
+                    const label =
+                      slab.minutesBeforeDeparture === 0
+                        ? earlier
+                          ? `Less than ${formatPolicyTime(earlier.minutesBeforeDeparture)}`
+                          : "Any time"
+                        : earlier
+                        ? `${formatPolicyTime(slab.minutesBeforeDeparture)} to ${formatPolicyTime(
+                            earlier.minutesBeforeDeparture
+                          )}`
+                        : `More than ${formatPolicyTime(slab.minutesBeforeDeparture)}`;
+                    return (
+                      <div key={slab.minutesBeforeDeparture} className="policy-row" role="row">
+                        <span role="cell">{label}</span>
+                        <strong role="cell">
+                          {slab.chargePercent === 0 ? "Free" : `${slab.chargePercent}% of fare`}
+                        </strong>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="policy-note">
+                  As set by the bus operator. The exact refund is shown before you cancel.
+                </p>
+              </div>
+            </>
+          )}
+
           {/* Section 4: Total Amount Box (Tinted Background) */}
           <div className="total-amount-tinted-box">
-            <span className="total-amount-label">Total Amount</span>
+            <span className="total-amount-label">
+              Total Amount
+              {isLive && <span className="total-tax-note"> (incl. taxes)</span>}
+            </span>
             <strong className="total-amount-val">₹{totalAmount.toLocaleString("en-IN")}</strong>
           </div>
         </div>
@@ -373,14 +476,22 @@ function BookingConfirmation() {
             disabled={submitting}
             onClick={handleConfirmBooking}
           >
-            {submitting ? "Confirming Booking..." : "Confirm Booking"}
+            {submitting
+              ? isLive
+                ? "Booking with operator..."
+                : "Confirming Booking..."
+              : "Confirm Booking"}
           </button>
         </div>
 
         {/* Reserved seats footer lock note */}
         <div className="seats-reserved-footer-note">
           <span className="lock-icon">🔒</span>
-          <span>Your seats are reserved for a limited time.</span>
+          <span>
+            {isLive
+              ? "Your seats are held with the operator the moment you confirm."
+              : "Your seats are reserved for a limited time."}
+          </span>
         </div>
       </div>
     </main>

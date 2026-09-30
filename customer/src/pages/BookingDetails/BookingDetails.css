@@ -340,4 +340,105 @@
   .btn-primary-red {
     width: 100%;
   }
-}
+}
+
+/* ------------------------------------------------------------
+   Live (operator) bookings: ticket codes, refund and cancellation
+   ------------------------------------------------------------ */
+.status-pill-badge.confirmed {
+  color: #15803d;
+}
+
+.status-pill-badge.cancelled {
+  color: #b91c1c;
+}
+
+.status-pill-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.ticket-code {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3px;
+  overflow-wrap: anywhere;
+}
+
+.refund-summary-box {
+  margin-top: 14px;
+  padding: 14px 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.refund-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.refund-line strong {
+  color: #111827;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.refund-line.refund-total {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px dashed #d1d5db;
+  font-weight: 600;
+  color: #111827;
+}
+
+.refund-line.refund-total strong {
+  font-size: 17px;
+  color: #15803d;
+}
+
+.cancel-error-banner {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cancel-quote-card {
+  margin-top: 16px;
+  padding: 20px 24px;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.cancel-quote-title {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.cancel-quote-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .cancel-quote-card {
+    padding: 16px;
+  }
+
+  .cancel-quote-actions {
+    flex-direction: column-reverse;
+  }
+}

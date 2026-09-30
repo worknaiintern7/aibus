@@ -31,7 +31,8 @@
 }
 
 .legend-sample.selected {
-  background: #e53935;
+  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  border: 1px solid #854D0E;
 }
 
 .legend-sample.booked-male {

@@ -39,9 +39,9 @@
 }
 
 .stepper-item.active .step-circle {
-  background: #e53935;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+  background: var(--gradient-gold, linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%));
+  color: #1a1608;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.45);
 }
 
 .stepper-item.completed .step-circle {
@@ -57,7 +57,7 @@
 }
 
 .stepper-item.active .step-label {
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
   font-weight: 700;
 }
 

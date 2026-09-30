@@ -482,4 +482,9 @@
   }
 }
 
-
+/* Operator PNR / ticket number: easy to read out and copy */
+.ticket-code {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3px;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,95 @@
+.journey-points-card {
+  background: #ffffff;
+  border: 1px solid #eaedf0;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.journey-points-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.journey-point-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.journey-point-field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.journey-select-wrap {
+  position: relative;
+}
+
+.journey-select-wrap select {
+  width: 100%;
+  height: 46px;
+  padding: 0 38px 0 14px;
+  border: 1.5px solid #d8dee6;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 600;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.journey-select-wrap select:hover {
+  border-color: #b8c2cf;
+}
+
+.journey-select-wrap select:focus-visible {
+  outline: none;
+  border-color: var(--gold-500, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.journey-select-caret {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.journey-point-hint {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Side by side once the card has room (tablet layout, where the column is full width) */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .journey-points-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+  }
+
+  .journey-points-title {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .journey-points-card {
+    padding: 16px;
+  }
+}

@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestClientException;
 
 import java.util.stream.Collectors;
 
@@ -60,6 +61,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    // The bus provider answered but refused the request (seat already taken, hold expired, ...)
+    @ExceptionHandler(GdsApiException.class)
+    public ResponseEntity<ApiResponse<Object>> handleGdsApiException(GdsApiException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error(ex.getMessage()));
+    }
+
+    // The bus provider could not be reached or answered with an HTTP error
+    @ExceptionHandler(RestClientException.class)
+    public ResponseEntity<ApiResponse<Object>> handleRestClientException(RestClientException ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(ApiResponse.error("The bus operator's system is not responding right now. Please try again."));
     }
 
     @ExceptionHandler(Exception.class)

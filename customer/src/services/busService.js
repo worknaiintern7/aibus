@@ -338,14 +338,26 @@ function mapScheduleToBus(schedule) {
   const depTime = schedule.departureTime ? schedule.departureTime.slice(0, 5) : "08:00";
   const arrTime = schedule.arrivalTime ? schedule.arrivalTime.slice(0, 5) : "12:00";
   const duration = calculateDuration(depTime, arrTime);
-  const boardingPoints = normalizeBoardingPoints(schedule.boardingPoints, schedule.source);
-  const defaultBp = schedule.boardingPoint
+
+  // Live GDS buses have no local schedule: they are identified by the provider bus id
+  const isLive = schedule.provider === "GDS";
+
+  // Live pickup points are real operator data, so no sample addresses or coordinates are filled in
+  const boardingPoints = isLive
+    ? mapLivePoints(schedule.boardingPoints, schedule.source)
+    : normalizeBoardingPoints(schedule.boardingPoints, schedule.source);
+  const defaultBp = isLive
+    ? (boardingPoints[0] || null)
+    : schedule.boardingPoint
     ? normalizeBoardingPoint(schedule.boardingPoint, schedule.source)
     : (boardingPoints[0] || null);
 
   return {
-    id: schedule.scheduleId,
+    id: isLive ? `${LIVE_BUS_PREFIX}${schedule.gdsBusId}` : schedule.scheduleId,
     scheduleId: schedule.scheduleId,
+    provider: schedule.provider || "LOCAL",
+    isLive,
+    gdsBusId: schedule.gdsBusId,
     busId: schedule.busId,
     operator: schedule.busName || "AIBus Travels",
     busNumber: schedule.busNumber || "AI001",
@@ -360,12 +372,70 @@ function mapScheduleToBus(schedule) {
     price: Number(schedule.fare || schedule.baseFare || 500),
     availableSeats: schedule.availableSeats != null ? schedule.availableSeats : 20,
     seats: schedule.availableSeats != null ? schedule.availableSeats : 20,
-    rating: 4.5,
-    reviews: "1.2K",
-    amenities: ["WiFi", "Charging", "Blanket", "Water Bottle"],
+    // Ratings and amenities are sample values for our own buses only
+    rating: isLive ? null : 4.5,
+    reviews: isLive ? null : "1.2K",
+    amenities: isLive ? [] : ["WiFi", "Charging", "Blanket", "Water Bottle"],
     boardingPoint: defaultBp,
     boardingPoints,
   };
+}
+
+function mapLivePoints(points, city) {
+  return (points || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    time: p.time || "",
+    area: p.area || city || "",
+    address: p.address || [p.name, city].filter(Boolean).join(", "),
+    landmark: p.landmark || "",
+    // No coordinates from the provider: maps are looked up by name
+    mapQuery: [p.name, city].filter(Boolean).join(", "),
+  }));
+}
+
+// Live bus with its real seat chart, dropping points and cancellation policy
+function mapLiveBusDetails(details) {
+  const bus = mapScheduleToBus(details);
+  const decks = details.decks || [];
+
+  const seatFares = {};
+  const seatInfo = {};
+  decks.forEach((deck) => {
+    (deck.seats || []).forEach((seat) => {
+      seatFares[seat.seatNumber] = Number(seat.fare || 0);
+      seatInfo[seat.seatNumber] = seat;
+    });
+  });
+
+  const hasSleeper = decks.some((deck) => (deck.seats || []).some((s) => s.seatType === "SLEEPER"));
+
+  return {
+    ...bus,
+    busType: details.busLabel || bus.busType,
+    layoutType: hasSleeper ? "SLEEPER_2_1" : "SEATER_2_2",
+    decks,
+    seatFares,
+    seatInfo,
+    droppingPoints: mapLivePoints(details.droppingPoints, details.destination),
+    maxSeats: details.maxSeatsPerBooking || 6,
+    cancellationPolicy: details.cancellationPolicy || [],
+  };
+}
+
+export const LIVE_BUS_PREFIX = "gds-";
+
+export function isLiveBusId(busId) {
+  return String(busId || "").startsWith(LIVE_BUS_PREFIX);
+}
+
+// Total payable for the selected seats: real per-seat fares for live buses, flat fare otherwise
+export function getSeatsTotal(bus, seatCodes = []) {
+  if (!bus) return 0;
+  return seatCodes.reduce((sum, code) => {
+    const seatFare = bus.seatFares ? bus.seatFares[code] : undefined;
+    return sum + Number(seatFare != null ? seatFare : bus.price || 0);
+  }, 0);
 }
 
 export const busService = {
@@ -410,6 +480,26 @@ export const busService = {
   // Asynchronous Get Bus Details by Schedule ID
   getBusById: async (scheduleId, options = {}) => {
     if (!scheduleId) return null;
+
+    // Live GDS bus: seat chart comes straight from the provider, never from sample data
+    if (isLiveBusId(scheduleId)) {
+      try {
+        const gdsBusId = String(scheduleId).slice(LIVE_BUS_PREFIX.length);
+        const response = await api.get(`/api/gds/buses/${gdsBusId}`, {
+          params: {
+            source: options.from,
+            destination: options.to,
+            date: options.date,
+          },
+          timeout: 40000,
+        });
+        const data = response.data?.data;
+        return data ? mapLiveBusDetails(data) : null;
+      } catch (err) {
+        console.warn("Live bus details fetch failed:", err.message);
+        return null;
+      }
+    }
 
     try {
       const response = await api.get(`/api/buses/${scheduleId}`);

@@ -98,6 +98,8 @@ function BusCard({ bus, searchFrom, searchTo, searchDate }) {
       from: bus.from || searchFrom || "Pune",
       to: bus.to || searchTo || "Mumbai",
       date: bus.date || searchDate || "",
+      // Live buses carry the chosen boarding point into seat selection
+      ...(bus.isLive && selectedPoint?.id && { pickup: selectedPoint.id }),
     });
     navigate(`/seat-selection?${params.toString()}`);
   };
@@ -118,6 +120,12 @@ function BusCard({ bus, searchFrom, searchTo, searchDate }) {
         <div className="bus-operator-section">
           <h3 className="operator-name">{bus.operator}</h3>
           <span className="bus-type-text">{bus.busType}</span>
+          {bus.isLive && (
+            <span className="live-bus-badge" title="Live seats and fares from the bus operator">
+              <span className="live-bus-dot" />
+              Live availability
+            </span>
+          )}
 
           {bus.rating && (
             <div className="rating-badge">
@@ -191,11 +199,16 @@ function BusCard({ bus, searchFrom, searchTo, searchDate }) {
         {/* Right Section: Price & Compact Action Button */}
         <div className="bus-price-section">
           <div className="price-container">
-            <span className="price-label">Starting from</span>
+            <span className="price-label">{bus.isLive ? "Base fare from" : "Starting from"}</span>
             <div className="price-amount">
               <span className="price-currency">₹</span>
               <span className="price-val">{bus.price}</span>
             </div>
+            {bus.availableSeats != null && (
+              <span className={`seats-left-text ${bus.availableSeats <= 5 ? "few" : ""}`}>
+                {bus.availableSeats} seats left
+              </span>
+            )}
           </div>
 
           <button

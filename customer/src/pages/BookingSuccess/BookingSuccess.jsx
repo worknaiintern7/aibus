@@ -231,6 +231,48 @@ function BookingSuccess() {
 
           <div className="card-divider" />
 
+          {/* Operator ticket details (live bookings) */}
+          {booking.isLive && (
+            <>
+              <div className="card-section">
+                <h2 className="section-heading">Ticket Details</h2>
+                <div className="grid-info-rows">
+                  {booking.pnrNo && (
+                    <div className="info-row">
+                      <span className="info-label">Operator PNR</span>
+                      <strong className="info-value ticket-code">{booking.pnrNo}</strong>
+                    </div>
+                  )}
+                  {booking.ticketNo && (
+                    <div className="info-row">
+                      <span className="info-label">Ticket No.</span>
+                      <strong className="info-value ticket-code">{booking.ticketNo}</strong>
+                    </div>
+                  )}
+                  {booking.boardingPoint && (
+                    <div className="info-row">
+                      <span className="info-label">Boarding Point</span>
+                      <strong className="info-value">
+                        {booking.boardingPoint}
+                        {booking.boardingTime && (
+                          <span className="meta-date-inline"> ({booking.boardingTime})</span>
+                        )}
+                      </strong>
+                    </div>
+                  )}
+                  {booking.droppingPoint && (
+                    <div className="info-row">
+                      <span className="info-label">Dropping Point</span>
+                      <strong className="info-value">{booking.droppingPoint}</strong>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="card-divider" />
+            </>
+          )}
+
           {/* Section 2: Passenger Details (Dynamic N Count) */}
           <div className="card-section">
             <h2 className="section-heading">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bus } from "lucide-react";
+import { Bus, Sparkles } from "lucide-react";
 import authService from "../../services/authService";
 import "./Header.css";
 
@@ -36,8 +36,12 @@ function Header() {
             <Bus size={20} />
           </div>
           <span className="logo-text">
-            <span className="logo-text-red">AI</span>
-            <span className="logo-text-dark">Bus</span>
+            <span className="logo-text-gold">AI</span>
+            <span className="logo-text-dark">BUS</span>
+            <span className="logo-ai-badge">
+              <Sparkles size={11} className="ai-sparkle" />
+              INTELLIGENT GDS
+            </span>
           </span>
         </Link>
 
@@ -72,7 +76,7 @@ function Header() {
             </div>
           ) : (
             <Link to="/login" className="login-button">
-              Login
+              Sign In
             </Link>
           )}
         </nav>

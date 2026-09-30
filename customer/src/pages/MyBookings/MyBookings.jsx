@@ -140,7 +140,11 @@ function MyBookings() {
 
                   <span
                     className={`booking-status ${
-                      booking.status === "Cancelled" ? "cancelled" : ""
+                      booking.status === "Cancelled" || booking.status === "Failed"
+                        ? "cancelled"
+                        : booking.status === "Pending"
+                        ? "pending"
+                        : ""
                     }`}
                   >
                     {booking.status || "Confirmed"}
@@ -166,6 +170,13 @@ function MyBookings() {
                     <span>Booking ID</span>
                     <strong>{booking.bookingId || booking.bookingReference}</strong>
                   </div>
+
+                  {booking.pnrNo && (
+                    <div>
+                      <span>PNR</span>
+                      <strong>{booking.pnrNo}</strong>
+                    </div>
+                  )}
 
                   <div>
                     <span>Passenger</span>
@@ -198,11 +209,16 @@ function MyBookings() {
                     View Ticket Details
                   </button>
 
-                  {booking.status !== "Cancelled" && (
+                  {(booking.status === "Confirmed" || !booking.status) && (
                     <button
                       type="button"
                       className="cancel-booking-button"
-                      onClick={() => handleCancelBooking(booking.bookingId || booking.bookingReference)}
+                      onClick={() =>
+                        // Live tickets show the operator's refund first, on the details page
+                        booking.isLive
+                          ? navigate(`/booking-details?bookingId=${booking.bookingId || booking.bookingReference}`)
+                          : handleCancelBooking(booking.bookingId || booking.bookingReference)
+                      }
                     >
                       Cancel Booking
                     </button>

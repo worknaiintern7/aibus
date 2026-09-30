@@ -25,6 +25,7 @@ import AdminPayments from "./pages/AdminPayments";
 import AdminReports from "./pages/AdminReports";
 import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminProfile from "./pages/AdminProfile";
+import AdminAgentEnquiries from "./pages/AdminAgentEnquiries";
 
 function App() {
   return (
@@ -50,6 +51,12 @@ function App() {
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/users/:id" element={<AdminUserDetails />} />
               <Route path="/admin/users/:id" element={<AdminUserDetails />} />
+
+              {/* Agent Enquiries & KYC */}
+              <Route path="/agents" element={<AdminAgentEnquiries />} />
+              <Route path="/admin/agents" element={<AdminAgentEnquiries />} />
+              <Route path="/agents/enquiries" element={<AdminAgentEnquiries />} />
+              <Route path="/admin/agents/enquiries" element={<AdminAgentEnquiries />} />
 
               {/* Buses */}
               <Route path="/buses" element={<AdminBuses />} />

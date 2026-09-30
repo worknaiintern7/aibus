@@ -1,0 +1,650 @@
+/* ========================================================
+   RAZORPAY DEMO CHECKOUT MODAL - RICH GOLD & AI DESIGN
+   ======================================================== */
+
+.rzp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 13, 22, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: rzpFadeIn 0.2s ease-out;
+}
+
+@keyframes rzpFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.rzp-container {
+  width: 100%;
+  max-width: 620px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  animation: rzpSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rzpSlideUp {
+  from {
+    transform: translateY(20px) scale(0.97);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Header */
+.rzp-header {
+  background: linear-gradient(135deg, #0c1322 0%, #172033 100%);
+  border-bottom: 2px solid #d4af37;
+  padding: 18px 22px;
+  color: #ffffff;
+}
+
+.rzp-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.rzp-merchant-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rzp-logo-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%));
+  color: #1a1608;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.rzp-sparkle {
+  color: #1a1608;
+}
+
+.rzp-merchant-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: #ffffff;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+}
+
+.rzp-order-id {
+  font-size: 11.5px;
+  color: #94a3b8;
+  letter-spacing: 0.3px;
+}
+
+.rzp-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.rzp-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.rzp-amount-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.rzp-amount-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.rzp-amount-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #d4af37;
+  letter-spacing: 0.8px;
+}
+
+.rzp-amount-val {
+  font-size: 26px;
+  font-weight: 900;
+  color: #ffffff;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  line-height: 1.1;
+}
+
+.rzp-currency {
+  font-size: 20px;
+  margin-right: 2px;
+  color: #fde68a;
+}
+
+.rzp-countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: #fde68a;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* Main Layout */
+.rzp-main-layout {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  min-height: 340px;
+}
+
+/* Sidebar */
+.rzp-method-sidebar {
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rzp-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.rzp-tab-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.rzp-tab-btn.active {
+  background: #ffffff;
+  color: var(--gold-800, #854D0E);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-left: 3px solid var(--gold-500, #D4AF37);
+}
+
+.rzp-popular-badge {
+  font-size: 9px;
+  font-weight: 800;
+  background: var(--gold-100, #FEF3C7);
+  color: var(--gold-800, #854D0E);
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+/* Content Area */
+.rzp-method-content {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* UPI Tab */
+.rzp-upi-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rzp-qr-box {
+  background: var(--gold-50, #FFFDF5);
+  border: 1px dashed var(--gold-400, #F3CE52);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rzp-qr-code-graphic {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background: #ffffff;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rzp-mock-qr {
+  width: 100%;
+  height: 100%;
+  color: #0f172a;
+}
+
+.rzp-qr-center-logo {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: var(--gold-500, #D4AF37);
+  color: #1a1608;
+  font-weight: 900;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  box-shadow: 0 0 0 2px #ffffff;
+}
+
+.rzp-qr-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rzp-qr-text strong {
+  font-size: 13.5px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.rzp-qr-text span {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.rzp-divider-or {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.rzp-divider-or::before,
+.rzp-divider-or::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.rzp-divider-or span {
+  padding: 0 10px;
+}
+
+.rzp-input-field input {
+  width: 100%;
+  height: 42px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 13.5px;
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.rzp-input-field input:focus {
+  border-color: var(--gold-500, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+}
+
+/* Card View */
+.rzp-card-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rzp-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rzp-field-group label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.rzp-field-group input {
+  height: 40px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 13.5px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.rzp-field-group input:focus {
+  border-color: var(--gold-500, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+}
+
+.rzp-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.rzp-card-badges {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* NetBanking */
+.rzp-sub-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.rzp-banks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.rzp-bank-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e293b;
+  transition: all 0.15s ease;
+}
+
+.rzp-bank-card:hover {
+  border-color: var(--gold-400, #F3CE52);
+  background: var(--gold-50, #FFFDF5);
+}
+
+.rzp-bank-card.selected {
+  border-color: var(--gold-500, #D4AF37);
+  background: var(--gold-50, #FFFDF5);
+  color: var(--gold-800, #854D0E);
+  font-weight: 700;
+}
+
+/* Wallets */
+.rzp-wallets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.rzp-wallet-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  transition: all 0.15s ease;
+}
+
+.rzp-wallet-card:hover {
+  border-color: var(--gold-400, #F3CE52);
+  background: var(--gold-50, #FFFDF5);
+}
+
+.rzp-wallet-card.selected {
+  border-color: var(--gold-500, #D4AF37);
+  background: var(--gold-50, #FFFDF5);
+  color: var(--gold-800, #854D0E);
+  font-weight: 700;
+}
+
+/* Journey Badge */
+.rzp-journey-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #475569;
+  font-weight: 600;
+  margin: 16px 0 12px;
+}
+
+.rzp-dot-sep {
+  color: #94a3b8;
+}
+
+/* CTA Row */
+.rzp-action-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rzp-pay-cta {
+  height: 46px;
+  background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%));
+  color: #1a1608;
+  border: none;
+  border-radius: 8px;
+  font-size: 14.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  transition: all 0.2s ease;
+}
+
+.rzp-pay-cta:hover:not(:disabled) {
+  background: var(--gradient-gold-hover, linear-gradient(180deg, #D6AE33 0%, #C9A227 100%));
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.rzp-fail-sim-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 11.5px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 2px 0;
+  transition: color 0.15s ease;
+}
+
+.rzp-fail-sim-btn:hover {
+  color: #64748b;
+}
+
+/* Processing & States */
+.rzp-state-screen {
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 320px;
+  justify-content: center;
+}
+
+.rzp-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f1f5f9;
+  border-top-color: var(--gold-500, #D4AF37);
+  border-radius: 50%;
+  animation: rzpSpin 0.8s linear infinite;
+  margin-bottom: 18px;
+}
+
+@keyframes rzpSpin {
+  to { transform: rotate(360deg); }
+}
+
+.rzp-state-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+}
+
+.rzp-state-desc {
+  font-size: 13px;
+  color: #64748b;
+  max-width: 380px;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.rzp-security-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.rzp-success-circle {
+  color: #10b981;
+  margin-bottom: 12px;
+  animation: rzpPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.rzp-failed-circle {
+  color: #f59e0b;
+  margin-bottom: 12px;
+}
+
+.rzp-confirming-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--gold-800, #854D0E);
+  background: var(--gold-50, #FFFDF5);
+  border: 1px solid var(--gold-200, #FDE68A);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+.spin-icon {
+  animation: rzpSpin 1s linear infinite;
+}
+
+.rzp-retry-btn {
+  padding: 8px 20px;
+  background: var(--gold-500, #D4AF37);
+  color: #1a1608;
+  border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Footer */
+.rzp-footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rzp-footer-trust {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.rzp-shield-gold {
+  color: var(--gold-600, #B8860B);
+}
+
+@media (max-width: 600px) {
+  .rzp-main-layout {
+    grid-template-columns: 1fr;
+  }
+  .rzp-method-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .rzp-tab-btn {
+    white-space: nowrap;
+  }
+}

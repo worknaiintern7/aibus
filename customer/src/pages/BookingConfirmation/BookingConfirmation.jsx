@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import busService, { getSeatsTotal } from "../../services/busService";
 import bookingService from "../../services/bookingService";
 import authService from "../../services/authService";
+import RazorpayModal from "../../components/RazorpayModal/RazorpayModal";
 import "./BookingConfirmation.css";
 
 function formatTripDate(dateStr) {
@@ -74,6 +75,7 @@ function BookingConfirmation() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [bookingError, setBookingError] = useState("");
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const loggedInUser = authService.getLoggedInUser();
 
@@ -208,7 +210,8 @@ function BookingConfirmation() {
   const formatPolicyTime = (minutes) =>
     minutes % 60 === 0 ? `${minutes / 60} hrs` : `${minutes} mins`;
 
-  const handleConfirmBooking = async () => {
+  const handlePaymentSuccess = async (paymentData) => {
+    setShowPaymentModal(false);
     const userMobile = loggedInUser?.mobile || contactMobile;
 
     try {
@@ -217,8 +220,7 @@ function BookingConfirmation() {
 
       const isGuest = !loggedInUser;
       const newBooking = isLive
-        ? // Live bus: seats are held with the operator and then booked
-          await bookingService.createLiveBooking({
+        ? await bookingService.createLiveBooking({
             bus: selectedBus,
             travellers,
             seats: selectedSeats,
@@ -228,6 +230,7 @@ function BookingConfirmation() {
             contactEmail,
             userId: loggedInUser?.id || null,
             isGuest,
+            paymentId: paymentData?.paymentId,
           })
         : await bookingService.createBooking({
             bus: selectedBus,
@@ -237,6 +240,7 @@ function BookingConfirmation() {
             userMobile,
             userId: loggedInUser?.id || null,
             isGuest,
+            paymentId: paymentData?.paymentId,
           });
 
       navigate(`/booking-success?bookingId=${newBooking.bookingId}&isGuest=${isGuest}`);
@@ -246,6 +250,11 @@ function BookingConfirmation() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleOpenPayment = () => {
+    setBookingError("");
+    setShowPaymentModal(true);
   };
 
   return (
@@ -474,13 +483,13 @@ function BookingConfirmation() {
             type="button"
             className="primary-confirm-btn"
             disabled={submitting}
-            onClick={handleConfirmBooking}
+            onClick={handleOpenPayment}
           >
             {submitting
               ? isLive
                 ? "Booking with operator..."
                 : "Confirming Booking..."
-              : "Confirm Booking"}
+              : `Proceed to Pay ₹${totalAmount.toLocaleString("en-IN")}`}
           </button>
         </div>
 
@@ -489,10 +498,24 @@ function BookingConfirmation() {
           <span className="lock-icon">🔒</span>
           <span>
             {isLive
-              ? "Your seats are held with the operator the moment you confirm."
+              ? "Your seats are held with the operator. Complete payment to issue PNR."
               : "Your seats are reserved for a limited time."}
           </span>
         </div>
+
+        {/* Demo Razorpay Checkout Gateway */}
+        <RazorpayModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          amount={totalAmount}
+          busName={selectedBus.operator}
+          from={displayFrom}
+          to={displayTo}
+          seats={selectedSeats}
+          customerPhone={contactMobile || loggedInUser?.mobile || "9876543210"}
+          customerEmail={contactEmail || "passenger@aibus.in"}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
       </div>
     </main>
   );

@@ -171,7 +171,6 @@
 .seat-element.available:hover {
   border-color: #D4AF37;
   background: #FEF8E2;
-  transform: translateY(-1px);
 }
 
 .seat-element.available:hover .seat-code-label {
@@ -180,9 +179,9 @@
 
 /* Selected State */
 .seat-element.selected {
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%) !important;
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%) !important;
   border-color: #854D0E !important;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.45);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .seat-element.selected .seat-code-label {
@@ -281,7 +280,7 @@
   .deck-tab-btn.active {
     background: #ffffff;
     color: #854D0E;
-    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   }
 
   /* Only display the selected deck on mobile */

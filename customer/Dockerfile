@@ -16,6 +16,10 @@ COPY . .
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
+# Address of the separate agent portal app (/agent on this site redirects there)
+ARG VITE_AGENT_PORTAL_URL
+ENV VITE_AGENT_PORTAL_URL=$VITE_AGENT_PORTAL_URL
+
 # Build production bundle
 RUN npm run build
 

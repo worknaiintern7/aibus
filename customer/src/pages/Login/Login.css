@@ -4,7 +4,6 @@
 
 .login-page {
   min-height: calc(100vh - 72px);
-  background: #f7f8fa;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,7 +37,7 @@
 }
 
 .back-button:hover {
-  color: #ef4444;
+  color: var(--gold-600, #B8860B);
 }
 
 /* Login Card */
@@ -96,8 +95,8 @@
 }
 
 .mobile-input-wrapper:focus-within {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.08);
+  border-color: var(--gold-500, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
 }
 
 .country-code {
@@ -146,8 +145,8 @@
 }
 
 .otp-input-wrapper input:focus {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.08);
+  border-color: var(--gold-500, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
 }
 
 .otp-input-wrapper input::placeholder {
@@ -157,9 +156,9 @@
 /* Error Message */
 .login-error {
   margin: 8px 0 0 0;
-  color: #ef4444;
+  color: #d97706;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Primary Send OTP / Verify OTP Button */
@@ -168,20 +167,21 @@
   height: 48px;
   border: none;
   border-radius: 8px;
-  background: #ef4444;
-  color: #ffffff;
+  background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%));
+  color: #1a1608;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
   margin-top: 18px;
-  transition: background 0.15s ease;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .login-submit-button:hover {
-  background: #dc2626;
+  background: var(--gradient-gold-hover, linear-gradient(180deg, #D6AE33 0%, #C9A227 100%));
 }
 
 /* Secondary Actions for OTP step */
@@ -204,9 +204,9 @@
   border: none;
   background: transparent;
   padding: 0;
-  color: #ef4444;
+  color: var(--gold-700, #9A7B1C);
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
 }
 

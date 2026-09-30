@@ -4,7 +4,6 @@
 
 .booking-success-page {
   min-height: calc(100vh - 72px);
-  background: #f8fafc;
   padding: 28px 20px 56px;
 }
 
@@ -69,13 +68,18 @@
   font-size: 14px;
 }
 
-.id-label {
+/* Scoped: the PNR page has its own .id-label / .id-val */
+.booking-id-pill-box .id-label {
   color: #4b5563;
+  font-size: inherit;
+  letter-spacing: normal;
   font-weight: 500;
 }
 
-.id-val {
+.booking-id-pill-box .id-val {
   color: #0f172a;
+  font-size: inherit;
+  font-family: inherit;
   font-weight: 800;
   letter-spacing: 0.5px;
 }
@@ -162,7 +166,7 @@
 .info-value.price-highlight {
   font-size: 26px;
   font-weight: 900;
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
   letter-spacing: -0.4px;
 }
 
@@ -263,21 +267,21 @@
 .primary-view-details-btn {
   width: 240px;
   height: 48px;
-  background: #e53935 !important;
+  background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%)) !important;
   border: none !important;
   outline: none !important;
   border-radius: 8px;
-  color: #ffffff !important;
+  color: #1a1608 !important;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 4px 14px rgba(229, 57, 53, 0.25);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .primary-view-details-btn:hover {
-  background: #d32f2f !important;
-  box-shadow: 0 6px 18px rgba(229, 57, 53, 0.35);
+  background: var(--gradient-gold-hover, linear-gradient(180deg, #D6AE33 0%, #C9A227 100%)) !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .primary-view-details-btn:active {
@@ -445,7 +449,6 @@
 
 .guest-login-now-btn:hover {
   background: #1d4ed8;
-  transform: translateY(-1px);
 }
 
 .print-ticket-btn {

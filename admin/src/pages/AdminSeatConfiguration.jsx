@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Plus, Grid, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { busService } from "../services/busService";
 import PageHeader from "../components/layout/PageHeader";
 import Loading from "../components/common/Loading";

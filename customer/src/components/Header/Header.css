@@ -2,12 +2,11 @@
   width: 100%;
   height: 72px;
   background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(212, 175, 55, 0.3);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   transition: all 0.3s ease;
 }
 
@@ -34,19 +33,18 @@
   width: 38px;
   height: 38px;
   color: #0F172A;
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.45);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .logo:hover .logo-bus-icon {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .logo-text {
@@ -55,10 +53,7 @@
 }
 
 .logo-text-gold {
-  background: linear-gradient(135deg, #FFDF73 0%, #D4AF37 50%, #B8860B 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--gold-600, #B8860B);
   font-weight: 900;
   font-family: var(--font-heading);
 }
@@ -87,12 +82,6 @@
 
 .ai-sparkle {
   color: #D4AF37;
-  animation: spinSlow 6s linear infinite;
-}
-
-@keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 .header-nav {
@@ -101,9 +90,10 @@
   gap: 26px;
 }
 
-.my-bookings-link {
+.my-bookings-link,
+.nav-link-item {
   text-decoration: none;
-  font-size: 14.5px;
+  font-size: 14px;
   font-weight: 600;
   color: #334155;
   transition: all 0.2s ease;
@@ -114,9 +104,40 @@
   border-radius: 8px;
 }
 
-.my-bookings-link:hover {
+.my-bookings-link:hover,
+.nav-link-item:hover {
   color: #996515;
   background: rgba(212, 175, 55, 0.08);
+}
+
+.nav-link-gds {
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #713F12;
+  background: var(--gold-50, #FFFDF5);
+  border: 1px solid var(--gold-300, #FCD34D);
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.nav-link-gds:hover {
+  background: var(--gold-100, #FEF3C7);
+  border-color: var(--gold-500, #D4AF37);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.gds-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
 }
 
 .guest-badge-count {
@@ -131,7 +152,7 @@
   align-items: center;
   justify-content: center;
   line-height: 1;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.5);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
 .user-logged-nav {
@@ -167,19 +188,18 @@
   padding: 9px 24px;
   border: none;
   border-radius: 24px;
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
   color: #0F172A;
   font-size: 14.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   transition: all 0.25s ease;
 }
 
 .login-button:hover {
-  transform: translateY(-1.5px);
-  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.55);
-  background: linear-gradient(135deg, #FFF089 0%, #E5BF47 50%, #C9961B 100%);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, #D6AE33 0%, #C9A227 100%);
 }
 
 .logout-button {
@@ -240,7 +260,26 @@
   }
 
   .login-button {
-    padding: 7px 16px;
+    padding: 7px 14px;
     font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .header-nav {
+    gap: 6px;
+  }
+
+  .my-bookings-link,
+  .nav-link-item {
+    font-size: 13px;
+    padding: 6px 6px;
+    white-space: nowrap;
+  }
+}
+
+/* Very narrow phones: PNR tracking stays reachable from the footer */
+@media (max-width: 400px) {
+  .header-nav .nav-link-item[href="/pnr-status"] {
+    display: none;
   }
 }

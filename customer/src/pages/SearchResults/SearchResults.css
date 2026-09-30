@@ -1,7 +1,6 @@
 .search-results-page {
   min-height: calc(100vh - 68px);
   padding: 24px 0 60px;
-  background: #f7f8fa;
 }
 
 .search-results-container {
@@ -218,7 +217,7 @@
   }
 
   .mobile-modify-toggle-btn.open {
-    background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+    background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
     color: #0F172A;
     border-color: #D4AF37;
   }
@@ -294,7 +293,7 @@
   }
 
   .quick-chip.filter-main-chip.active {
-    background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+    background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
     color: #0F172A;
     border-color: #D4AF37;
   }
@@ -317,7 +316,6 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
     z-index: 1000;
     animation: fadeInBackdrop 0.2s ease-out;
   }
@@ -408,14 +406,14 @@
   .drawer-apply-btn {
     width: 100%;
     height: 48px;
-    background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+    background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
     color: #0F172A;
     border: none;
     border-radius: 10px;
     font-size: 15px;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   }
 
   /* Content area full width on mobile */

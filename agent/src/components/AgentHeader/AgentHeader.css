@@ -1,0 +1,129 @@
+.agent-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-light, #E2E8F0);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.agent-header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.agent-header-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-dark, #0F172A);
+  min-width: 0;
+}
+
+.agent-header-logo-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%));
+  color: #1a1608;
+}
+
+.agent-header-logo-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.agent-header-logo-gold {
+  color: var(--gold-600, #B8860B);
+}
+
+.agent-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: var(--gold-300, #F9E292);
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.agent-header-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.agent-header-link,
+.agent-header-login {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.agent-header-link {
+  color: var(--text-slate, #334155);
+}
+
+.agent-header-link:hover {
+  background: #f1f5f9;
+}
+
+.agent-header-login {
+  border: 1.5px solid var(--gold-500, #D4AF37);
+  color: var(--gold-800, #7A4F0C);
+  background: var(--gold-50, #FFFDF5);
+}
+
+.agent-header-login:hover {
+  background: var(--gold-100, #FEF8E2);
+}
+
+.agent-header-link:focus-visible,
+.agent-header-login:focus-visible,
+.agent-header-logo:focus-visible {
+  outline: 2px solid var(--gold-600, #B8860B);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .agent-header-container {
+    padding: 10px 14px;
+  }
+
+  .agent-header-badge {
+    display: none;
+  }
+
+  .agent-header-link,
+  .agent-header-login {
+    padding: 0 10px;
+    font-size: 13px;
+  }
+}

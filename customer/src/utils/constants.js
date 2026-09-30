@@ -1,3 +1,8 @@
+// B2B agent portal: a separate app on its own port / domain
+export const AGENT_PORTAL_URL = (
+  import.meta.env.VITE_AGENT_PORTAL_URL || "http://localhost:5175"
+).replace(/\/$/, "");
+
 export const BUS_TYPES = [
   { label: "AC Sleeper", value: "AC_SLEEPER" },
   { label: "AC Seater", value: "AC_SEATER" },

@@ -24,11 +24,7 @@
 
 .offers-header .text-red,
 .offers-header .text-gold {
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  display: inline-block;
+  color: var(--gold-600, #B8860B);
 }
 
 .offers-subtitle {
@@ -55,10 +51,9 @@
 }
 
 .view-all-offers-btn:hover {
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
   color: #0F172A;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 /* Grid Layout */
@@ -90,7 +85,6 @@
 }
 
 .clickable-card:hover {
-  transform: translateY(-4px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
@@ -235,18 +229,17 @@
 
 .btn-solid-red,
 .btn-solid-gold {
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
   color: #0F172A;
   font-weight: 800;
   border: none;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .btn-solid-red:hover,
 .btn-solid-gold:hover {
-  background: linear-gradient(135deg, #FFF089 0%, #E5BF47 50%, #C9961B 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5);
+  background: linear-gradient(180deg, #D6AE33 0%, #C9A227 100%);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .btn-outline-blue {
@@ -258,7 +251,6 @@
 .btn-outline-blue:hover {
   background: #2563eb;
   color: #ffffff;
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
@@ -270,7 +262,6 @@
 
 .btn-solid-blue:hover {
   background: #1d4ed8;
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
@@ -283,7 +274,6 @@
 .btn-outline-green:hover {
   background: #16a34a;
   color: #ffffff;
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
 }
 
@@ -295,7 +285,6 @@
 
 .btn-solid-green:hover {
   background: #15803d;
-  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
 }
 
@@ -342,8 +331,6 @@
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -443,9 +430,9 @@
 }
 
 .modal-close-btn:hover {
-  background: #fee2e2;
-  color: #ef4444;
-  border-color: #fca5a5;
+  background: var(--gold-50, #FFFDF5);
+  color: var(--gold-800, #854D0E);
+  border-color: var(--gold-300, #FCD34D);
   transform: rotate(90deg);
 }
 
@@ -591,8 +578,8 @@
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 6px;
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--gold-100, #FEF3C7);
+  color: var(--gold-800, #854D0E);
   text-transform: uppercase;
 }
 
@@ -654,7 +641,7 @@
 }
 
 .modal-copy-btn:hover {
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
   color: #0F172A;
 }
 
@@ -728,20 +715,7 @@
   border-radius: 50%;
   background: #10b981;
   box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-  animation: pulseDot 1.8s infinite;
   flex-shrink: 0;
-}
-
-@keyframes pulseDot {
-  0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-  }
 }
 
 .location-label {
@@ -848,7 +822,7 @@
 .fare-amount {
   font-size: 18px;
   font-weight: 800;
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
 }
 
 .bus-route-highlight {
@@ -878,7 +852,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ef4444;
+  background: var(--gold-600, #B8860B);
 }
 
 .time-sub {

@@ -91,7 +91,7 @@
   background: #ffffff;
   border: 1.5px solid rgba(212, 175, 55, 0.35);
   border-radius: 14px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(212, 175, 55, 0.12);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   padding: 18px;
   z-index: 1000;
   animation: calendarFadeIn 0.18s ease-out;
@@ -138,7 +138,7 @@
 }
 
 .calendar-nav-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
   border-color: #D4AF37;
   color: #0F172A;
 }
@@ -209,10 +209,10 @@
 }
 
 .calendar-cell.day-btn.selected {
-  background: linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%);
+  background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
   color: #0F172A;
   font-weight: 800;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
 /* Today & Tomorrow Shortcuts */

@@ -4,7 +4,6 @@
 
 .booking-confirmation-page {
   min-height: calc(100vh - 72px);
-  background: #f8fafc;
   padding: 28px 20px 56px;
 }
 
@@ -39,13 +38,13 @@
 }
 
 .subtle-back-link:hover {
-  color: #e53935 !important;
+  color: var(--gold-600, #B8860B) !important;
 }
 
 .seat-lock-strip {
-  background: #fffbe6;
-  border: 1px solid #ffe58f;
-  color: #725200;
+  background: var(--gold-50, #FFFDF5);
+  border: 1px solid var(--gold-200, #FDE68A);
+  color: var(--gold-900, #713F12);
   padding: 7px 16px;
   border-radius: 8px;
   font-size: 13.5px;
@@ -60,7 +59,7 @@
 }
 
 .timer-val {
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
   font-weight: 700;
 }
 
@@ -213,8 +212,8 @@
 
 /* Total Amount Tinted Box */
 .total-amount-tinted-box {
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
+  background: var(--gold-50, #FFFDF5);
+  border: 1px solid var(--gold-200, #FDE68A);
   border-radius: 12px;
   padding: 18px 24px;
   display: flex;
@@ -233,7 +232,7 @@
 .total-amount-val {
   font-size: 26px;
   font-weight: 900;
-  color: #e53935;
+  color: var(--gold-700, #9A7B1C);
   letter-spacing: -0.4px;
 }
 
@@ -268,21 +267,21 @@
 .primary-confirm-btn {
   width: 240px;
   height: 48px;
-  background: #e53935 !important;
+  background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%)) !important;
   border: none !important;
   outline: none !important;
   border-radius: 8px;
-  color: #ffffff !important;
+  color: #1a1608 !important;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 4px 14px rgba(229, 57, 53, 0.25);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .primary-confirm-btn:hover {
-  background: #d32f2f !important;
-  box-shadow: 0 6px 18px rgba(229, 57, 53, 0.35);
+  background: var(--gradient-gold-hover, linear-gradient(180deg, #D6AE33 0%, #C9A227 100%)) !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .primary-confirm-btn:active {

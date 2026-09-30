@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { AGENT_PORTAL_URL } from "../../utils/constants";
 import "./Footer.css";
 
 function Footer() {
@@ -31,7 +32,7 @@ function Footer() {
           {/* Column 1: Brand & Mission */}
           <div className="footer-col brand-col">
             <Link to="/" className="footer-logo" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-              <span className="logo-red">AI</span>
+              <span className="logo-gold">AI</span>
               <span className="logo-dark">Bus</span>
             </Link>
             <p className="footer-tagline">
@@ -54,7 +55,15 @@ function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/pnr-status" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+                  Track PNR / Print Ticket
+                </Link>
+              </li>
+              <li>
                 <Link to="/my-bookings">My Bookings</Link>
+              </li>
+              <li>
+                <a href={AGENT_PORTAL_URL}>Travel Partner / Agent Portal</a>
               </li>
               <li>
                 <button type="button" className="footer-link-btn" onClick={handleScrollToOffers}>

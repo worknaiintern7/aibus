@@ -6,5 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5174,
+    // Fail instead of drifting to 5175, which belongs to the agent app
+    strictPort: true,
   },
 });

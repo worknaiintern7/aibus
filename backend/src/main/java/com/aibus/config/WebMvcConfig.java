@@ -14,7 +14,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AdminAuthInterceptor adminAuthInterceptor;
 
-    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:5174,http://localhost:3000,http://localhost:3001,http://localhost}")
+    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost}")
     private String allowedOrigins;
 
     public WebMvcConfig(AdminAuthInterceptor adminAuthInterceptor) {
@@ -25,6 +25,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminAuthInterceptor)
                 .addPathPatterns("/api/admin/**")
+                // Agent KYC review lives under /api/agents but is an admin action
+                .addPathPatterns("/api/agents/enquiries/**", "/api/agents/approved")
                 .excludePathPatterns("/api/admin/auth/login");
     }
 

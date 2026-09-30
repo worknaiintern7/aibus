@@ -41,8 +41,8 @@
   width: fit-content;
 }
 
-.footer-logo .logo-red {
-  color: #e53935;
+.footer-logo .logo-gold {
+  color: var(--gold-500, #D4AF37);
 }
 
 .footer-logo .logo-dark,
@@ -113,7 +113,7 @@
 
 .footer-links-list li a:hover,
 .footer-link-btn:hover {
-  color: #e53935;
+  color: var(--gold-600, #B8860B);
   transform: translateX(3px);
 }
 

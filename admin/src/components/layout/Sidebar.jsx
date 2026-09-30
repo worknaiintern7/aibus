@@ -9,6 +9,7 @@ import {
   CreditCard,
   BarChart3,
   ShieldCheck,
+  Briefcase,
   User,
   LogOut,
   PanelLeftClose,
@@ -21,6 +22,7 @@ export const Sidebar = ({ isOpen = true, onToggle }) => {
   const navItems = [
     { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { label: "Users", path: "/users", icon: Users },
+    { label: "Agent KYC Inquiries", path: "/agents", icon: Briefcase },
     { label: "Buses", path: "/buses", icon: Bus },
     { label: "Routes", path: "/routes", icon: MapPin },
     { label: "Schedules", path: "/schedules", icon: Calendar },

@@ -1,7 +1,6 @@
 .seat-selection-page {
   min-height: calc(100vh - 70px);
   padding: 24px 20px 48px;
-  background: #f7f8fa;
 }
 
 .seat-selection-container {
@@ -146,7 +145,7 @@
   }
 
   .mobile-sticky-continue-btn {
-    background: var(--gradient-gold, linear-gradient(135deg, #FFE259 0%, #D4AF37 50%, #B8860B 100%));
+    background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%));
     color: #1a1608;
     border: none;
     border-radius: 10px;
@@ -154,13 +153,13 @@
     font-size: 14.5px;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.4);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
     transition: all 0.2s ease;
   }
 
   .mobile-sticky-continue-btn:hover {
-    background: var(--gradient-gold-hover, linear-gradient(135deg, #FFF08A 0%, #E5C158 50%, #CFA01E 100%));
-    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5);
+    background: var(--gradient-gold-hover, linear-gradient(180deg, #D6AE33 0%, #C9A227 100%));
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   }
 
   .mobile-sticky-continue-btn:disabled {

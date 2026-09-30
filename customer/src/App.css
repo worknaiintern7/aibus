@@ -43,23 +43,23 @@ button {
 }
 
 .logo span {
-  color: #e53935;
+  color: var(--gold-600, #B8860B);
 }
 
 .login-button {
-  border: 1px solid #e53935;
+  border: 1px solid var(--gold-500, #D4AF37);
   background: #ffffff;
-  color: #e53935;
+  color: var(--gold-800, #854D0E);
 
   padding: 9px 20px;
   border-radius: 7px;
 
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .login-button:hover {
-  background: #fff5f5;
+  background: var(--gold-50, #FFFDF5);
 }
 
 /* Hero */
@@ -135,7 +135,8 @@ button {
 }
 
 .search-field input:focus {
-  border-color: #e53935;
+  border-color: var(--gold-500, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
 }
 
 .search-field input::placeholder {
@@ -148,11 +149,11 @@ button {
 
   margin-bottom: 6px;
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--gold-200, #FDE68A);
   border-radius: 50%;
 
-  background: #ffffff;
-  color: #e53935;
+  background: var(--gold-50, #FFFDF5);
+  color: var(--gold-700, #9A7B1C);
 
   font-size: 18px;
 }
@@ -165,20 +166,20 @@ button {
   border: none;
   border-radius: 7px;
 
-  background: #e53935;
-  color: #ffffff;
+  background: var(--gradient-gold, linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%));
+  color: #1a1608;
 
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
 
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  transition: all 0.2s ease;
 }
 
 .search-button:hover {
-  background: #d9322f;
+  background: var(--gradient-gold-hover, linear-gradient(180deg, #D6AE33 0%, #C9A227 100%));
 }
-
-
 
 /* Responsive */
 

@@ -4,10 +4,15 @@
 const MANTIS_AUTH = 'https://partnerapi.iamgds.com/ota/v1/Auth';
 const MANTIS_READ = 'https://partnerapi.iamgds.com';
 const MANTIS_TRAN = 'https://partnertranapi.iamgds.com';
-const BACKEND_BASE = 'http://localhost:8080';
+const BACKEND_BASE = process.env.BACKEND_BASE || 'http://localhost:8080';
 
-const CLIENT_ID = 50;
-const CLIENT_SECRET = 'd66de12fa3473a93415b02494253f088';
+// Credentials come from the environment (same names as backend/.env), never from the repo
+const CLIENT_ID = Number(process.env.AIBUS_CLIENT_ID);
+const CLIENT_SECRET = process.env.AIBUS_CLIENT_SECRET;
+if (!CLIENT_ID || !CLIENT_SECRET) {
+  console.error('Set AIBUS_CLIENT_ID and AIBUS_CLIENT_SECRET before running this suite.');
+  process.exit(1);
+}
 
 const colors = {
   reset: "\x1b[0m",

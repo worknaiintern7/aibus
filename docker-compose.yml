@@ -40,7 +40,7 @@ services:
       AIBUS_AUTH_URL: ${AIBUS_AUTH_URL}
       AIBUS_CLIENT_ID: ${AIBUS_CLIENT_ID}
       AIBUS_CLIENT_SECRET: ${AIBUS_CLIENT_SECRET}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:5174,http://localhost:3000,http://localhost:3001}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,http://localhost:3001,http://localhost:3002}
     ports:
       - "8080:8080"
     networks:
@@ -52,6 +52,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_BASE_URL: ${VITE_CUSTOMER_API_BASE_URL:-http://localhost:8080}
+        VITE_AGENT_PORTAL_URL: ${VITE_AGENT_PORTAL_URL:-http://localhost:3002}
     image: aibus-customer:latest
     container_name: aibus-customer
     restart: unless-stopped
@@ -71,6 +72,21 @@ services:
     restart: unless-stopped
     ports:
       - "3001:80"
+    networks:
+      - aibus-network
+
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_AGENT_API_BASE_URL:-http://localhost:8080}
+        VITE_CUSTOMER_APP_URL: ${VITE_CUSTOMER_APP_URL:-http://localhost:3000}
+    image: aibus-agent:latest
+    container_name: aibus-agent
+    restart: unless-stopped
+    ports:
+      - "3002:80"
     networks:
       - aibus-network
 

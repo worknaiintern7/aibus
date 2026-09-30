@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Edit, Calendar, Clock, MapPin, Bus, IndianRupee, XCircle } from "lucide-react";
+import { ArrowLeft, Edit, Calendar, MapPin, Bus, IndianRupee, XCircle } from "lucide-react";
 import { scheduleService } from "../services/scheduleService";
 import PageHeader from "../components/layout/PageHeader";
 import StatusBadge from "../components/common/StatusBadge";

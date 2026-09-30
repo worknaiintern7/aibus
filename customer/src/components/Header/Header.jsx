@@ -46,7 +46,10 @@ function Header() {
         </Link>
 
         <nav className="header-nav">
-          <Link to="/my-bookings" className="my-bookings-link">
+          <Link to="/pnr-status" className="nav-link-item">
+            Track PNR
+          </Link>
+          <Link to="/my-bookings" className="nav-link-item">
             My Bookings
           </Link>
 

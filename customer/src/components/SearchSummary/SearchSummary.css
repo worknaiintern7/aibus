@@ -20,8 +20,9 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #ffebee;
-  color: #e53935;
+  background: var(--gold-50, #FFFDF5);
+  color: var(--gold-700, #9A7B1C);
+  border: 1px solid var(--gold-200, #FDE68A);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,8 +56,9 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #ffebee;
-  color: #e53935;
+  background: var(--gold-50, #FFFDF5);
+  color: var(--gold-700, #9A7B1C);
+  border: 1px solid var(--gold-200, #FDE68A);
   display: flex;
   align-items: center;
   justify-content: center;

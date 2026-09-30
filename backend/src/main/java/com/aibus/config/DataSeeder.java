@@ -61,6 +61,7 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         seedSchedulesAndScheduleSeats(routes, buses);
+        updateExistingSchedulesBoardingPointIfMissing();
     }
 
     private void seedAdminAccount() {
@@ -182,7 +183,7 @@ public class DataSeeder implements CommandLineRunner {
         schedule.setJourneyDate(date);
         schedule.setDepartureTime(LocalTime.of(8, 0));
         schedule.setArrivalTime(LocalTime.of(12, 0));
-        schedule.setBoardingPoint(route.getSource() + " Central Bus Station");
+        setBoardingPointInfo(schedule, route.getSource());
         schedule.setDroppingPoint(route.getDestination() + " Main Bus Stand");
         schedule.setBaseFare(bus.getBusType() == BusType.AC_SLEEPER ? new BigDecimal("850.00") : new BigDecimal("500.00"));
         schedule.setStatus(ScheduleStatus.SCHEDULED);
@@ -195,5 +196,65 @@ public class DataSeeder implements CommandLineRunner {
             scheduleSeats.add(new ScheduleSeat(savedSchedule, seat, SeatStatus.AVAILABLE));
         }
         scheduleSeatRepository.saveAll(scheduleSeats);
+    }
+
+    private void updateExistingSchedulesBoardingPointIfMissing() {
+        List<BusSchedule> allSchedules = busScheduleRepository.findAll();
+        for (BusSchedule schedule : allSchedules) {
+            if (schedule.getBoardingPointAddress() == null || schedule.getBoardingPointLatitude() == null) {
+                String source = schedule.getRoute() != null ? schedule.getRoute().getSource() : "Pune";
+                setBoardingPointInfo(schedule, source);
+                busScheduleRepository.save(schedule);
+            }
+        }
+    }
+
+    private void setBoardingPointInfo(BusSchedule schedule, String source) {
+        String city = source != null ? source.trim().toLowerCase() : "";
+        switch (city) {
+            case "pune":
+                schedule.setBoardingPoint("Shivajinagar Bus Stand");
+                schedule.setBoardingPointAddress("Shivajinagar, Pune, Maharashtra 411005");
+                schedule.setBoardingPointLandmark("Near Main Bus Stand Gate, Opp Metro Station");
+                schedule.setBoardingPointLatitude(18.5308);
+                schedule.setBoardingPointLongitude(73.8475);
+                break;
+            case "mumbai":
+                schedule.setBoardingPoint("Dadar TT Circle Bus Stop");
+                schedule.setBoardingPointAddress("Dadar East, Mumbai, Maharashtra 400014");
+                schedule.setBoardingPointLandmark("Near Swaminarayan Temple, Flyover Pillar 24");
+                schedule.setBoardingPointLatitude(19.0178);
+                schedule.setBoardingPointLongitude(72.8478);
+                break;
+            case "nashik":
+                schedule.setBoardingPoint("CBS Bus Stand (Thakkar Bazaar)");
+                schedule.setBoardingPointAddress("Thakkar Bazaar, Nashik, Maharashtra 422002");
+                schedule.setBoardingPointLandmark("Near Main Entrance, Counter No. 3");
+                schedule.setBoardingPointLatitude(19.9975);
+                schedule.setBoardingPointLongitude(73.7898);
+                break;
+            case "goa":
+                schedule.setBoardingPoint("Panjim Kadamba Bus Terminal");
+                schedule.setBoardingPointAddress("Patto Plaza, Panaji, Goa 403001");
+                schedule.setBoardingPointLandmark("Near KTC Central Office Gate");
+                schedule.setBoardingPointLatitude(15.4989);
+                schedule.setBoardingPointLongitude(73.8370);
+                break;
+            case "bengaluru":
+            case "bangalore":
+                schedule.setBoardingPoint("Majestic Kempegowda Bus Station");
+                schedule.setBoardingPointAddress("Gubbi Thotadappa Rd, Majestic, Bengaluru, Karnataka 560009");
+                schedule.setBoardingPointLandmark("Opposite Sangam Theatre, Platform 3");
+                schedule.setBoardingPointLatitude(12.9778);
+                schedule.setBoardingPointLongitude(77.5713);
+                break;
+            default:
+                schedule.setBoardingPoint(source + " Central Bus Station");
+                schedule.setBoardingPointAddress(source + " Central Bus Terminal, Station Road");
+                schedule.setBoardingPointLandmark("Near Main Ticket Counter");
+                schedule.setBoardingPointLatitude(18.5204);
+                schedule.setBoardingPointLongitude(73.8567);
+                break;
+        }
     }
 }

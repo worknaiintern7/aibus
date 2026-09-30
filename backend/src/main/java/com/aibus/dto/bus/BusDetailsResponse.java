@@ -18,7 +18,8 @@ public class BusDetailsResponse {
     private LocalDate journeyDate;
     private LocalTime departureTime;
     private LocalTime arrivalTime;
-    private String boardingPoint;
+    private BoardingPointResponse boardingPoint;
+    private List<BoardingPointResponse> boardingPoints;
     private String droppingPoint;
     private BigDecimal fare;
     private int totalSeats;
@@ -108,12 +109,24 @@ public class BusDetailsResponse {
         this.arrivalTime = arrivalTime;
     }
 
-    public String getBoardingPoint() {
+    public BoardingPointResponse getBoardingPoint() {
         return boardingPoint;
     }
 
-    public void setBoardingPoint(String boardingPoint) {
+    public void setBoardingPoint(BoardingPointResponse boardingPoint) {
         this.boardingPoint = boardingPoint;
+    }
+
+    public String getBoardingPointName() {
+        return boardingPoint != null ? boardingPoint.getName() : null;
+    }
+
+    public List<BoardingPointResponse> getBoardingPoints() {
+        return boardingPoints;
+    }
+
+    public void setBoardingPoints(List<BoardingPointResponse> boardingPoints) {
+        this.boardingPoints = boardingPoints;
     }
 
     public String getDroppingPoint() {

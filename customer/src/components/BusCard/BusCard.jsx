@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import BoardingPointModal from "../BoardingPointModal/BoardingPointModal";
 import "./BusCard.css";
 
 function AmenityIcon({ name }) {
@@ -88,6 +90,7 @@ function AmenityIcon({ name }) {
 
 function BusCard({ bus, searchFrom, searchTo, searchDate }) {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSelectSeats = () => {
     const params = new URLSearchParams({
@@ -103,6 +106,10 @@ function BusCard({ bus, searchFrom, searchTo, searchDate }) {
   const amenities = rawAmenities.filter(
     (item) => !["ac", "non ac", "sleeper", "seater"].includes(item.toLowerCase())
   );
+
+  const boardingPoints = bus.boardingPoints || [];
+  const [selectedPoint, setSelectedPoint] = useState(null);
+  const cityName = bus.from || searchFrom || "Pune";
 
   return (
     <article className="bus-card">
@@ -121,7 +128,7 @@ function BusCard({ bus, searchFrom, searchTo, searchDate }) {
           )}
         </div>
 
-        {/* Middle Section: Timings & Amenities */}
+        {/* Middle Section: Timings, Boarding Point & Amenities */}
         <div className="bus-middle-section">
           {/* Timing & Duration Graphic */}
           <div className="bus-timing-row">
@@ -143,6 +150,31 @@ function BusCard({ bus, searchFrom, searchTo, searchDate }) {
               <strong className="time-val">{bus.arrivalTime}</strong>
               <span className="city-name">{bus.to}</span>
             </div>
+          </div>
+
+          {/* Clean Boarding Points Selector */}
+          <div className="bus-boarding-compact-row">
+            <div className="boarding-compact-info">
+              <span className="compact-pin">📍</span>
+              <span className="compact-label">
+                {selectedPoint ? (
+                  <>
+                    Boarding at <strong className="selected-point-name">{selectedPoint.name}</strong> ({selectedPoint.time || bus.departureTime})
+                  </>
+                ) : (
+                  <>
+                    <strong className="points-count">{boardingPoints.length || 4} Boarding Points</strong> in {cityName}
+                  </>
+                )}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="compact-select-point-btn"
+              onClick={() => setIsModalOpen(true)}
+            >
+              {selectedPoint ? "Change Location" : "Select Nearest Point"}
+            </button>
           </div>
 
           {/* Amenities Row */}
@@ -176,6 +208,16 @@ function BusCard({ bus, searchFrom, searchTo, searchDate }) {
           </button>
         </div>
       </div>
+
+      {/* Smart Boarding Point Visual Modal with Multi-location Selection */}
+      <BoardingPointModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        cityName={cityName}
+        boardingPoints={boardingPoints}
+        selectedPoint={selectedPoint}
+        onSelectPoint={(point) => setSelectedPoint(point)}
+      />
     </article>
   );
 }

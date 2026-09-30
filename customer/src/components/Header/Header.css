@@ -138,35 +138,44 @@
   color: #ffffff;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 680px) {
   .header {
     height: 60px;
   }
 
   .header-container {
-    width: calc(100% - 24px);
+    width: calc(100% - 20px);
   }
 
   .logo {
-    font-size: 22px;
+    font-size: 20px;
+    gap: 8px;
   }
 
   .logo-bus-icon {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
 
   .header-nav {
-    gap: 12px;
+    gap: 10px;
   }
 
   .my-bookings-link {
-    font-size: 13px;
+    font-size: 12.5px;
+  }
+
+  .user-logged-nav {
+    gap: 8px;
+  }
+
+  .logged-in-mobile {
+    display: none;
   }
 
   .login-button,
   .logout-button {
     padding: 6px 14px;
-    font-size: 13px;
+    font-size: 12.5px;
   }
 }

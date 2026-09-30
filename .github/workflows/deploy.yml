@@ -1,0 +1,48 @@
+name: Continuous Deployment (CD) - VPS
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to VPS Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy application via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
+          script: |
+            echo "🚀 Starting Deployment on VPS..."
+            
+            # Directory where project is cloned on VPS
+            APP_DIR="${{ secrets.VPS_APP_DIR || '/var/www/aibus' }}"
+            
+            if [ ! -d "$APP_DIR" ]; then
+              echo "Creating project directory at $APP_DIR..."
+              sudo mkdir -p "$APP_DIR"
+              sudo chown -R $USER:$USER "$APP_DIR"
+              git clone https://github.com/worknaiintern7/aibus.git "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
+            
+            echo "📥 Pulling latest changes from main branch..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "🐳 Building and starting Docker containers..."
+            docker compose down --remove-orphans || true
+            docker compose up -d --build
+
+            echo "🧹 Cleaning up dangling Docker images..."
+            docker image prune -f
+
+            echo "✅ Deployment completed successfully!"
+            docker compose ps

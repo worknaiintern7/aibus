@@ -73,6 +73,7 @@ function SearchResults() {
     return filterBuses(busesForRoute, filters, sortBy);
   }, [busesForRoute, filters, sortBy]);
 
+  const [showModifySearch, setShowModifySearch] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const activeFilterCount =
@@ -82,11 +83,98 @@ function SearchResults() {
     (filters.seaterOnly ? 1 : 0) +
     (filters.depTime && filters.depTime.length ? filters.depTime.length : 0);
 
+  const toggleChipFilter = (key) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const getSortLabel = (val) => {
+    switch (val) {
+      case "price_asc":
+        return "Price: Low to High";
+      case "price_desc":
+        return "Price: High to Low";
+      case "duration_asc":
+        return "Fastest";
+      case "rating_desc":
+        return "Top Rated";
+      case "departure_asc":
+      default:
+        return "Earliest";
+    }
+  };
+
+  const cycleSort = () => {
+    const options = ["departure_asc", "price_asc", "rating_desc", "duration_asc"];
+    const currIdx = options.indexOf(sortBy);
+    const nextIdx = (currIdx + 1) % options.length;
+    setSortBy(options[nextIdx]);
+  };
+
   return (
     <main className="search-results-page">
       <div className="search-results-container">
-        {/* Top Header Title */}
-        <div className="results-header-bar">
+        {/* ========================================================
+            MOBILE STICKY ROUTE SUMMARY BAR (< 860px)
+           ======================================================== */}
+        <div className="mobile-route-summary-bar">
+          <button
+            type="button"
+            className="mobile-back-btn"
+            onClick={() => navigate("/")}
+            aria-label="Back to home"
+          >
+            ←
+          </button>
+
+          <div
+            className="mobile-route-info"
+            onClick={() => setShowModifySearch((prev) => !prev)}
+            role="button"
+            tabIndex={0}
+          >
+            <div className="mobile-cities">
+              <strong>{from}</strong>
+              <span className="route-arrow">➔</span>
+              <strong>{to}</strong>
+            </div>
+            <div className="mobile-date-count">
+              <span>{date}</span>
+              <span className="dot-sep">•</span>
+              <span>{loading ? "Searching..." : `${filteredBuses.length} buses`}</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className={`mobile-modify-toggle-btn ${showModifySearch ? "open" : ""}`}
+            onClick={() => setShowModifySearch((prev) => !prev)}
+          >
+            {showModifySearch ? "✕ Close" : "✏️ Modify"}
+          </button>
+        </div>
+
+        {/* Collapsible Search Box on Mobile */}
+        {showModifySearch && (
+          <div className="mobile-search-dropdown-wrapper">
+            <SearchBox
+              initialFrom={from}
+              initialTo={to}
+              initialDate={date}
+              onSearch={(params) => {
+                handleInPageSearch(params);
+                setShowModifySearch(false);
+              }}
+            />
+          </div>
+        )}
+
+        {/* ========================================================
+            DESKTOP HEADER & HORIZONTAL SEARCH BAR (>= 860px)
+           ======================================================== */}
+        <div className="desktop-results-header-bar">
           <div className="header-text-block">
             <h1 className="page-title">Available Buses</h1>
             <p className="results-count-text">
@@ -99,14 +187,67 @@ function SearchResults() {
           </div>
         </div>
 
-        {/* Embedded Top Horizontal Search Bar */}
-        <div className="search-results-search-bar-wrapper">
+        <div className="desktop-search-bar-wrapper">
           <SearchBox
             initialFrom={from}
             initialTo={to}
             initialDate={date}
             onSearch={handleInPageSearch}
           />
+        </div>
+
+        {/* ========================================================
+            MOBILE QUICK FILTER & SORT CHIPS ROW
+           ======================================================== */}
+        <div className="mobile-quick-chips-bar">
+          <button
+            type="button"
+            className={`quick-chip filter-main-chip ${activeFilterCount > 0 ? "active" : ""}`}
+            onClick={() => setShowMobileFilters(true)}
+          >
+            <span>⚡ Filters {activeFilterCount > 0 ? `(${activeFilterCount})` : ""}</span>
+          </button>
+
+          <button
+            type="button"
+            className="quick-chip sort-chip"
+            onClick={cycleSort}
+            title="Click to cycle sorting"
+          >
+            <span>⇅ {getSortLabel(sortBy)}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`quick-chip toggle-chip ${filters.acOnly ? "active" : ""}`}
+            onClick={() => toggleChipFilter("acOnly")}
+          >
+            AC
+          </button>
+
+          <button
+            type="button"
+            className={`quick-chip toggle-chip ${filters.sleeperOnly ? "active" : ""}`}
+            onClick={() => toggleChipFilter("sleeperOnly")}
+          >
+            Sleeper
+          </button>
+
+          <button
+            type="button"
+            className={`quick-chip toggle-chip ${filters.seaterOnly ? "active" : ""}`}
+            onClick={() => toggleChipFilter("seaterOnly")}
+          >
+            Seater
+          </button>
+
+          <button
+            type="button"
+            className={`quick-chip toggle-chip ${filters.nonAcOnly ? "active" : ""}`}
+            onClick={() => toggleChipFilter("nonAcOnly")}
+          >
+            Non-AC
+          </button>
         </div>
 
         {/* Loading Indicator */}
@@ -125,21 +266,8 @@ function SearchResults() {
         ) : (
           /* Main 2-Column Layout */
           <div className="search-results-layout">
-            {/* Mobile Filter Toggle Button */}
-            <div className="mobile-filter-toggle-row">
-              <button
-                type="button"
-                className={`mobile-filter-toggle-btn ${showMobileFilters ? "open" : ""}`}
-                onClick={() => setShowMobileFilters((prev) => !prev)}
-                aria-expanded={showMobileFilters}
-              >
-                <span>🔍 Filter Buses {activeFilterCount > 0 ? `(${activeFilterCount} active)` : ""}</span>
-                <span className="toggle-arrow">{showMobileFilters ? "▲ Close" : "▼ Filters & Price"}</span>
-              </button>
-            </div>
-
-            {/* Left Column: Filter Sidebar */}
-            <div className={`filter-panel-wrapper ${showMobileFilters ? "mobile-visible" : ""}`}>
+            {/* Desktop Left Column: Filter Sidebar */}
+            <div className="desktop-filter-sidebar">
               <FilterPanel
                 buses={busesForRoute}
                 filters={filters}
@@ -147,9 +275,50 @@ function SearchResults() {
               />
             </div>
 
+            {/* Mobile Filter Bottom Sheet Drawer */}
+            {showMobileFilters && (
+              <>
+                <div
+                  className="filter-mobile-backdrop"
+                  onClick={() => setShowMobileFilters(false)}
+                />
+                <div className="filter-mobile-drawer">
+                  <div className="drawer-grab-bar" />
+                  <div className="drawer-header">
+                    <h3>Filter Buses</h3>
+                    <button
+                      type="button"
+                      className="drawer-close-btn"
+                      onClick={() => setShowMobileFilters(false)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="drawer-body">
+                    <FilterPanel
+                      buses={busesForRoute}
+                      filters={filters}
+                      onFilterChange={setFilters}
+                    />
+                  </div>
+                  <div className="drawer-footer">
+                    <button
+                      type="button"
+                      className="drawer-apply-btn"
+                      onClick={() => setShowMobileFilters(false)}
+                    >
+                      Apply Filters ({filteredBuses.length} Buses)
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
             {/* Right Column: Sort & Bus List */}
             <div className="results-content-area">
-              <SortControl value={sortBy} onChange={setSortBy} />
+              <div className="desktop-sort-wrapper">
+                <SortControl value={sortBy} onChange={setSortBy} />
+              </div>
 
               {filteredBuses.length > 0 ? (
                 <BusList

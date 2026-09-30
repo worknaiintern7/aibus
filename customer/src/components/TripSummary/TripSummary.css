@@ -5,37 +5,17 @@
   background: #ffffff;
   border: 1px solid #eaedf0;
   border-radius: 16px;
-  padding: 16px 28px;
+  padding: 16px 24px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  margin-bottom: 24px;
-  gap: 24px;
+  margin-bottom: 20px;
+  gap: 20px;
 }
 
 .trip-bus-identity {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-width: 220px;
-}
-
-.bus-thumb-wrapper {
-  width: 80px;
-  height: 50px;
-  border-radius: 8px;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: #ffffff;
-  border: 1px solid #eaedf0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px;
-}
-
-.bus-thumb-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  gap: 14px;
+  min-width: 200px;
 }
 
 .bus-name-block {
@@ -45,15 +25,15 @@
 
 .trip-operator-name {
   margin: 0;
-  font-size: 18px;
+  font-size: 17.5px;
   font-weight: 800;
-  color: #111827;
+  color: #0f172a;
   line-height: 1.2;
 }
 
 .trip-bus-type {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 12.5px;
+  color: #64748b;
   font-weight: 500;
   margin-top: 2px;
 }
@@ -62,7 +42,7 @@
 .trip-route-timeline {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   flex: 1;
   max-width: 360px;
   justify-content: center;
@@ -73,17 +53,23 @@
   flex-direction: column;
 }
 
+.trip-time-block.arrival {
+  align-items: flex-end;
+}
+
 .time-text {
   font-size: 18px;
   font-weight: 800;
-  color: #111827;
-  line-height: 1.2;
+  color: #0f172a;
+  line-height: 1.1;
+  font-feature-settings: "tnum";
 }
 
 .city-text {
-  font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
 }
 
 .trip-duration-line {
@@ -92,12 +78,13 @@
   align-items: center;
   gap: 4px;
   flex: 1;
+  max-width: 120px;
 }
 
 .duration-text {
-  font-size: 12px;
-  color: #9ca3af;
-  font-weight: 500;
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-weight: 600;
 }
 
 .timeline-bar {
@@ -110,7 +97,7 @@
 .timeline-fill {
   flex: 1;
   height: 2px;
-  background: #d1d5db;
+  background: #cbd5e1;
 }
 
 .timeline-dot {
@@ -121,12 +108,13 @@
 }
 
 .trip-date-block {
-  padding: 0 20px;
+  padding: 0 16px;
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  color: #374151;
+  color: #334155;
+  white-space: nowrap;
 }
 
 .trip-price-block {
@@ -136,15 +124,15 @@
 }
 
 .seat-price-val {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 900;
-  color: #111827;
+  color: #e53935;
   line-height: 1;
 }
 
 .per-seat-lbl {
-  font-size: 12px;
-  color: #9ca3af;
+  font-size: 11.5px;
+  color: #94a3b8;
   font-weight: 500;
   margin-top: 2px;
 }
@@ -152,11 +140,48 @@
 @media (max-width: 900px) {
   .trip-summary-card {
     flex-wrap: wrap;
-    padding: 16px 20px;
+    padding: 14px 18px;
+    gap: 14px;
   }
 
   .trip-date-block {
     border: none;
     padding: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .trip-summary-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .trip-bus-identity {
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .trip-route-timeline {
+    max-width: 100%;
+    justify-content: space-between;
+  }
+
+  .trip-date-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 8px;
+  }
+
+  .trip-price-block {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 8px;
   }
 }

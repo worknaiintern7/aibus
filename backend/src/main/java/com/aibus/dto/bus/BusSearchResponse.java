@@ -5,6 +5,7 @@ import com.aibus.entity.BusType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class BusSearchResponse {
     private Long scheduleId;
@@ -17,7 +18,8 @@ public class BusSearchResponse {
     private LocalDate journeyDate;
     private LocalTime departureTime;
     private LocalTime arrivalTime;
-    private String boardingPoint;
+    private BoardingPointResponse boardingPoint;
+    private List<BoardingPointResponse> boardingPoints;
     private String droppingPoint;
     private BigDecimal fare;
     private long availableSeats;
@@ -105,12 +107,24 @@ public class BusSearchResponse {
         this.arrivalTime = arrivalTime;
     }
 
-    public String getBoardingPoint() {
+    public BoardingPointResponse getBoardingPoint() {
         return boardingPoint;
     }
 
-    public void setBoardingPoint(String boardingPoint) {
+    public void setBoardingPoint(BoardingPointResponse boardingPoint) {
         this.boardingPoint = boardingPoint;
+    }
+
+    public String getBoardingPointName() {
+        return boardingPoint != null ? boardingPoint.getName() : null;
+    }
+
+    public List<BoardingPointResponse> getBoardingPoints() {
+        return boardingPoints;
+    }
+
+    public void setBoardingPoints(List<BoardingPointResponse> boardingPoints) {
+        this.boardingPoints = boardingPoints;
     }
 
     public String getDroppingPoint() {

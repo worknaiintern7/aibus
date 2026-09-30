@@ -60,67 +60,78 @@ function SearchBox({ initialFrom = "", initialTo = "", initialDate = "", onSearc
 
   return (
     <div className="search-box">
-      <div className="search-box-inputs">
-        <LocationInput
-          label="FROM"
-          placeholder="Departure city"
-          value={from}
-          onChange={(val) => {
-            setFrom(val);
-            if (error) setError("");
-          }}
-          disabledCity={to}
-        />
+      <div className="search-box-main">
+        {/* Route Group: FROM, SWAP, TO */}
+        <div className="search-route-group">
+          <LocationInput
+            label="FROM"
+            placeholder="Departure city"
+            value={from}
+            onChange={(val) => {
+              setFrom(val);
+              if (error) setError("");
+            }}
+            disabledCity={to}
+          />
 
-        <button
-          type="button"
-          className="swap-button"
-          aria-label="Swap departure and arrival cities"
-          onClick={handleSwap}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
+          <div className="swap-button-wrapper">
+            <button
+              type="button"
+              className="swap-button"
+              aria-label="Swap departure and arrival cities"
+              onClick={handleSwap}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <polyline points="17 1 21 5 17 9" />
+                <line x1="3" y1="5" x2="21" y2="5" />
+                <polyline points="7 23 3 19 7 15" />
+                <line x1="21" y1="19" x2="3" y2="19" />
+              </svg>
+            </button>
+          </div>
+
+          <LocationInput
+            label="TO"
+            placeholder="Arrival city"
+            value={to}
+            onChange={(val) => {
+              setTo(val);
+              if (error) setError("");
+            }}
+            disabledCity={from}
+          />
+        </div>
+
+        {/* Date Group */}
+        <div className="search-date-group">
+          <DateInput value={date} onChange={setDate} />
+        </div>
+
+        {/* Search CTA Group */}
+        <div className="search-action-group">
+          <button
+            type="button"
+            className="search-button"
+            onClick={handleSearch}
           >
-            <polyline points="17 1 21 5 17 9" />
-            <line x1="3" y1="5" x2="21" y2="5" />
-            <polyline points="7 23 3 19 7 15" />
-            <line x1="21" y1="19" x2="3" y2="19" />
-          </svg>
-        </button>
-
-        <LocationInput
-          label="TO"
-          placeholder="Arrival city"
-          value={to}
-          onChange={(val) => {
-            setTo(val);
-            if (error) setError("");
-          }}
-          disabledCity={from}
-        />
-
-        <DateInput value={date} onChange={setDate} />
-
-        <button
-          type="button"
-          className="search-button"
-          onClick={handleSearch}
-        >
-          <svg
-            className="search-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          Search Buses
-        </button>
+            <svg
+              className="search-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <span>Search Buses</span>
+          </button>
+        </div>
       </div>
 
       {error && <p className="search-error">{error}</p>}

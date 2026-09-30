@@ -2,16 +2,17 @@
   background: #ffffff;
   border: 1px solid #eaedf0;
   border-radius: 16px;
-  padding: 22px 26px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  margin-bottom: 16px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   position: relative;
 }
 
 .bus-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
 }
 
 .bus-card-content {
@@ -22,7 +23,9 @@
   position: relative;
 }
 
-/* Left Section: Operator & Rating */
+/* ----------------------------------------------------
+   Left Section: Operator & Rating
+   ---------------------------------------------------- */
 .bus-operator-section {
   display: flex;
   flex-direction: column;
@@ -33,52 +36,62 @@
 
 .operator-name {
   margin: 0;
-  font-size: 18px;
+  font-size: 17.5px;
   font-weight: 800;
-  color: #111827;
+  color: #0f172a;
+  line-height: 1.25;
 }
 
 .bus-type-text {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: 12.5px;
+  color: #64748b;
   font-weight: 500;
 }
 
 .rating-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: 8px;
-  font-size: 13px;
+  margin-top: 6px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  padding: 2px 8px;
+  border-radius: 6px;
+  width: fit-content;
 }
 
 .star-icon {
-  color: #f59e0b;
-  font-size: 14px;
+  color: #d97706;
+  font-size: 12px;
 }
 
 .rating-score {
   font-weight: 700;
-  color: #111827;
+  color: #92400e;
+  font-size: 12.5px;
 }
 
 .reviews-count {
-  color: #6b7280;
-  font-size: 12px;
+  color: #b45309;
+  font-size: 11px;
 }
 
-/* Middle Section: Timings & Amenities */
+/* ----------------------------------------------------
+   Middle Section: Timings & Amenities
+   ---------------------------------------------------- */
 .bus-middle-section {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .bus-timing-row {
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .time-block {
@@ -86,17 +99,23 @@
   flex-direction: column;
 }
 
+.time-block.arrival {
+  align-items: flex-end;
+}
+
 .time-val {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
-  color: #111827;
-  line-height: 1.2;
+  color: #0f172a;
+  line-height: 1.1;
+  font-feature-settings: "tnum";
 }
 
 .city-name {
   font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
 }
 
 .duration-line-container {
@@ -105,13 +124,14 @@
   align-items: center;
   gap: 4px;
   flex: 1;
-  max-width: 160px;
+  max-width: 140px;
 }
 
 .duration-label {
-  font-size: 12px;
-  color: #9ca3af;
-  font-weight: 500;
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
 .line-with-dots {
@@ -124,40 +144,118 @@
 .line-with-dots .line {
   flex: 1;
   height: 2px;
-  background: #e5e7eb;
+  background: #cbd5e1;
 }
 
 .line-with-dots .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #d1d5db;
+  background: #94a3b8;
+}
+
+/* Boarding Point Clean Compact Row */
+.bus-boarding-compact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+  transition: all 0.15s ease;
+}
+
+.bus-boarding-compact-row:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.boarding-compact-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.compact-pin {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.compact-label {
+  font-size: 12px;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.points-count {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.selected-point-name {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.compact-select-point-btn {
+  background: #ffffff;
+  color: #e53935;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(229, 57, 53, 0.08);
+}
+
+.compact-select-point-btn:hover {
+  background: #e53935;
+  color: #ffffff;
+  border-color: #e53935;
+  box-shadow: 0 2px 6px rgba(229, 57, 53, 0.25);
+  transform: translateY(-1px);
 }
 
 /* Amenities Row */
 .amenities-row {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .amenity-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #4b5563;
+  gap: 4px;
+  font-size: 11.5px;
+  color: #475569;
   font-weight: 500;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 3px 8px;
+  border-radius: 6px;
 }
 
 .amenity-svg {
-  width: 15px;
-  height: 15px;
-  color: #6b7280;
+  width: 13px;
+  height: 13px;
+  color: #64748b;
 }
 
-/* Right Section: Price & Action Button */
+/* ----------------------------------------------------
+   Right Section: Price & Action Button
+   ---------------------------------------------------- */
 .bus-price-section {
   display: flex;
   flex-direction: column;
@@ -174,7 +272,7 @@
 }
 
 .price-label {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   color: #64748b;
   letter-spacing: 0.2px;
@@ -185,21 +283,19 @@
   align-items: baseline;
   line-height: 1;
   font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
 }
 
 .price-currency {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  color: #0f172a;
+  color: #e53935;
   margin-right: 2px;
-  letter-spacing: -0.5px;
 }
 
 .price-val {
   font-size: 24px;
-  font-weight: 800;
-  color: #0f172a;
+  font-weight: 900;
+  color: #e53935;
   letter-spacing: -0.4px;
 }
 
@@ -208,40 +304,46 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #e53935;
+  background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
   color: #ffffff;
   border: none;
-  border-radius: 8px;
+  border-radius: 9px;
   padding: 10px 18px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  width: 150px;
-  transition: all 0.15s ease;
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
-  margin-top: 4px;
+  width: 145px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 10px rgba(229, 57, 53, 0.28);
 }
 
 .compact-select-seats-btn:hover {
-  background: #d9322f;
+  background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(229, 57, 53, 0.35);
+  box-shadow: 0 5px 14px rgba(229, 57, 53, 0.38);
 }
 
 .compact-select-seats-btn .arrow-icon {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1;
+  transition: transform 0.15s ease;
 }
 
-/* Responsive Styles */
-@media (max-width: 1024px) {
+.compact-select-seats-btn:hover .arrow-icon {
+  transform: translateX(3px);
+}
+
+/* ========================================================
+   RESPONSIVE DESIGN (TABLET & RESIZED DESKTOP)
+   ======================================================== */
+@media (max-width: 960px) {
   .bus-card-content {
     flex-wrap: wrap;
+    gap: 14px;
   }
 
   .bus-operator-section {
     width: 100%;
-
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -253,11 +355,89 @@
 
   .bus-price-section {
     width: 100%;
-
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding-top: 12px;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid #f1f5f9;
+  }
+}
+
+/* ========================================================
+   RESPONSIVE DESIGN (MOBILE < 640px)
+   ======================================================== */
+@media (max-width: 640px) {
+  .bus-card {
+    padding: 14px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+  }
+
+  .bus-card-content {
+    gap: 10px;
+  }
+
+  .bus-operator-section .operator-name {
+    font-size: 15.5px;
+  }
+
+  .bus-operator-section .bus-type-text {
+    font-size: 11.5px;
+  }
+
+  .rating-badge {
+    margin-top: 0;
+    padding: 2px 6px;
+  }
+
+  .time-val {
+    font-size: 17px;
+  }
+
+  .city-name {
+    font-size: 12px;
+  }
+
+  .duration-line-container {
+    max-width: 100px;
+  }
+
+  .duration-label {
+    font-size: 10.5px;
+  }
+
+  .amenities-row {
+    gap: 6px;
+  }
+
+  .amenity-item {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  .price-val {
+    font-size: 21px;
+  }
+
+  .compact-select-seats-btn {
+    width: 125px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .bus-boarding-compact-row {
+    padding: 5px 8px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .compact-label {
+    font-size: 11px;
+  }
+
+  .compact-select-point-btn {
+    padding: 3px 8px;
+    font-size: 10.5px;
   }
 }

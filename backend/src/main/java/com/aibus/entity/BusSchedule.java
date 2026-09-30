@@ -33,6 +33,18 @@ public class BusSchedule {
     @Column(name = "boarding_point", nullable = false)
     private String boardingPoint;
 
+    @Column(name = "boarding_point_address")
+    private String boardingPointAddress;
+
+    @Column(name = "boarding_point_landmark")
+    private String boardingPointLandmark;
+
+    @Column(name = "boarding_point_latitude")
+    private Double boardingPointLatitude;
+
+    @Column(name = "boarding_point_longitude")
+    private Double boardingPointLongitude;
+
     @Column(name = "dropping_point", nullable = false)
     private String droppingPoint;
 
@@ -96,6 +108,46 @@ public class BusSchedule {
 
     public void setBoardingPoint(String boardingPoint) {
         this.boardingPoint = boardingPoint;
+    }
+
+    public String getBoardingPointName() {
+        return boardingPoint;
+    }
+
+    public void setBoardingPointName(String boardingPointName) {
+        this.boardingPoint = boardingPointName;
+    }
+
+    public String getBoardingPointAddress() {
+        return boardingPointAddress;
+    }
+
+    public void setBoardingPointAddress(String boardingPointAddress) {
+        this.boardingPointAddress = boardingPointAddress;
+    }
+
+    public String getBoardingPointLandmark() {
+        return boardingPointLandmark;
+    }
+
+    public void setBoardingPointLandmark(String boardingPointLandmark) {
+        this.boardingPointLandmark = boardingPointLandmark;
+    }
+
+    public Double getBoardingPointLatitude() {
+        return boardingPointLatitude;
+    }
+
+    public void setBoardingPointLatitude(Double boardingPointLatitude) {
+        this.boardingPointLatitude = boardingPointLatitude;
+    }
+
+    public Double getBoardingPointLongitude() {
+        return boardingPointLongitude;
+    }
+
+    public void setBoardingPointLongitude(Double boardingPointLongitude) {
+        this.boardingPointLongitude = boardingPointLongitude;
     }
 
     public String getDroppingPoint() {

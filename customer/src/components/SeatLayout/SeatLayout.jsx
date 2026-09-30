@@ -245,6 +245,7 @@ function SingleBusFrame({ deckTitle, gridData, selectedSeats, onSeatClick, seats
 
 function SeatLayout({ bus, selectedSeats = [], onSeatClick }) {
   const [genderNotice, setGenderNotice] = useState("");
+  const [activeMobileDeck, setActiveMobileDeck] = useState("LOWER");
 
   const layoutType = bus?.layoutType || "SLEEPER_2_1";
   const basePrice = bus?.price || 580;
@@ -300,9 +301,29 @@ function SeatLayout({ bus, selectedSeats = [], onSeatClick }) {
         <span className="driver-lbl">Front (Driver)</span>
       </div>
 
-      {/* Both Decks Side-by-Side */}
+      {/* Mobile Deck Switcher Tab (Only on mobile for multi-deck buses) */}
+      {hasMultipleDecks && (
+        <div className="mobile-deck-switcher-tabs">
+          <button
+            type="button"
+            className={`deck-tab-btn ${activeMobileDeck === "LOWER" ? "active" : ""}`}
+            onClick={() => setActiveMobileDeck("LOWER")}
+          >
+            Lower Deck
+          </button>
+          <button
+            type="button"
+            className={`deck-tab-btn ${activeMobileDeck === "UPPER" ? "active" : ""}`}
+            onClick={() => setActiveMobileDeck("UPPER")}
+          >
+            Upper Deck
+          </button>
+        </div>
+      )}
+
+      {/* Both Decks Side-by-Side (Desktop) / Tabbed (Mobile) */}
       {hasMultipleDecks ? (
-        <div className="decks-side-by-side-row">
+        <div className={`decks-side-by-side-row show-${activeMobileDeck.toLowerCase()}-on-mobile`}>
           <SingleBusFrame
             deckTitle="Lower Deck"
             gridData={lowerGrid}

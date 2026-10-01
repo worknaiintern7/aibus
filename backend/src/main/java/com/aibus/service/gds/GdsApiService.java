@@ -143,20 +143,81 @@ public class GdsApiService {
         return Optional.ofNullable(cityIdsByName.get(cityName.trim().toLowerCase()));
     }
 
+    private static final java.util.List<String> POPULAR_CITIES = java.util.List.of(
+            "Bangalore", "Mumbai", "Pune", "Delhi", "Hyderabad",
+            "Chennai", "Goa", "Jaipur", "Ahmedabad", "Kolkata",
+            "Surat", "Indore", "Bhopal", "Nagpur", "Nashik",
+            "Chandigarh", "Lucknow", "Agra", "Varanasi", "Coimbatore",
+            "Madurai", "Mysore", "Mangalore", "Vijayawada", "Visakhapatnam",
+            "Tirupati", "Kochi", "Trivandrum", "Dehradun", "Ranchi", "Bhubaneswar"
+    );
+
     public java.util.List<Map<String, Object>> searchCities(String query) {
         ensureCitiesLoaded();
         String q = query == null ? "" : query.trim().toLowerCase();
-        return allCitiesList.stream()
-                .filter(c -> q.isEmpty() || (c.getCity() != null && c.getCity().toLowerCase().contains(q)))
-                .limit(40)
-                .map(c -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("cityId", c.getCityId());
-                    map.put("city", c.getCity());
-                    map.put("state", c.getState() != null ? c.getState() : "");
-                    return map;
-                })
+
+        java.util.Set<String> seenCityNames = new java.util.LinkedHashSet<>();
+        java.util.List<Map<String, Object>> result = new java.util.ArrayList<>();
+
+        if (q.isEmpty()) {
+            // Default view: popular hubs first
+            for (String popName : POPULAR_CITIES) {
+                String popLower = popName.toLowerCase();
+                for (GdsCityListResponse.GdsCity c : allCitiesList) {
+                    if (c.getCity() != null && c.getCity().trim().equalsIgnoreCase(popLower)) {
+                        String name = c.getCity().trim();
+                        if (seenCityNames.add(name.toLowerCase())) {
+                            result.add(cityToMap(c));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Fill remaining slots up to 40
+            for (GdsCityListResponse.GdsCity c : allCitiesList) {
+                if (result.size() >= 40) break;
+                if (c.getCity() != null && seenCityNames.add(c.getCity().trim().toLowerCase())) {
+                    result.add(cityToMap(c));
+                }
+            }
+            return result;
+        }
+
+        // Filter and sort by relevance
+        java.util.List<GdsCityListResponse.GdsCity> matched = allCitiesList.stream()
+                .filter(c -> c.getCity() != null && c.getCity().toLowerCase().contains(q))
+                .sorted(java.util.Comparator.comparingInt((GdsCityListResponse.GdsCity c) -> cityRelevance(c.getCity(), q))
+                        .thenComparing(c -> c.getCity().length())
+                        .thenComparing(c -> c.getCity()))
                 .toList();
+
+        for (GdsCityListResponse.GdsCity c : matched) {
+            if (result.size() >= 40) break;
+            String name = c.getCity().trim();
+            if (seenCityNames.add(name.toLowerCase())) {
+                result.add(cityToMap(c));
+            }
+        }
+
+        return result;
+    }
+
+    private static int cityRelevance(String cityName, String q) {
+        String name = cityName.trim().toLowerCase();
+        if (name.equals(q)) return 1;
+        if (name.startsWith(q + " ") || name.startsWith(q + ",") || name.startsWith(q + "-")) return 2;
+        if (name.startsWith(q)) return 3;
+        if (name.contains(" " + q) || name.contains("(" + q)) return 4;
+        return 5;
+    }
+
+    private static Map<String, Object> cityToMap(GdsCityListResponse.GdsCity c) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("cityId", c.getCityId());
+        map.put("city", c.getCity().trim());
+        map.put("state", c.getState() != null ? c.getState().trim() : "");
+        return map;
     }
 
     private void ensureCitiesLoaded() {

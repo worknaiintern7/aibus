@@ -38,10 +38,6 @@ function Header() {
           <span className="logo-text">
             <span className="logo-text-gold">AI</span>
             <span className="logo-text-dark">BUS</span>
-            <span className="logo-ai-badge">
-              <Sparkles size={11} className="ai-sparkle" />
-              INTELLIGENT GDS
-            </span>
           </span>
         </Link>
 

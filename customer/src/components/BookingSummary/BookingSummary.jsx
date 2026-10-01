@@ -5,6 +5,7 @@ function BookingSummary({
   price = 580,
   isLive = false,
   canContinue,
+  buttonText,
   onClear,
   onContinue,
 }) {
@@ -76,18 +77,9 @@ function BookingSummary({
           className="proceed-btn"
           onClick={onContinue}
         >
-          <span>Proceed to Traveller Details</span>
+          <span>{buttonText || "Proceed to Traveller Details"}</span>
           <span className="arrow">→</span>
         </button>
-
-        <div className="selection-tip-box">
-          <span className="tip-icon">{isLive ? "ℹ️" : "💡"}</span>
-          <span className="tip-text">
-            {isLive
-              ? "Fares are set by the operator and include taxes."
-              : "Front rows (+₹100) & Rear rows (-₹60) have location-based pricing."}
-          </span>
-        </div>
       </div>
     </div>
   );

@@ -334,6 +334,166 @@ function normalizeBoardingPoints(points, source) {
   ];
 }
 
+function normalizeDroppingPoints(points, destination) {
+  if (Array.isArray(points) && points.length > 0) {
+    return points.map((p, idx) => ({
+      id: p.id || `dp-${idx}`,
+      name: p.name,
+      time: p.time || "06:00 AM",
+      area: p.area || destination || "Dropping Point",
+      address: p.address || `${p.name}, ${destination || "City Center"}`,
+      landmark: p.landmark || "Near Main Highway Exit",
+      latitude: p.latitude != null ? Number(p.latitude) : 12.9778,
+      longitude: p.longitude != null ? Number(p.longitude) : 77.5713,
+    }));
+  }
+
+  const d = (destination || "").trim().toLowerCase();
+  if (d.includes("bengaluru") || d.includes("bangalore")) {
+    return [
+      {
+        id: "blr-drop-1",
+        name: "Majestic Kempegowda Bus Station",
+        time: "06:30 AM",
+        area: "Central Bengaluru",
+        address: "Gubbi Thotadappa Rd, Majestic, Bengaluru 560009",
+        landmark: "Platform 3 Exit, Opp Sangam Theatre",
+      },
+      {
+        id: "blr-drop-2",
+        name: "Madiwala St. John's Junction",
+        time: "07:00 AM",
+        area: "Madiwala",
+        address: "Hosur Main Road, Madiwala, Bengaluru 560068",
+        landmark: "Near Total Mall / St. John's Hospital",
+      },
+      {
+        id: "blr-drop-3",
+        name: "Electronic City Toll Plaza",
+        time: "07:25 AM",
+        area: "Electronic City",
+        address: "Elevated Expressway Exit, Hosur Road, Bengaluru 560100",
+        landmark: "Toll Gate Pillar 105",
+      },
+      {
+        id: "blr-drop-4",
+        name: "Anand Rao Circle",
+        time: "06:15 AM",
+        area: "Gandhinagar / Majestic",
+        address: "Anand Rao Circle, Bengaluru 560009",
+        landmark: "Near Flyover Junction",
+      },
+    ];
+  }
+
+  if (d.includes("pune")) {
+    return [
+      {
+        id: "pune-drop-1",
+        name: "Swargate Bus Terminal",
+        time: "06:00 AM",
+        area: "South Pune",
+        address: "Jedhe Chowk, Swargate, Pune 411042",
+        landmark: "Platform 1 Gate",
+      },
+      {
+        id: "pune-drop-2",
+        name: "Shivajinagar Station Bay",
+        time: "06:25 AM",
+        area: "Central Pune",
+        address: "Shivajinagar, Pune 411005",
+        landmark: "Opposite Metro Station Gate 2",
+      },
+      {
+        id: "pune-drop-3",
+        name: "Wakad / Hinjawadi Bridge",
+        time: "05:30 AM",
+        area: "IT Corridor",
+        address: "Wakad Flyover, Mumbai-Pune Expressway, Pune 411057",
+        landmark: "Ginger Hotel Highway Stop",
+      },
+    ];
+  }
+
+  if (d.includes("mumbai")) {
+    return [
+      {
+        id: "mum-drop-1",
+        name: "Dadar TT Circle",
+        time: "06:30 AM",
+        area: "Central Mumbai",
+        address: "Dadar East, Mumbai 400014",
+        landmark: "Near Swaminarayan Temple",
+      },
+      {
+        id: "mum-drop-2",
+        name: "Sion Circle Flyover",
+        time: "06:45 AM",
+        area: "Sion East",
+        address: "Sion, Mumbai 400022",
+        landmark: "Under Sion Flyover",
+      },
+      {
+        id: "mum-drop-3",
+        name: "Vashi Toll Plaza",
+        time: "06:00 AM",
+        area: "Navi Mumbai",
+        address: "Vashi Bridge, Navi Mumbai 400703",
+        landmark: "Highway Bus Stop",
+      },
+    ];
+  }
+
+  if (d.includes("chennai") || d.includes("madras")) {
+    return [
+      {
+        id: "chn-drop-1",
+        name: "Koyambedu CMBT Bus Stand",
+        time: "06:00 AM",
+        area: "Central Chennai",
+        address: "CMBT Terminal, Koyambedu, Chennai 600107",
+        landmark: "Main Entrance Gate",
+      },
+      {
+        id: "chn-drop-2",
+        name: "Guindy Industrial Estate",
+        time: "06:30 AM",
+        area: "South Chennai",
+        address: "Guindy, Chennai 600032",
+        landmark: "Near Guindy Metro Station",
+      },
+      {
+        id: "chn-drop-3",
+        name: "Tambaram MEPZ Gate",
+        time: "07:00 AM",
+        area: "Tambaram",
+        address: "GST Road, Tambaram Sanatorium, Chennai 600045",
+        landmark: "Near MEPZ Main Gate",
+      },
+    ];
+  }
+
+  const city = destination || "Destination";
+  return [
+    {
+      id: "gen-drop-1",
+      name: `${city} Central Bus Terminal`,
+      time: "06:00 AM",
+      area: `${city} Center`,
+      address: `Station Road, ${city}`,
+      landmark: "Main Highway Arrival Bay",
+    },
+    {
+      id: "gen-drop-2",
+      name: `${city} Bypass Highway Stop`,
+      time: "05:30 AM",
+      area: "Highway Bypass",
+      address: `National Highway Toll Junction, ${city}`,
+      landmark: "Near Flyover Exit",
+    },
+  ];
+}
+
 function mapScheduleToBus(schedule) {
   const depTime = schedule.departureTime ? schedule.departureTime.slice(0, 5) : "08:00";
   const arrTime = schedule.arrivalTime ? schedule.arrivalTime.slice(0, 5) : "12:00";
@@ -346,6 +506,9 @@ function mapScheduleToBus(schedule) {
   const boardingPoints = isLive
     ? mapLivePoints(schedule.boardingPoints, schedule.source)
     : normalizeBoardingPoints(schedule.boardingPoints, schedule.source);
+  const droppingPoints = isLive
+    ? mapLivePoints(schedule.droppingPoints, schedule.destination)
+    : normalizeDroppingPoints(schedule.droppingPoints, schedule.destination);
   const defaultBp = isLive
     ? (boardingPoints[0] || null)
     : schedule.boardingPoint
@@ -378,13 +541,28 @@ function mapScheduleToBus(schedule) {
     amenities: isLive ? [] : ["WiFi", "Charging", "Blanket", "Water Bottle"],
     boardingPoint: defaultBp,
     boardingPoints,
+    droppingPoints,
   };
 }
 
 function mapLivePoints(points, city) {
-  return (points || []).map((p) => ({
-    id: p.id,
-    name: p.name,
+  if (!points || !points.length) {
+    const cityName = city || "City";
+    return [
+      {
+        id: `gen-${cityName.toLowerCase().replace(/[^a-z0-9]/g, "")}-1`,
+        name: `${cityName} Central Bus Stand`,
+        time: "",
+        area: cityName,
+        address: `${cityName} Central Bus Terminal`,
+        landmark: "Main Highway Bay",
+        mapQuery: `${cityName} Central Bus Stand`,
+      },
+    ];
+  }
+  return points.map((p, idx) => ({
+    id: p.id != null ? String(p.id) : `point-${idx}`,
+    name: p.name || `${city || "City"} Stop`,
     time: p.time || "",
     area: p.area || city || "",
     address: p.address || [p.name, city].filter(Boolean).join(", "),
@@ -556,6 +734,34 @@ export const busService = {
       console.warn("Failed to fetch seats from backend:", err.message);
       return [];
     }
+  },
+
+  // Get cities from integrated GDS API with client cache and fallback
+  getCities: async (query = "") => {
+    const trimmed = (query || "").trim();
+    try {
+      const response = await api.get("/api/gds/cities", {
+        params: { query: trimmed },
+        timeout: 10000,
+      });
+      const list = response.data?.data;
+      if (Array.isArray(list) && list.length > 0) {
+        return list;
+      }
+    } catch (err) {
+      console.warn("GDS city search API error, falling back to local list:", err.message);
+    }
+
+    // Fallback if backend or GDS API is unavailable
+    const qLower = trimmed.toLowerCase();
+    const fallback = (await import("../utils/cities")).default;
+    return fallback
+      .filter((name) => !qLower || name.toLowerCase().includes(qLower))
+      .map((name) => ({
+        city: name,
+        cityId: null,
+        state: "",
+      }));
   },
 };
 

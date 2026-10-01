@@ -201,8 +201,8 @@ function TravellerDetails() {
     if (reservedFor === "MALE") return "Male";
     return null;
   };
-  const boardingPoint = isLive ? selectedBus.boardingPoints?.find((p) => p.id === pickupId) : null;
-  const droppingPoint = isLive ? selectedBus.droppingPoints?.find((p) => p.id === dropoffId) : null;
+  const boardingPoint = selectedBus.boardingPoints?.find((p) => p.id === pickupId) || null;
+  const droppingPoint = selectedBus.droppingPoints?.find((p) => p.id === dropoffId) || null;
 
   const handleContinue = () => {
     // Validate each passenger
@@ -491,8 +491,8 @@ function TravellerDetails() {
                 </div>
               </div>
 
-              {/* Boarding & dropping point chosen for a live bus */}
-              {isLive && (boardingPoint || droppingPoint) && (
+              {/* Boarding & dropping point chosen */}
+              {(boardingPoint || droppingPoint) && (
                 <div className="summary-points-block">
                   {boardingPoint && (
                     <div className="summary-point-row">

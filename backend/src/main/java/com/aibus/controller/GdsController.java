@@ -78,8 +78,10 @@ public class GdsController {
 
     @GetMapping("/cities")
     public ResponseEntity<ApiResponse<java.util.List<java.util.Map<String, Object>>>> searchCities(
-            @RequestParam(required = false, defaultValue = "") String query) {
-        java.util.List<java.util.Map<String, Object>> response = gdsApiService.searchCities(query);
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String q) {
+        String searchTerm = (query != null && !query.isBlank()) ? query : (q != null ? q : "");
+        java.util.List<java.util.Map<String, Object>> response = gdsApiService.searchCities(searchTerm);
         return ResponseEntity.ok(ApiResponse.success("Cities retrieved successfully", response));
     }
 }

@@ -202,8 +202,8 @@ function BookingConfirmation() {
   const totalAmount = getSeatsTotal(selectedBus, selectedSeats);
 
   const isLive = Boolean(selectedBus.isLive);
-  const boardingPoint = isLive ? selectedBus.boardingPoints?.find((p) => p.id === pickupId) : null;
-  const droppingPoint = isLive ? selectedBus.droppingPoints?.find((p) => p.id === dropoffId) : null;
+  const boardingPoint = selectedBus.boardingPoints?.find((p) => p.id === pickupId) || null;
+  const droppingPoint = selectedBus.droppingPoints?.find((p) => p.id === dropoffId) || null;
   const cancellationPolicy = isLive ? selectedBus.cancellationPolicy || [] : [];
 
   // "12 hrs" / "30 mins" before departure

@@ -2,24 +2,26 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 import Home from "./pages/Home/Home";
 import SearchResults from "./pages/SearchResults/SearchResults";
 import SeatSelection from "./pages/SeatSelection/SeatSelection";
 import TravellerDetails from "./pages/TravellerDetails/TravellerDetails";
 import BookingConfirmation from "./pages/BookingConfirmation/BookingConfirmation";
+import Payment from "./pages/Payment/Payment";
 import BookingSuccess from "./pages/BookingSuccess/BookingSuccess";
 import MyBookings from "./pages/MyBookings/MyBookings";
 import Login from "./pages/Login/Login";
 import BookingDetails from "./pages/BookingDetails/BookingDetails";
-import Payment from "./pages/Payment/Payment";
 import PnrStatus from "./pages/PnrStatus/PnrStatus";
 import AgentRedirect from "./pages/AgentRedirect/AgentRedirect";
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
-      <Routes>
+      <ErrorBoundary>
+        <Header />
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/seat-selection" element={<SeatSelection />} />
@@ -35,6 +37,7 @@ function App() {
         <Route path="/agent/*" element={<AgentRedirect />} />
       </Routes>
       <Footer />
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

@@ -20,19 +20,17 @@ function Home() {
               <div className="hero-eyebrow">
                 <span className="eyebrow-ai-pill">
                   <Sparkles size={13} className="ai-sparkle-icon" />
-                  AI ROUTE INTELLIGENCE
+                  Smart Intercity Travel
                 </span>
-                <span className="eyebrow-line"></span>
-                <span className="eyebrow-sub">LIVE MANTIS GDS INTEGRATED</span>
               </div>
 
               <h1 className="hero-title">
-                Smart Travel. <br />
-                <span className="text-gold">Executive Comfort.</span>
+                Comfortable Journeys. <br />
+                <span className="text-gold">Effortless Booking.</span>
               </h1>
 
               <p className="hero-subtitle">
-                Real-time seat inventory, AI dynamic fare analytics, and instant confirmed PNR booking across 29,000+ cities in India.
+                Real-time seat inventory, verified bus operators, and instant confirmed tickets across India.
               </p>
             </div>
 
@@ -45,19 +43,19 @@ function Home() {
             <div className="hero-ai-features-strip">
               <div className="ai-feature-pill">
                 <Zap size={16} className="feature-icon" />
-                <span>Real-Time Seat Locks</span>
+                <span>Live Seat Availability</span>
               </div>
               <div className="ai-feature-pill">
                 <Sparkles size={16} className="feature-icon" />
-                <span>AI Price Intelligence</span>
+                <span>Best Price Guarantee</span>
               </div>
               <div className="ai-feature-pill">
                 <ShieldCheck size={16} className="feature-icon" />
-                <span>Guaranteed PNR Issuance</span>
+                <span>Instant Ticket Issuance</span>
               </div>
               <div className="ai-feature-pill">
                 <Globe2 size={16} className="feature-icon" />
-                <span>29,000+ Verified Routes</span>
+                <span>Verified Operators</span>
               </div>
             </div>
           </div>

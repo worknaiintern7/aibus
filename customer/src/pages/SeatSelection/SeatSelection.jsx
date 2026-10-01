@@ -7,15 +7,21 @@ import TripSummary from "../../components/TripSummary/TripSummary";
 import SeatLayout from "../../components/SeatLayout/SeatLayout";
 import BookingSummary from "../../components/BookingSummary/BookingSummary";
 import JourneyPoints from "../../components/JourneyPoints/JourneyPoints";
+import BoardingDroppingModal from "../../components/BoardingDroppingModal/BoardingDroppingModal";
 import "./SeatSelection.css";
 
 function SeatSelection() {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedBus, setSelectedBus] = useState(null);
   const [loading, setLoading] = useState(true);
-  // Live buses only: the operator needs a boarding and a dropping point to hold seats
+
+  // Selected boarding and dropping points
   const [pickupId, setPickupId] = useState("");
   const [dropoffId, setDropoffId] = useState("");
+
+  // Modal controls
+  const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
+  const [modalInitialTab, setModalInitialTab] = useState("boarding");
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -36,11 +42,18 @@ function SeatSelection() {
       .then((bus) => {
         if (isMounted) {
           setSelectedBus(bus);
-          if (bus?.isLive) {
-            const points = bus.boardingPoints || [];
-            const preselected = points.find((p) => p.id === pickupParam) || points[0];
-            setPickupId(preselected?.id || "");
-            setDropoffId(bus.droppingPoints?.[0]?.id || "");
+          if (bus) {
+            const bPoints = bus.boardingPoints || [];
+            // If user explicitly chose a boarding point on the search results bus card
+            const preselectedPickup = pickupParam ? bPoints.find((p) => p.id === pickupParam) : null;
+            if (preselectedPickup) {
+              setPickupId(preselectedPickup.id);
+            } else {
+              setPickupId(""); // Not chosen yet!
+            }
+
+            // Dropping point starts unselected
+            setDropoffId("");
           }
           setLoading(false);
         }
@@ -115,11 +128,12 @@ function SeatSelection() {
     (sum, s) => sum + (typeof s === "object" ? s.price : selectedBus.price),
     0
   );
-  const canContinue = selectedSeats.length > 0 && (!isLive || (pickupId && dropoffId));
 
-  const handleContinue = () => {
-    if (!canContinue) return;
+  const hasSeats = selectedSeats.length > 0;
+  const hasBothPoints = Boolean(pickupId && dropoffId);
 
+  // Navigate to Traveller Details with locked seats and chosen points
+  const proceedToTravellerDetails = (finalPickup = pickupId, finalDropoff = dropoffId) => {
     const seatCodes = selectedSeats.map((s) =>
       typeof s === "object" ? s.display || s.id : s
     );
@@ -137,10 +151,51 @@ function SeatSelection() {
       ...(selectedBus.from && { from: selectedBus.from }),
       ...(selectedBus.to && { to: selectedBus.to }),
       ...(selectedBus.date && { date: selectedBus.date }),
-      ...(isLive && { pickup: pickupId, dropoff: dropoffId }),
+      ...(finalPickup && { pickup: finalPickup }),
+      ...(finalDropoff && { dropoff: finalDropoff }),
     });
 
     navigate(`/traveller-details?${params.toString()}`);
+  };
+
+  // Called when user clicks "Proceed" or mobile continue button
+  const handleProceedClick = () => {
+    if (!hasSeats) return;
+
+    // If boarding point was not selected, open modal on Boarding tab
+    if (!pickupId) {
+      setModalInitialTab("boarding");
+      setIsPointsModalOpen(true);
+      return;
+    }
+
+    // If boarding point was selected but dropping was not, open modal on Dropping tab
+    if (!dropoffId) {
+      setModalInitialTab("dropping");
+      setIsPointsModalOpen(true);
+      return;
+    }
+
+    // Both are already selected!
+    proceedToTravellerDetails(pickupId, dropoffId);
+  };
+
+  const handlePointsConfirmed = ({ pickupId: newPickup, dropoffId: newDropoff }) => {
+    setPickupId(newPickup);
+    setDropoffId(newDropoff);
+    setIsPointsModalOpen(false);
+    // If seats are already selected, proceed directly to traveller details
+    if (selectedSeats && selectedSeats.length > 0) {
+      proceedToTravellerDetails(newPickup, newDropoff);
+    }
+  };
+
+  const getButtonText = () => {
+    if (!hasSeats) return "Select Seats to Proceed";
+    if (!pickupId && !dropoffId) return "Select Boarding & Dropping Points →";
+    if (!pickupId) return "Select Boarding Point →";
+    if (!dropoffId) return "Select Dropping Point →";
+    return "Proceed to Traveller Details →";
   };
 
   return (
@@ -163,31 +218,35 @@ function SeatSelection() {
             />
           </div>
 
-          {/* Right Column: Booking Summary Card */}
+          {/* Right Column: Points & Booking Summary Card */}
           <div className="selection-card-column">
-            {isLive && (
-              <JourneyPoints
-                boardingPoints={selectedBus.boardingPoints}
-                droppingPoints={selectedBus.droppingPoints}
-                pickupId={pickupId}
-                dropoffId={dropoffId}
-                onPickupChange={setPickupId}
-                onDropoffChange={setDropoffId}
-              />
-            )}
+            <JourneyPoints
+              boardingPoints={selectedBus.boardingPoints || []}
+              droppingPoints={selectedBus.droppingPoints || []}
+              pickupId={pickupId}
+              dropoffId={dropoffId}
+              sourceCity={selectedBus.from || from || "Departure"}
+              destinationCity={selectedBus.to || to || "Arrival"}
+              onOpenModal={(tab) => {
+                setModalInitialTab(tab || "boarding");
+                setIsPointsModalOpen(true);
+              }}
+            />
+
             <BookingSummary
               selectedSeats={selectedSeats}
               price={selectedBus.price}
               isLive={isLive}
-              canContinue={canContinue}
+              canContinue={hasSeats}
+              buttonText={getButtonText()}
               onClear={() => setSelectedSeats([])}
-              onContinue={handleContinue}
+              onContinue={handleProceedClick}
             />
           </div>
         </div>
 
         {/* Mobile Sticky Bottom Floating Action Bar */}
-        {selectedSeats.length > 0 && (
+        {hasSeats && (
           <div className="mobile-seat-sticky-bar">
             <div className="mobile-sticky-left">
               <span className="mobile-seat-count-label">
@@ -203,13 +262,26 @@ function SeatSelection() {
             <button
               type="button"
               className="mobile-sticky-continue-btn"
-              disabled={!canContinue}
-              onClick={handleContinue}
+              onClick={handleProceedClick}
             >
-              Continue →
+              {hasBothPoints ? "Continue →" : "Select Points →"}
             </button>
           </div>
         )}
+
+        {/* Multi-step Boarding & Dropping Point Visual Modal */}
+        <BoardingDroppingModal
+          isOpen={isPointsModalOpen}
+          onClose={() => setIsPointsModalOpen(false)}
+          sourceCity={selectedBus.from || from || "Departure City"}
+          destinationCity={selectedBus.to || to || "Arrival City"}
+          boardingPoints={selectedBus.boardingPoints || []}
+          droppingPoints={selectedBus.droppingPoints || []}
+          selectedPickupId={pickupId}
+          selectedDropoffId={dropoffId}
+          initialTab={modalInitialTab}
+          onConfirm={handlePointsConfirmed}
+        />
       </div>
     </main>
   );

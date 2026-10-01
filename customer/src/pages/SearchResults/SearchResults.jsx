@@ -18,7 +18,7 @@ function SearchResults() {
     sleeperOnly: false,
     seaterOnly: false,
     depTime: [],
-    maxPrice: 2000,
+    maxPrice: 4000,
   });
 
   const [sortBy, setSortBy] = useState("departure_asc");

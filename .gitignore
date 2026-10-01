@@ -36,3 +36,7 @@ backend/.env.*
 
 #Production secrets
 **/.env.production
+
+# SSH deploy keys
+github_deploy_key
+github_deploy_key.pub

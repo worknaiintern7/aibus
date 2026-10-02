@@ -130,12 +130,12 @@ function MyBookings() {
                 <div className="booking-card-header">
                   <div>
                     <div className="operator-guest-tag">
-                      <h2>{booking.bus?.operator || "AIBus Travels"}</h2>
+                      <h2>{booking.bus?.operator || "--"}</h2>
                       {booking.isGuest && (
                         <span className="guest-local-pill">Linked from Device</span>
                       )}
                     </div>
-                    <p>{booking.bus?.busType || "AC Seater"}</p>
+                    <p>{booking.bus?.busType || "--"}</p>
                   </div>
 
                   <span
@@ -153,15 +153,15 @@ function MyBookings() {
 
                 <div className="booking-route">
                   <div>
-                    <strong>{booking.bus?.departureTime || "08:00"}</strong>
-                    <span>{booking.bus?.from || "Delhi"}</span>
+                    <strong>{booking.bus?.departureTime || "--"}</strong>
+                    <span>{booking.bus?.from || "--"}</span>
                   </div>
 
                   <span className="route-arrow">→</span>
 
                   <div>
-                    <strong>{booking.bus?.arrivalTime || "12:00"}</strong>
-                    <span>{booking.bus?.to || "Jaipur"}</span>
+                    <strong>{booking.bus?.arrivalTime || "--"}</strong>
+                    <span>{booking.bus?.to || "--"}</span>
                   </div>
                 </div>
 
@@ -180,7 +180,7 @@ function MyBookings() {
 
                   <div>
                     <span>Passenger</span>
-                    <strong>{booking.traveller?.name || "Passenger"}</strong>
+                    <strong>{booking.traveller?.name || "--"}</strong>
                   </div>
 
                   <div>
@@ -188,7 +188,7 @@ function MyBookings() {
                     <strong>
                       {Array.isArray(booking.seats)
                         ? booking.seats.join(", ")
-                        : booking.seats || "A1"}
+                        : booking.seats || "--"}
                     </strong>
                   </div>
 

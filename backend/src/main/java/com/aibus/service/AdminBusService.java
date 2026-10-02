@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,15 +28,43 @@ public class AdminBusService {
     private final SeatRepository seatRepository;
     private final AdminMapper adminMapper;
     private final AdminAuditService adminAuditService;
+    private final BusService busService;
 
     public AdminBusService(BusRepository busRepository,
                            SeatRepository seatRepository,
                            AdminMapper adminMapper,
-                           AdminAuditService adminAuditService) {
+                           AdminAuditService adminAuditService,
+                           BusService busService) {
         this.busRepository = busRepository;
         this.seatRepository = seatRepository;
         this.adminMapper = adminMapper;
         this.adminAuditService = adminAuditService;
+        this.busService = busService;
+    }
+
+    public List<java.util.Map<String, Object>> getLiveGdsBuses() {
+        List<com.aibus.dto.bus.BusSearchResponse> buses = busService.searchBuses("Bangalore", "Chennai", java.time.LocalDate.now().plusDays(1));
+        List<java.util.Map<String, Object>> list = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (var b : buses) {
+            if ("GDS".equalsIgnoreCase(b.getProvider())) {
+                String key = b.getBusNumber() + "-" + b.getBusName();
+                if (seen.add(key)) {
+                    java.util.Map<String, Object> map = new java.util.LinkedHashMap<>();
+                    map.put("gdsBusId", b.getGdsBusId());
+                    map.put("operatorName", b.getBusName());
+                    map.put("busNumber", b.getBusNumber());
+                    map.put("busType", b.getBusType() != null ? b.getBusType().name() : "AC_SLEEPER");
+                    map.put("totalSeats", b.getAvailableSeats() > 0 ? b.getAvailableSeats() : 36);
+                    map.put("status", "ACTIVE_ON_GDS");
+                    map.put("source", b.getSource());
+                    map.put("destination", b.getDestination());
+                    map.put("fare", b.getFare());
+                    list.add(map);
+                }
+            }
+        }
+        return list;
     }
 
     @Transactional(readOnly = true)

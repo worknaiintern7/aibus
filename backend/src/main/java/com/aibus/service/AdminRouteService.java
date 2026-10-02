@@ -32,6 +32,27 @@ public class AdminRouteService {
         this.adminAuditService = adminAuditService;
     }
 
+    public List<java.util.Map<String, Object>> getLiveGdsRoutes() {
+        List<java.util.Map<String, Object>> routes = new java.util.ArrayList<>();
+        String[][] popular = {
+            {"Bangalore", "Chennai"},
+            {"Bangalore", "Hyderabad"},
+            {"Pune", "Mumbai"},
+            {"Mumbai", "Goa"},
+            {"Delhi", "Jaipur"}
+        };
+        for (String[] pair : popular) {
+            java.util.Map<String, Object> map = new java.util.LinkedHashMap<>();
+            map.put("source", pair[0]);
+            map.put("destination", pair[1]);
+            map.put("provider", "MANTIS_GDS");
+            map.put("status", "ACTIVE_LIVE");
+            map.put("availableDaily", true);
+            routes.add(map);
+        }
+        return routes;
+    }
+
     @Transactional(readOnly = true)
     public PageResponse<AdminRouteResponse> getRoutes(Pageable pageable) {
         Page<Route> page = routeRepository.findAll(pageable);

@@ -28,6 +28,7 @@ public class AdminScheduleService {
     private final ScheduleSeatRepository scheduleSeatRepository;
     private final AdminMapper adminMapper;
     private final AdminAuditService adminAuditService;
+    private final BusService busService;
 
     public AdminScheduleService(BusScheduleRepository busScheduleRepository,
                                 BusRepository busRepository,
@@ -35,7 +36,8 @@ public class AdminScheduleService {
                                 SeatRepository seatRepository,
                                 ScheduleSeatRepository scheduleSeatRepository,
                                 AdminMapper adminMapper,
-                                AdminAuditService adminAuditService) {
+                                AdminAuditService adminAuditService,
+                                BusService busService) {
         this.busScheduleRepository = busScheduleRepository;
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
@@ -43,6 +45,14 @@ public class AdminScheduleService {
         this.scheduleSeatRepository = scheduleSeatRepository;
         this.adminMapper = adminMapper;
         this.adminAuditService = adminAuditService;
+        this.busService = busService;
+    }
+
+    public List<com.aibus.dto.bus.BusSearchResponse> getLiveGdsSchedules(String source, String destination, java.time.LocalDate date) {
+        String src = (source != null && !source.isBlank()) ? source.trim() : "Bangalore";
+        String dest = (destination != null && !destination.isBlank()) ? destination.trim() : "Chennai";
+        java.time.LocalDate journeyDate = (date != null) ? date : java.time.LocalDate.now().plusDays(1);
+        return busService.searchBuses(src, dest, journeyDate);
     }
 
     @Transactional(readOnly = true)

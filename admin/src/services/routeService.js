@@ -20,4 +20,8 @@ export const routeService = {
   updateRouteStatus: async (id, active) => {
     return await api.patch(`/routes/${id}/status`, { active });
   },
+
+  getLiveGdsRoutes: async () => {
+    return await api.get("/routes/live-gds");
+  },
 };

@@ -24,8 +24,8 @@ function RazorpayModal({
   from,
   to,
   seats = [],
-  customerPhone = "9876543210",
-  customerEmail = "passenger@aibus.in",
+  customerPhone = "",
+  customerEmail = "",
   onPaymentSuccess,
   onPaymentFailure,
 }) {

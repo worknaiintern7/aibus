@@ -1,120 +1,84 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import busService from "../../services/busService";
 
 const NEARBY_LOCATIONS = [
-  "Anand Vihar ISBT, Delhi NCR",
-  "Kashmere Gate ISBT, Delhi",
-  "Sector 62 / Botanical Garden, Noida",
-  "Majestic Bus Stand, Bengaluru",
-  "Dadar TT Circle, Mumbai",
-];
-
-const NEARBY_BUSES = [
-  {
-    id: "nb-1",
-    busName: "AiBus Royal Club Multi-Axle",
-    busType: "AC Sleeper (2+1)",
-    fromCity: "Delhi",
-    toCity: "Jaipur",
-    boardingPoint: "Platform 4, Anand Vihar ISBT (800m away)",
-    departureTime: "11:45 AM",
-    departureIn: "Departing in 35 mins",
-    isFast: true,
-    rating: "4.8",
-    ratingCount: "320+",
-    seatsLeft: 12,
-    fare: "₹749",
-    category: "sleeper",
-    amenities: ["WiFi", "Blanket", "Charging Point", "Water Bottle"],
-  },
-  {
-    id: "nb-2",
-    busName: "AiBus Gold Express Seater",
-    busType: "AC Pushback Seater (2+2)",
-    fromCity: "Delhi",
-    toCity: "Agra",
-    boardingPoint: "Gate 2 Bus Bay, ISBT (1.2 km away)",
-    departureTime: "12:20 PM",
-    departureIn: "Departing in 1h 10m",
-    isFast: false,
-    rating: "4.7",
-    ratingCount: "184+",
-    seatsLeft: 7,
-    fare: "₹499",
-    category: "seater",
-    amenities: ["AC", "Reclining Seats", "Charging Point"],
-  },
-  {
-    id: "nb-3",
-    busName: "AiBus Northern Star Premium",
-    busType: "AC Sleeper / Seater (2+1)",
-    fromCity: "Delhi",
-    toCity: "Dehradun",
-    boardingPoint: "Kashmere Gate Metro Gate 1 (3.5 km away)",
-    departureTime: "01:15 PM",
-    departureIn: "Departing in 2h 05m",
-    isFast: false,
-    rating: "4.6",
-    ratingCount: "95+",
-    seatsLeft: 18,
-    fare: "₹620",
-    category: "sleeper",
-    amenities: ["AC", "Reading Light", "Pillow", "Live GPS"],
-  },
-  {
-    id: "nb-4",
-    busName: "AiBus Quick-Hop Express",
-    busType: "Non-AC Hi-Tech (2+2)",
-    fromCity: "Delhi",
-    toCity: "Mathura",
-    boardingPoint: "Noida Sector 37 Underpass (4.1 km away)",
-    departureTime: "01:45 PM",
-    departureIn: "Departing in 2h 35m",
-    isFast: false,
-    rating: "4.4",
-    ratingCount: "62",
-    seatsLeft: 22,
-    fare: "₹299",
-    category: "seater",
-    amenities: ["Express Route", "Punctual", "First Aid"],
-  },
+  { label: "Bengaluru (Kempegowda / Majestic)", city: "Bangalore", dest: "Chennai" },
+  { label: "Chennai (Koyambedu CMBT)", city: "Chennai", dest: "Bangalore" },
+  { label: "Delhi (Anand Vihar / Kashmere Gate)", city: "Delhi", dest: "Jaipur" },
+  { label: "Mumbai (Dadar TT / Borivali)", city: "Mumbai", dest: "Pune" },
+  { label: "Pune (Shivajinagar / Swargate)", city: "Pune", dest: "Mumbai" },
 ];
 
 function NearbyBusesModal({ isOpen, onClose }) {
   const navigate = useNavigate();
-  const [currentLocation, setCurrentLocation] = useState(NEARBY_LOCATIONS[0]);
+  const [selectedLocIndex, setSelectedLocIndex] = useState(0);
   const [isLocating, setIsLocating] = useState(false);
+  const [buses, setBuses] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState("all");
+
+  const activeLoc = NEARBY_LOCATIONS[selectedLocIndex] || NEARBY_LOCATIONS[0];
+  const today = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let isMounted = true;
+    setLoading(true);
+
+    busService
+      .searchBuses({
+        from: activeLoc.city,
+        to: activeLoc.dest,
+        date: today,
+      })
+      .then((results) => {
+        if (isMounted) {
+          setBuses(results || []);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setBuses([]);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, activeLoc.city, activeLoc.dest, today]);
 
   if (!isOpen) return null;
 
   const handleRefreshLocation = () => {
     setIsLocating(true);
     setTimeout(() => {
-      // Pick next or random location
-      const nextIndex = (NEARBY_LOCATIONS.indexOf(currentLocation) + 1) % NEARBY_LOCATIONS.length;
-      setCurrentLocation(NEARBY_LOCATIONS[nextIndex]);
+      setSelectedLocIndex((prev) => (prev + 1) % NEARBY_LOCATIONS.length);
       setIsLocating(false);
-    }, 600);
+    }, 400);
   };
 
-  const filteredBuses = NEARBY_BUSES.filter((bus) => {
-    if (filterType === "soon") return bus.isFast;
-    if (filterType === "sleeper") return bus.category === "sleeper";
-    if (filterType === "seater") return bus.category === "seater";
+  const filteredBuses = buses.filter((bus) => {
+    if (filterType === "sleeper") return (bus.busType || "").toLowerCase().includes("sleeper");
+    if (filterType === "seater") return (bus.busType || "").toLowerCase().includes("seater");
     return true;
   });
 
   const handleBookNow = (bus) => {
     onClose();
-    // Get today's date in YYYY-MM-DD
-    const today = new Date().toISOString().split("T")[0];
-    const params = new URLSearchParams({
-      from: bus.fromCity,
-      to: bus.toCity,
-      date: today,
-    });
-    navigate(`/search?${params.toString()}`);
+    if (bus.id) {
+      navigate(`/seat-selection?busId=${bus.id}&from=${encodeURIComponent(bus.from)}&to=${encodeURIComponent(bus.to)}&date=${today}`);
+    } else {
+      const params = new URLSearchParams({
+        from: bus.from,
+        to: bus.to,
+        date: today,
+      });
+      navigate(`/search?${params.toString()}`);
+    }
   };
 
   return (
@@ -125,8 +89,8 @@ function NearbyBusesModal({ isOpen, onClose }) {
           <div className="modal-title-group">
             <span className="modal-badge-icon badge-blue">📍</span>
             <div>
-              <h3>Buses Near You</h3>
-              <p>Find & board buses departing shortly from your nearest bus terminals</p>
+              <h3>Live Departures Near You</h3>
+              <p>Real-time bus inventory retrieved directly from operator GDS</p>
             </div>
           </div>
           <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close modal">
@@ -139,8 +103,8 @@ function NearbyBusesModal({ isOpen, onClose }) {
           <div className="location-info">
             <span className="pulse-indicator"></span>
             <div>
-              <span className="location-label">CURRENT DETECTED LOCATION</span>
-              <strong className="location-name">{currentLocation}</strong>
+              <span className="location-label">CURRENT SEARCH HUB</span>
+              <strong className="location-name">{activeLoc.label}</strong>
             </div>
           </div>
 
@@ -161,7 +125,7 @@ function NearbyBusesModal({ isOpen, onClose }) {
               <polyline points="1 20 1 14 7 14" />
               <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
             </svg>
-            {isLocating ? "Detecting..." : "Change / Refresh"}
+            {isLocating ? "Switching..." : "Switch Hub"}
           </button>
         </div>
 
@@ -172,14 +136,7 @@ function NearbyBusesModal({ isOpen, onClose }) {
             className={`tab-btn ${filterType === "all" ? "active" : ""}`}
             onClick={() => setFilterType("all")}
           >
-            All Departures ({NEARBY_BUSES.length})
-          </button>
-          <button
-            type="button"
-            className={`tab-btn ${filterType === "soon" ? "active" : ""}`}
-            onClick={() => setFilterType("soon")}
-          >
-            ⚡ Departing Soon (&lt; 45m)
+            All Live Buses ({buses.length})
           </button>
           <button
             type="button"
@@ -199,74 +156,93 @@ function NearbyBusesModal({ isOpen, onClose }) {
 
         {/* Buses List */}
         <div className="modal-body-scroll">
-          <div className="nearby-buses-list">
-            {filteredBuses.map((bus) => (
-              <div key={bus.id} className="nearby-bus-card">
-                <div className="bus-card-top-row">
-                  <div>
-                    <h4 className="bus-title">{bus.busName}</h4>
-                    <span className="bus-type-sub">{bus.busType}</span>
-                  </div>
-                  <div className="bus-price-tag">
-                    <span className="fare-label">Starting from</span>
-                    <strong className="fare-amount">{bus.fare}</strong>
-                  </div>
-                </div>
-
-                <div className="bus-route-highlight">
-                  <div className="route-point">
-                    <span className="dot-green"></span>
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "40px 20px", color: "#64748b" }}>
+              ⏳ Querying live GDS inventory for {activeLoc.city}...
+            </div>
+          ) : filteredBuses.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px 20px", color: "#64748b" }}>
+              <div style={{ fontSize: "2rem", marginBottom: "8px" }}>🚌</div>
+              <h4 style={{ margin: "0 0 6px", color: "#1e293b" }}>No departures found for today</h4>
+              <p style={{ margin: 0, fontSize: "13px" }}>
+                There are no active scheduled departures from {activeLoc.city} to {activeLoc.dest} on today&apos;s date.
+              </p>
+              <button
+                type="button"
+                className="action-btn btn-solid-blue"
+                style={{ marginTop: "16px", padding: "8px 20px" }}
+                onClick={() => {
+                  onClose();
+                  const searchBox = document.querySelector(".search-box-hero-wrapper") || document.querySelector(".search-box");
+                  if (searchBox) searchBox.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Search Another Date &rarr;
+              </button>
+            </div>
+          ) : (
+            <div className="nearby-buses-list">
+              {filteredBuses.map((bus) => (
+                <div key={bus.id} className="nearby-bus-card">
+                  <div className="bus-card-top-row">
                     <div>
-                      <strong>{bus.fromCity}</strong>
-                      <span className="time-sub">{bus.departureTime}</span>
+                      <h4 className="bus-title">{bus.operator || "Operator"}</h4>
+                      <span className="bus-type-sub">{bus.busType}</span>
+                    </div>
+                    <div className="bus-price-tag">
+                      <span className="fare-label">Starting from</span>
+                      <strong className="fare-amount">₹{bus.price}</strong>
                     </div>
                   </div>
-                  <div className="route-arrow">➔</div>
-                  <div className="route-point">
-                    <span className="dot-red"></span>
-                    <div>
-                      <strong>{bus.toCity}</strong>
-                      <span className="time-sub">Direct</span>
+
+                  <div className="bus-route-highlight">
+                    <div className="route-point">
+                      <span className="dot-green"></span>
+                      <div>
+                        <strong>{bus.from}</strong>
+                        <span className="time-sub">{bus.departureTime}</span>
+                      </div>
+                    </div>
+                    <div className="route-arrow">➔</div>
+                    <div className="route-point">
+                      <span className="dot-red"></span>
+                      <div>
+                        <strong>{bus.to}</strong>
+                        <span className="time-sub">{bus.arrivalTime}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="bus-boarding-info">
-                  <span className="info-icon">📍</span>
-                  <span>{bus.boardingPoint}</span>
-                </div>
+                  {bus.boardingPoint?.name && (
+                    <div className="bus-boarding-info">
+                      <span className="info-icon">📍</span>
+                      <span>Boarding: {bus.boardingPoint.name}</span>
+                    </div>
+                  )}
 
-                <div className="bus-amenities-row">
-                  {bus.amenities.map((item, idx) => (
-                    <span key={idx} className="amenity-chip">
-                      ✓ {item}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="nearby-card-footer">
-                  <div className="bus-badges">
-                    <span className="depart-badge">{bus.departureIn}</span>
-                    <span className="seats-badge">💺 {bus.seatsLeft} seats left</span>
-                    <span className="rating-pill">★ {bus.rating}</span>
+                  <div className="nearby-card-footer">
+                    <div className="bus-badges">
+                      <span className="seats-badge">💺 {bus.availableSeats} seats left</span>
+                      {bus.duration && <span className="depart-badge">⏱ {bus.duration}</span>}
+                    </div>
+                    <button
+                      type="button"
+                      className="action-btn btn-solid-blue"
+                      onClick={() => handleBookNow(bus)}
+                    >
+                      Select Seats &rarr;
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className="action-btn btn-solid-blue"
-                    onClick={() => handleBookNow(bus)}
-                  >
-                    Book Now &rarr;
-                  </button>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Footer */}
         <div className="modal-footer">
           <p className="footer-note">
-            📍 Showing real-time scheduled departures within 15 km with live boarding gate tracking.
+            📍 Showing live operator inventory verified from partner GDS.
           </p>
           <button type="button" className="action-btn btn-outline-gray" onClick={onClose}>
             Close

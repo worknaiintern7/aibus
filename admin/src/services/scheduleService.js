@@ -23,4 +23,10 @@ export const scheduleService = {
   updateScheduleStatus: async (id, status) => {
     return await api.patch(`/schedules/${id}/status`, { status });
   },
+
+  getLiveGdsSchedules: async (source = "Bangalore", destination = "Chennai", date = "") => {
+    const params = new URLSearchParams({ source, destination });
+    if (date) params.append("date", date);
+    return await api.get(`/schedules/live-gds?${params.toString()}`);
+  },
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Eye, Ticket, Calendar, Phone, XCircle } from "lucide-react";
+import { Eye, Ticket, Calendar, Phone, XCircle, Filter, Radio } from "lucide-react";
 import { bookingService } from "../services/bookingService";
 import PageHeader from "../components/layout/PageHeader";
 import SearchInput from "../components/common/SearchInput";
@@ -22,6 +22,7 @@ export const AdminBookings = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [channelFilter, setChannelFilter] = useState(""); // "" | "GDS" | "LOCAL"
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -37,7 +38,11 @@ export const AdminBookings = () => {
     try {
       const response = await bookingService.getBookings(page, 20, search, statusFilter);
       if (response?.data) {
-        setBookings(response.data.content || []);
+        let content = response.data.content || [];
+        if (channelFilter) {
+          content = content.filter((b) => b.provider === channelFilter);
+        }
+        setBookings(content);
         setTotalPages(response.data.totalPages || 1);
         setTotalElements(response.data.totalElements || 0);
       }
@@ -50,7 +55,7 @@ export const AdminBookings = () => {
 
   useEffect(() => {
     fetchBookings();
-  }, [page, search, statusFilter]);
+  }, [page, search, statusFilter, channelFilter]);
 
   const handleCancelClick = (bk) => {
     setCancelModal({
@@ -79,11 +84,11 @@ export const AdminBookings = () => {
     <div>
       <PageHeader
         title="Booking Oversight"
-        subtitle="Search & inspect customer tickets, seats, amounts, and statuses"
+        subtitle="Real-time oversight of all customer bookings created on the website (Mantis GDS & in-house)"
         actions={
-          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+          <>
             <SearchInput
-              placeholder="Search by PNR or mobile..."
+              placeholder="Search by PNR, ref, or phone..."
               value={search}
               onChange={(val) => {
                 setSearch(val);
@@ -92,7 +97,20 @@ export const AdminBookings = () => {
             />
             <select
               className="form-control"
-              style={{ width: "160px" }}
+              style={{ width: "160px", flexShrink: 0 }}
+              value={channelFilter}
+              onChange={(e) => {
+                setChannelFilter(e.target.value);
+                setPage(0);
+              }}
+            >
+              <option value="">All Channels</option>
+              <option value="GDS">Live GDS (Website)</option>
+              <option value="LOCAL">In-House Fleet</option>
+            </select>
+            <select
+              className="form-control"
+              style={{ width: "150px", flexShrink: 0 }}
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
@@ -106,7 +124,7 @@ export const AdminBookings = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </>
         }
       />
 
@@ -114,14 +132,14 @@ export const AdminBookings = () => {
 
       <div className="admin-card">
         {loading ? (
-          <Loading text="Fetching booking records..." />
+          <Loading text="Fetching live booking records..." />
         ) : bookings.length === 0 ? (
           <EmptyState
             title="No Bookings Found"
             description={
-              search || statusFilter
+              search || statusFilter || channelFilter
                 ? "No booking matches your active search/filter criteria."
-                : "No customer bookings have been created yet."
+                : "No customer bookings have been placed yet. As users book on the customer website, confirmed bookings will appear here instantly."
             }
           />
         ) : (
@@ -130,11 +148,12 @@ export const AdminBookings = () => {
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>PNR Reference</th>
+                    <th>Booking Reference</th>
+                    <th>Channel</th>
                     <th>Customer</th>
-                    <th>Mobile</th>
-                    <th>Route</th>
-                    <th>Journey Date</th>
+                    <th>Route & Bus</th>
+                    <th>Date & Time</th>
+                    <th>Seats</th>
                     <th>Total Amount</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -143,23 +162,63 @@ export const AdminBookings = () => {
                 <tbody>
                   {bookings.map((b) => (
                     <tr key={b.id || b.bookingReference}>
-                      <td style={{ fontWeight: "700", color: "var(--admin-primary)" }}>
-                        <Ticket size={14} style={{ marginRight: "4px" }} />
-                        {b.bookingReference}
-                      </td>
-                      <td style={{ fontWeight: "600" }}>{b.userName || "Customer"}</td>
                       <td>
-                        <span style={{ fontSize: "0.85rem", color: "var(--admin-text-muted)" }}>
-                          <Phone size={12} style={{ marginRight: "4px" }} />
-                          {b.userMobile}
-                        </span>
+                        <div style={{ fontWeight: "700", color: "var(--admin-primary)", display: "flex", alignItems: "center", gap: "4px" }}>
+                          <Ticket size={14} />
+                          {b.bookingReference}
+                        </div>
+                        {b.pnrNo && (
+                          <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>
+                            PNR: <strong style={{ color: "inherit" }}>{b.pnrNo}</strong>
+                          </div>
+                        )}
+                        {b.ticketNo && (
+                          <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>
+                            Tkt: {b.ticketNo}
+                          </div>
+                        )}
                       </td>
-                      <td>{b.source} → {b.destination}</td>
                       <td>
-                        <span style={{ fontSize: "0.85rem" }}>
-                          <Calendar size={12} style={{ marginRight: "4px" }} />
+                        {b.provider === "GDS" ? (
+                          <span style={{ background: "#ecfdf5", color: "#059669", padding: "2px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "3px", whiteSpace: "nowrap" }}>
+                            <Radio size={11} /> Live GDS (Web)
+                          </span>
+                        ) : (
+                          <span style={{ background: "#eff6ff", color: "#2563eb", padding: "2px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: "600", whiteSpace: "nowrap" }}>
+                            In-House
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: "600" }}>{b.userName || "Customer"}</div>
+                        {b.userMobile && (
+                          <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)", display: "inline-flex", alignItems: "center", gap: "3px" }}>
+                            <Phone size={11} />
+                            {b.userMobile}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: "600" }}>{b.source} → {b.destination}</div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>
+                          {b.busName} {b.busNumber ? `(${b.busNumber})` : ""}
+                        </div>
+                      </td>
+                      <td>
+                        <span style={{ fontSize: "0.85rem", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                          <Calendar size={12} style={{ color: "var(--admin-text-muted)" }} />
                           {formatDate(b.journeyDate)}
                         </span>
+                        {b.departureTime && (
+                          <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>
+                            Dep: {b.departureTime.toString().slice(0, 5)}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <strong style={{ fontSize: "0.85rem" }}>
+                          {b.selectedSeats || "--"}
+                        </strong>
                       </td>
                       <td style={{ fontWeight: "700", color: "#10b981" }}>
                         {formatCurrency(b.totalAmount)}
@@ -208,7 +267,7 @@ export const AdminBookings = () => {
         onClose={() => setCancelModal((prev) => ({ ...prev, isOpen: false }))}
         onConfirm={confirmCancelBooking}
         title="Cancel Customer Booking"
-        message={`Are you sure you want to cancel booking ${cancelModal.booking?.bookingReference}? Reserved seats will be released back to inventory.`}
+        message={`Are you sure you want to cancel booking ${cancelModal.booking?.bookingReference}? This will release the seats with the operator and update the customer status.`}
         confirmText="Cancel Booking"
         confirmVariant="danger"
         loading={cancelModal.loading}

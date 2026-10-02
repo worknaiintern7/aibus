@@ -24,7 +24,8 @@ export const AdminAgentEnquiries = () => {
 
   // Approval form state
   const [commissionPct, setCommissionPct] = useState(10);
-  const [initialBalance, setInitialBalance] = useState(19978.55);
+  const [initialBalance, setInitialBalance] = useState(0);
+  const [liveBalance, setLiveBalance] = useState(null);
   const [actionSuccessMsg, setActionSuccessMsg] = useState("");
 
   // Reject state
@@ -32,12 +33,30 @@ export const AdminAgentEnquiries = () => {
   const [rejectReason, setRejectReason] = useState("");
 
   const refreshData = async () => {
-    const [enqs, agents] = await Promise.all([
-      adminAgentService.getEnquiries(),
-      adminAgentService.getApprovedAgents(),
-    ]);
-    setEnquiries(enqs);
-    setApprovedAgents(agents);
+    try {
+      const [enqs, agents] = await Promise.all([
+        adminAgentService.getEnquiries(),
+        adminAgentService.getApprovedAgents(),
+      ]);
+      setEnquiries(enqs);
+      setApprovedAgents(agents);
+    } catch (e) {
+      console.warn("Failed to load enquiries/agents:", e);
+    }
+
+    try {
+      const token = localStorage.getItem("admin_token");
+      const base = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8080").replace(/\/$/, "");
+      const res = await fetch(`${base}/api/agents/balance`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      const data = await res.json();
+      if (data?.data?.Balance != null) {
+        setLiveBalance(data.data.Balance);
+      }
+    } catch {
+      // Ignored if balance endpoint offline
+    }
   };
 
   useEffect(() => {
@@ -64,7 +83,7 @@ export const AdminAgentEnquiries = () => {
   const handleOpenReview = (enq) => {
     setSelectedEnquiry(enq);
     setCommissionPct(10);
-    setInitialBalance(19978.55);
+    setInitialBalance(0);
     setRejectMode(false);
     setRejectReason("");
     setActionSuccessMsg("");
@@ -138,7 +157,9 @@ export const AdminAgentEnquiries = () => {
             <span className="stat-card-title">Mantis Live Pool</span>
             <Wallet size={20} style={{ color: "#ca8a04" }} />
           </div>
-          <div className="stat-card-value">₹19,978.55</div>
+          <div className="stat-card-value">
+            {liveBalance !== null ? `₹${Number(liveBalance).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "--"}
+          </div>
           <span className="stat-card-desc">Available ClientId #50 balance</span>
         </div>
 

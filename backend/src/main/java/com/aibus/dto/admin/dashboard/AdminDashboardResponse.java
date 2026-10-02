@@ -13,8 +13,44 @@ public class AdminDashboardResponse {
     private long totalRoutes;
     private long upcomingSchedules;
     private BigDecimal totalRevenue;
+    private BigDecimal gdsBalance;
+    private boolean apiConnected;
+    private long gdsBookingsCount;
+    private long localBookingsCount;
 
     public AdminDashboardResponse() {
+    }
+
+    public BigDecimal getGdsBalance() {
+        return gdsBalance;
+    }
+
+    public void setGdsBalance(BigDecimal gdsBalance) {
+        this.gdsBalance = gdsBalance;
+    }
+
+    public boolean isApiConnected() {
+        return apiConnected;
+    }
+
+    public void setApiConnected(boolean apiConnected) {
+        this.apiConnected = apiConnected;
+    }
+
+    public long getGdsBookingsCount() {
+        return gdsBookingsCount;
+    }
+
+    public void setGdsBookingsCount(long gdsBookingsCount) {
+        this.gdsBookingsCount = gdsBookingsCount;
+    }
+
+    public long getLocalBookingsCount() {
+        return localBookingsCount;
+    }
+
+    public void setLocalBookingsCount(long localBookingsCount) {
+        this.localBookingsCount = localBookingsCount;
     }
 
     public long getTotalUsers() {

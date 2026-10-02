@@ -137,15 +137,15 @@ function BookingDetails() {
   const passengers =
     Array.isArray(booking.travellers) && booking.travellers.length > 0
       ? booking.travellers
-      : (booking.seats || ["4D"]).map((seat) => ({
+      : (booking.seats || []).map((seat) => ({
           seat,
-          name: booking.traveller?.name || "Passenger",
+          name: booking.traveller?.name || "--",
           age: booking.traveller?.age || "",
-          gender: "Male",
+          gender: booking.traveller?.gender || "",
         }));
 
   const primaryMobile =
-    booking.traveller?.mobile || booking.userMobile || "9876543210";
+    booking.traveller?.mobile || booking.userMobile || "";
 
   return (
     <main className="booking-details-page">
@@ -279,13 +279,13 @@ function BookingDetails() {
               <div className="grid-cell">
                 <span className="cell-label">Selected Seats</span>
                 <strong className="cell-value">
-                  {Array.isArray(booking.seats) ? booking.seats.join(", ") : booking.seats}
+                  {Array.isArray(booking.seats) ? booking.seats.join(", ") : booking.seats || "--"}
                 </strong>
               </div>
               <div className="grid-cell">
                 <span className="cell-label">Total Seats</span>
                 <strong className="cell-value">
-                  {Array.isArray(booking.seats) ? booking.seats.length : 1}
+                  {Array.isArray(booking.seats) ? booking.seats.length : (booking.seats ? 1 : 0)}
                 </strong>
               </div>
             </div>
@@ -294,7 +294,7 @@ function BookingDetails() {
           {/* SECTION 4: Total Amount Highlight Box */}
           <div className="total-amount-pink-box">
             <span className="total-label">Total Amount</span>
-            <strong className="total-val">₹{booking.totalAmount}</strong>
+            <strong className="total-val">₹{Number(booking.totalAmount || 0).toLocaleString("en-IN")}</strong>
           </div>
 
           {/* Refund of a cancelled live booking */}

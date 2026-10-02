@@ -18,27 +18,22 @@ import api from "../../services/api";
 import bookingService from "../../services/bookingService";
 import "./PnrStatus.css";
 
-// Sample ticket of the GDS demo account, offered in development builds only
-const SAMPLE_TICKET = import.meta.env.DEV ? { pnr: "96160626-523525", ticketNo: "501718666" } : null;
-
 function PnrStatus() {
   const [searchParams] = useSearchParams();
   const initialPnr = searchParams.get("pnr") || "";
   const initialTicket = searchParams.get("ticketNo") || "";
 
-  const [pnrInput, setPnrInput] = useState(initialPnr || SAMPLE_TICKET?.pnr || "");
-  const [ticketInput, setTicketInput] = useState(initialTicket || SAMPLE_TICKET?.ticketNo || "");
+  const [pnrInput, setPnrInput] = useState(initialPnr);
+  const [ticketInput, setTicketInput] = useState(initialTicket);
   const [loading, setLoading] = useState(false);
   const [ticketData, setTicketData] = useState(null);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // Auto fetch if URL params provided
+  // Auto fetch only if URL params provided
   useEffect(() => {
     if (initialPnr || initialTicket) {
       handleSearchTicket(initialPnr, initialTicket);
-    } else if (SAMPLE_TICKET) {
-      handleSearchTicket(SAMPLE_TICKET.pnr, SAMPLE_TICKET.ticketNo);
     }
   }, [initialPnr, initialTicket]);
 

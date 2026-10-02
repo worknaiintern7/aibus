@@ -20,8 +20,80 @@ public class AdminBookingResponse {
     private BigDecimal totalAmount;
     private BookingStatus status;
     private LocalDateTime createdAt;
+    private String provider = "LOCAL";
+    private String pnrNo;
+    private String ticketNo;
+    private java.time.LocalTime departureTime;
+    private java.time.LocalTime arrivalTime;
+    private String boardingPoint;
+    private String droppingPoint;
+    private String selectedSeats;
 
     public AdminBookingResponse() {
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getPnrNo() {
+        return pnrNo;
+    }
+
+    public void setPnrNo(String pnrNo) {
+        this.pnrNo = pnrNo;
+    }
+
+    public String getTicketNo() {
+        return ticketNo;
+    }
+
+    public void setTicketNo(String ticketNo) {
+        this.ticketNo = ticketNo;
+    }
+
+    public java.time.LocalTime getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(java.time.LocalTime departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public java.time.LocalTime getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(java.time.LocalTime arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    public String getBoardingPoint() {
+        return boardingPoint;
+    }
+
+    public void setBoardingPoint(String boardingPoint) {
+        this.boardingPoint = boardingPoint;
+    }
+
+    public String getDroppingPoint() {
+        return droppingPoint;
+    }
+
+    public void setDroppingPoint(String droppingPoint) {
+        this.droppingPoint = droppingPoint;
+    }
+
+    public String getSelectedSeats() {
+        return selectedSeats;
+    }
+
+    public void setSelectedSeats(String selectedSeats) {
+        this.selectedSeats = selectedSeats;
     }
 
     public Long getId() {

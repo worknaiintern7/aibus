@@ -33,6 +33,15 @@ public class AdminScheduleController {
         return ResponseEntity.ok(ApiResponse.success("Schedules retrieved successfully", response));
     }
 
+    @GetMapping("/live-gds")
+    public ResponseEntity<ApiResponse<java.util.List<com.aibus.dto.bus.BusSearchResponse>>> getLiveGdsSchedules(
+            @RequestParam(required = false, defaultValue = "Bangalore") String source,
+            @RequestParam(required = false, defaultValue = "Chennai") String destination,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate date) {
+        java.util.List<com.aibus.dto.bus.BusSearchResponse> response = adminScheduleService.getLiveGdsSchedules(source, destination, date);
+        return ResponseEntity.ok(ApiResponse.success("Live GDS schedules retrieved successfully", response));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AdminScheduleResponse>> getScheduleById(@PathVariable Long id) {
         AdminScheduleResponse response = adminScheduleService.getScheduleById(id);

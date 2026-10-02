@@ -34,6 +34,12 @@ public class AdminRouteController {
         return ResponseEntity.ok(ApiResponse.success("Routes retrieved successfully", response));
     }
 
+    @GetMapping("/live-gds")
+    public ResponseEntity<ApiResponse<java.util.List<Map<String, Object>>>> getLiveGdsRoutes() {
+        java.util.List<Map<String, Object>> response = adminRouteService.getLiveGdsRoutes();
+        return ResponseEntity.ok(ApiResponse.success("Live GDS connected routes retrieved successfully", response));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AdminRouteResponse>> getRouteById(@PathVariable Long id) {
         AdminRouteResponse response = adminRouteService.getRouteById(id);

@@ -37,4 +37,8 @@ export const busService = {
   updateBusSeatStatus: async (busId, seatId, active) => {
     return await api.patch(`/buses/${busId}/seats/${seatId}/status`, { active });
   },
+
+  getLiveGdsBuses: async () => {
+    return await api.get("/buses/live-gds");
+  },
 };

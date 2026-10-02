@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Ticket, User, Bus, MapPin, Calendar, IndianRupee, XCircle } from "lucide-react";
+import { ArrowLeft, Ticket, User, Bus, MapPin, Calendar, IndianRupee, XCircle, Radio, Clock, ShieldCheck } from "lucide-react";
 import { bookingService } from "../services/bookingService";
 import PageHeader from "../components/layout/PageHeader";
 import StatusBadge from "../components/common/StatusBadge";
@@ -52,13 +52,16 @@ export const AdminBookingDetails = () => {
   if (loading) return <Loading text="Fetching ticket reservation details..." />;
   if (error) return <ErrorState message={error} onRetry={fetchBookingDetails} />;
 
+  const customerName = booking?.user?.name || booking?.passengers?.[0]?.name || "Customer";
+  const customerMobile = booking?.user?.mobile || booking?.contactMobile || "";
+
   return (
     <div>
       <PageHeader
         title={`PNR: ${booking?.bookingReference}`}
         subtitle={`Booked on ${formatDateTime(booking?.createdAt)}`}
         actions={
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+          <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
             <Link to="/bookings" className="btn btn-outline">
               <ArrowLeft size={16} /> Back to Bookings
             </Link>
@@ -71,6 +74,48 @@ export const AdminBookingDetails = () => {
         }
       />
 
+      {/* Operator Live GDS Details Banner */}
+      {booking?.provider === "GDS" && (
+        <div
+          style={{
+            padding: "1rem 1.25rem",
+            background: "#ecfdf5",
+            border: "1px solid #a7f3d0",
+            borderRadius: "10px",
+            marginBottom: "1.25rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Radio size={18} color="#059669" />
+            <div>
+              <strong style={{ color: "#065f46" }}>Live Mantis GDS Confirmed Booking</strong>
+              <div style={{ fontSize: "0.8rem", color: "#047857" }}>
+                Seats reserved in real-time with partner bus operator.
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "1.5rem" }}>
+            {booking?.pnrNo && (
+              <div>
+                <span style={{ fontSize: "0.75rem", color: "#047857", display: "block" }}>Operator PNR</span>
+                <strong style={{ fontSize: "1.05rem", color: "#064e3b" }}>{booking.pnrNo}</strong>
+              </div>
+            )}
+            {booking?.ticketNo && (
+              <div>
+                <span style={{ fontSize: "0.75rem", color: "#047857", display: "block" }}>Ticket No.</span>
+                <strong style={{ fontSize: "1.05rem", color: "#064e3b" }}>{booking.ticketNo}</strong>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
         <div className="admin-card" style={{ padding: "1.5rem" }}>
           <h3 style={{ fontSize: "1.1rem", fontWeight: "600", marginBottom: "1.25rem", borderBottom: "1px solid var(--admin-card-border)", paddingBottom: "0.75rem" }}>
@@ -81,7 +126,7 @@ export const AdminBookingDetails = () => {
             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
               <Ticket size={18} style={{ color: "var(--admin-primary)" }} />
               <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Booking PNR</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Booking Reference</div>
                 <div style={{ fontWeight: "700", color: "var(--admin-primary)", fontSize: "1.1rem" }}>{booking?.bookingReference}</div>
               </div>
             </div>
@@ -89,33 +134,50 @@ export const AdminBookingDetails = () => {
             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
               <User size={18} style={{ color: "var(--admin-primary)" }} />
               <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Customer</div>
-                <div style={{ fontWeight: "600" }}>{booking?.user?.name} ({booking?.user?.mobile})</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Passenger Contact</div>
+                <div style={{ fontWeight: "600" }}>
+                  {customerName} {customerMobile ? `(+91 ${customerMobile})` : ""}
+                </div>
+                {booking?.contactEmail && (
+                  <div style={{ fontSize: "0.8rem", color: "var(--admin-text-muted)" }}>{booking.contactEmail}</div>
+                )}
               </div>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
               <Bus size={18} style={{ color: "var(--admin-primary)" }} />
               <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Bus Service</div>
-                <div style={{ fontWeight: "600" }}>{booking?.busName} ({booking?.busNumber}) — {booking?.busType}</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Bus Service & Operator</div>
+                <div style={{ fontWeight: "600" }}>{booking?.busName} {booking?.busNumber ? `(${booking?.busNumber})` : ""}</div>
+                <div style={{ fontSize: "0.8rem", color: "var(--admin-text-muted)" }}>{booking?.busType}</div>
               </div>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
               <MapPin size={18} style={{ color: "var(--admin-primary)" }} />
               <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Route</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Route Corridor</div>
                 <div style={{ fontWeight: "600" }}>{booking?.source} → {booking?.destination}</div>
+                {booking?.boardingPoint && (
+                  <div style={{ fontSize: "0.8rem", color: "var(--admin-text-muted)" }}>
+                    Pickup: {booking.boardingPoint} {booking.boardingTime ? `(${booking.boardingTime})` : ""}
+                  </div>
+                )}
+                {booking?.droppingPoint && (
+                  <div style={{ fontSize: "0.8rem", color: "var(--admin-text-muted)" }}>
+                    Dropoff: {booking.droppingPoint}
+                  </div>
+                )}
               </div>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
               <Calendar size={18} style={{ color: "var(--admin-primary)" }} />
               <div>
-                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Journey Date</div>
+                <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>Journey Date & Timings</div>
                 <div style={{ fontWeight: "600" }}>
-                  {formatDate(booking?.journeyDate)} ({formatTime(booking?.departureTime)} - {formatTime(booking?.arrivalTime)})
+                  {formatDate(booking?.journeyDate)}
+                  {booking?.departureTime ? ` • ${booking.departureTime.toString().slice(0, 5)} - ${booking.arrivalTime ? booking.arrivalTime.toString().slice(0, 5) : ""}` : ""}
                 </div>
               </div>
             </div>
@@ -164,14 +226,16 @@ export const AdminBookingDetails = () => {
                   <th>Seat</th>
                   <th>Passenger Name</th>
                   <th>Age / Gender</th>
+                  <th>Contact</th>
                 </tr>
               </thead>
               <tbody>
                 {booking?.passengers?.map((p, idx) => (
                   <tr key={idx}>
-                    <td style={{ fontWeight: "700" }}>{p.seatNumber}</td>
+                    <td style={{ fontWeight: "700", color: "var(--admin-primary)" }}>Seat {p.seatNumber}</td>
                     <td style={{ fontWeight: "600" }}>{p.name}</td>
                     <td>{p.age} yrs / {p.gender}</td>
+                    <td>{p.mobile || customerMobile || "--"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -185,7 +249,7 @@ export const AdminBookingDetails = () => {
         onClose={() => setCancelModal(false)}
         onConfirm={handleCancelBooking}
         title="Cancel Ticket Reservation"
-        message={`Are you sure you want to cancel booking ${booking?.bookingReference}? This action will release seats ${booking?.selectedSeats?.join(", ")}.`}
+        message={`Are you sure you want to cancel booking ${booking?.bookingReference}? This action will release reserved seats with the operator.`}
         confirmText="Cancel Reservation"
         confirmVariant="danger"
         loading={cancelLoading}

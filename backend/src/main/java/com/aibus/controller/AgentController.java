@@ -24,43 +24,6 @@ public class AgentController {
 
     public AgentController(GdsApiService gdsApiService) {
         this.gdsApiService = gdsApiService;
-        seedInitialData();
-    }
-
-    private void seedInitialData() {
-        // Seed Approved Agent 1
-        Map<String, Object> agent1 = new HashMap<>();
-        agent1.put("agentCode", "AG-5091");
-        agent1.put("agencyName", "Ramesh Travels & Tours");
-        agent1.put("ownerName", "Ramesh Chandra");
-        agent1.put("mobile", "9845012345");
-        agent1.put("email", "ramesh@travels.in");
-        agent1.put("password", "agent123");
-        agent1.put("city", "Bengaluru");
-        agent1.put("state", "Karnataka");
-        agent1.put("gstin", "29ABCDE1234F1Z5");
-        agent1.put("pan", "ABCDE1234F");
-        agent1.put("commissionPct", 10.0);
-        agent1.put("walletBalance", 19978.55);
-        agent1.put("status", "APPROVED");
-        agentsStore.put("AG-5091", agent1);
-
-        // Seed Pending Enquiry 1
-        Map<String, Object> enq1 = new HashMap<>();
-        enq1.put("id", "ENQ-2026-7841");
-        enq1.put("agencyName", "Bharat Yatra Express");
-        enq1.put("legalEntity", "Private Limited");
-        enq1.put("ownerName", "Sanjay Sharma");
-        enq1.put("mobile", "9876543210");
-        enq1.put("email", "sanjay@bharatyatra.com");
-        enq1.put("city", "Bengaluru");
-        enq1.put("state", "Karnataka");
-        enq1.put("address", "Shop 14, Majestic Bus Terminal Complex");
-        enq1.put("gstin", "29AABCB1234C1Z1");
-        enq1.put("pan", "AABCB1234C");
-        enq1.put("status", "PENDING");
-        enq1.put("appliedDate", "2026-09-30 11:20:00");
-        enquiriesStore.put("ENQ-2026-7841", enq1);
     }
 
     /**
@@ -73,7 +36,7 @@ public class AgentController {
         payload.put("status", "PENDING");
         payload.put("appliedDate", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-        enquiriesStore.put(newId, payload);
+        enquiriesStore.put(newId, payload); 
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);

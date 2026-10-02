@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CreditCard, Calendar, Ticket } from "lucide-react";
+import { CreditCard, Calendar, Ticket, Phone, Radio } from "lucide-react";
 import { paymentService } from "../services/paymentService";
 import PageHeader from "../components/layout/PageHeader";
 import StatusBadge from "../components/common/StatusBadge";
@@ -45,7 +45,7 @@ export const AdminPayments = () => {
     <div>
       <PageHeader
         title="Payment Records"
-        subtitle="Oversight of customer transactions and payment statuses"
+        subtitle="End-to-end audit of all online customer transactions from website & GDS gateway"
         actions={
           <select
             className="form-control"
@@ -74,33 +74,59 @@ export const AdminPayments = () => {
         ) : payments.length === 0 ? (
           <EmptyState
             title="No Payments Found"
-            description="No transaction logs match your active filters."
+            description="No transaction logs match your active filters. As customers book on the website, payments will log here in real-time."
           />
         ) : (
           <>
             <div className="table-responsive">
-              <table className="admin-table">
+              <table className="admin-table" style={{ minWidth: "860px" }}>
                 <thead>
                   <tr>
-                    <th>Payment Txn ID</th>
-                    <th>Booking PNR Reference</th>
+                    <th>Txn ID</th>
+                    <th>Booking Reference</th>
+                    <th>Channel</th>
+                    <th>Customer / Mobile</th>
+                    <th>Trip Corridor</th>
                     <th>Amount</th>
-                    <th>Status</th>
+                    <th>Payment Status</th>
                     <th>Transaction Time</th>
                   </tr>
                 </thead>
                 <tbody>
                   {payments.map((p) => (
                     <tr key={p.paymentId || p.id}>
-                      <td style={{ fontWeight: "700", color: "var(--admin-primary)" }}>
+                      <td style={{ fontWeight: "700", color: "var(--admin-primary)", whiteSpace: "nowrap" }}>
                         <CreditCard size={14} style={{ marginRight: "4px" }} />
                         #{p.paymentId || p.id}
                       </td>
-                      <td style={{ fontWeight: "600" }}>
+                      <td style={{ fontWeight: "600", whiteSpace: "nowrap" }}>
                         <Ticket size={14} style={{ marginRight: "4px", color: "var(--admin-text-muted)" }} />
                         {p.bookingReference || "N/A"}
                       </td>
-                      <td style={{ fontWeight: "700", color: "#10b981" }}>
+                      <td>
+                        <span style={{ background: p.channel?.includes("GDS") ? "#ecfdf5" : "#eff6ff", color: p.channel?.includes("GDS") ? "#059669" : "#2563eb", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: "600", whiteSpace: "nowrap", display: "inline-block" }}>
+                          {p.channel || "ONLINE"}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: "600" }}>{p.passengerName || "Customer"}</div>
+                        {p.userMobile && (
+                          <div style={{ fontSize: "0.75rem", color: "var(--admin-text-muted)" }}>
+                            <Phone size={11} style={{ marginRight: "2px" }} />
+                            {p.userMobile}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        {p.source && p.destination ? (
+                          <div style={{ fontSize: "0.85rem", fontWeight: "600" }}>
+                            {p.source} → {p.destination}
+                          </div>
+                        ) : (
+                          <span style={{ color: "var(--admin-text-muted)", fontSize: "0.85rem" }}>--</span>
+                        )}
+                      </td>
+                      <td style={{ fontWeight: "700", color: "#10b981", fontSize: "1rem" }}>
                         {formatCurrency(p.amount)}
                       </td>
                       <td>

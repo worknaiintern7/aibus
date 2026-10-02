@@ -118,7 +118,7 @@ function Payment() {
       setPaymentStep("success");
 
       try {
-        const userMobile = loggedInUser?.mobile || contactMobile || "9876543210";
+        const userMobile = loggedInUser?.mobile || contactMobile || "";
         const isGuest = !loggedInUser;
 
         const newBooking = isLive
@@ -204,41 +204,41 @@ function Payment() {
                 <Bus size={20} />
               </div>
               <div>
-                <h2 className="summary-title">{selectedBus?.operator || "AIBus Travels"}</h2>
-                <span className="summary-sub">{selectedBus?.busType || "AC Seater (2+2)"}</span>
+                <h2 className="summary-title">{selectedBus?.operator || "--"}</h2>
+                <span className="summary-sub">{selectedBus?.busType || "--"}</span>
               </div>
             </div>
 
             <div className="summary-route">
               <div>
                 <span className="route-lbl">From</span>
-                <strong>{from || selectedBus?.from || "Bengaluru"}</strong>
+                <strong>{from || selectedBus?.from || "--"}</strong>
               </div>
               <div className="route-arrow">➔</div>
               <div>
                 <span className="route-lbl">To</span>
-                <strong>{to || selectedBus?.to || "Chennai"}</strong>
+                <strong>{to || selectedBus?.to || "--"}</strong>
               </div>
             </div>
 
             <div className="summary-details-list">
               <div className="summary-line">
                 <span>Journey Date</span>
-                <strong>{date || selectedBus?.date || "Today"}</strong>
+                <strong>{date || selectedBus?.date || "--"}</strong>
               </div>
               <div className="summary-line">
                 <span>Selected Seats</span>
-                <strong className="summary-seats-val">{selectedSeats.join(", ") || "1 Seat"}</strong>
+                <strong className="summary-seats-val">{selectedSeats.join(", ") || "--"}</strong>
               </div>
               <div className="summary-line">
                 <span>Travellers</span>
-                <strong>{travellers.length || 1} Passenger(s)</strong>
+                <strong>{travellers.length || 0} Passenger(s)</strong>
               </div>
             </div>
 
             <div className="summary-total-box">
               <span>Final Fare Payable</span>
-              <strong>₹{totalAmount.toLocaleString("en-IN")}</strong>
+              <strong>₹{Number(totalAmount || 0).toLocaleString("en-IN")}</strong>
             </div>
 
             <div className="summary-trust-badges">

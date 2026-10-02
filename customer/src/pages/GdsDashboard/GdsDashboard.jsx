@@ -36,12 +36,12 @@ function GdsDashboard() {
       if (res.data?.success && res.data?.data) {
         setBalance(res.data.data.Balance);
       } else {
-        setBalance(19978.55);
+        setBalance(null);
       }
       setLastRefreshed(new Date().toLocaleTimeString());
     } catch (err) {
-      console.warn("Using cached balance fallback:", err.message);
-      setBalance(19978.55);
+      console.warn("Failed to fetch live balance:", err.message);
+      setBalance(null);
       setLastRefreshed(new Date().toLocaleTimeString());
     } finally {
       setBalanceLoading(false);
@@ -131,7 +131,7 @@ function GdsDashboard() {
               <h2 className="metric-amount">
                 {balance !== null 
                   ? Number(balance).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                  : "19,978.55"}
+                  : "--"}
               </h2>
             </div>
 

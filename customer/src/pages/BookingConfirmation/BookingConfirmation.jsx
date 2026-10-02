@@ -60,7 +60,7 @@ function BookingConfirmation() {
   const busId = searchParams.get("busId");
   const seatsParam = searchParams.get("seats");
   const travellersDataParam = searchParams.get("travellersData");
-  const contactMobile = searchParams.get("contactMobile") || searchParams.get("mobile") || "9876543210";
+  const contactMobile = searchParams.get("contactMobile") || searchParams.get("mobile") || "";
   const name = searchParams.get("name");
   const age = searchParams.get("age");
   const from = searchParams.get("from");
@@ -512,8 +512,8 @@ function BookingConfirmation() {
           from={displayFrom}
           to={displayTo}
           seats={selectedSeats}
-          customerPhone={contactMobile || loggedInUser?.mobile || "9876543210"}
-          customerEmail={contactEmail || "passenger@aibus.in"}
+          customerPhone={contactMobile || loggedInUser?.mobile || ""}
+          customerEmail={contactEmail || loggedInUser?.email || ""}
           onPaymentSuccess={handlePaymentSuccess}
         />
       </div>

@@ -37,6 +37,12 @@ public class AdminBusController {
         return ResponseEntity.ok(ApiResponse.success("Buses retrieved successfully", response));
     }
 
+    @GetMapping("/live-gds")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getLiveGdsBuses() {
+        List<Map<String, Object>> response = adminBusService.getLiveGdsBuses();
+        return ResponseEntity.ok(ApiResponse.success("Live GDS buses retrieved successfully", response));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AdminBusResponse>> getBusById(@PathVariable Long id) {
         AdminBusResponse response = adminBusService.getBusById(id);

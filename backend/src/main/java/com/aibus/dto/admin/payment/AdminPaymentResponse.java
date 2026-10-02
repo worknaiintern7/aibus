@@ -11,6 +11,11 @@ public class AdminPaymentResponse {
     private BigDecimal amount;
     private PaymentStatus status;
     private LocalDateTime createdAt;
+    private String userMobile;
+    private String passengerName;
+    private String channel = "ONLINE";
+    private String source;
+    private String destination;
 
     public AdminPaymentResponse() {
     }
@@ -21,6 +26,46 @@ public class AdminPaymentResponse {
         this.amount = amount;
         this.status = status;
         this.createdAt = createdAt;
+    }
+
+    public String getUserMobile() {
+        return userMobile;
+    }
+
+    public void setUserMobile(String userMobile) {
+        this.userMobile = userMobile;
+    }
+
+    public String getPassengerName() {
+        return passengerName;
+    }
+
+    public void setPassengerName(String passengerName) {
+        this.passengerName = passengerName;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
     public Long getPaymentId() {

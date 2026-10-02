@@ -143,7 +143,13 @@
 }
 
 
-/* Base Resets */
+/* Base Resets & Modern Box Sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -153,6 +159,10 @@ html, body, #root {
   color: var(--admin-text-main);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+input, select, textarea, button {
+  box-sizing: border-box;
 }
 
 /* Admin Container Layout */
@@ -175,6 +185,7 @@ html, body, #root {
 .admin-sidebar {
   width: 260px;
   min-width: 260px;
+  max-width: 260px;
   background-color: var(--admin-sidebar-bg);
   border-right: 1px solid var(--admin-card-border);
   display: flex;
@@ -184,8 +195,9 @@ html, body, #root {
   height: 100vh;
   z-index: 100;
   flex-shrink: 0;
-  transition: width 0.25s ease, transform 0.25s ease, opacity 0.2s ease;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
@@ -194,13 +206,17 @@ html, body, #root {
   display: none; /* Chrome, Safari, Edge */
 }
 
-.admin-layout.sidebar-collapsed .admin-sidebar {
-  width: 0;
-  min-width: 0;
+.admin-layout.sidebar-collapsed .admin-sidebar,
+.admin-sidebar.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
   transform: translateX(-100%);
   opacity: 0;
   pointer-events: none;
-  border-right: none;
+  border-right: none !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
 }
 
 .admin-sidebar-header {
@@ -403,30 +419,47 @@ html, body, #root {
 }
 
 .admin-content {
-  padding: 1.75rem;
+  padding: 1.5rem 1.75rem;
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
 }
 
-/* Page Header */
+/* Page Header & Actions Responsive Layout */
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.75rem;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.page-header-text {
+  min-width: 220px;
+  flex: 1 1 auto;
 }
 
 .page-header-title {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--admin-text-main);
   letter-spacing: -0.4px;
+  margin: 0;
 }
 
 .page-header-subtitle {
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   color: var(--admin-text-muted);
-  margin-top: 0.25rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0;
+}
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 /* Cards & Grid */
@@ -502,28 +535,31 @@ html, body, #root {
 .table-responsive {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
   width: 100%;
+  min-width: 820px;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .admin-table th {
   background-color: rgba(15, 23, 42, 0.6);
-  padding: 0.9rem 1.25rem;
+  padding: 0.75rem 0.85rem;
   color: var(--admin-text-muted);
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.725rem;
   letter-spacing: 0.5px;
   border-bottom: 1px solid var(--admin-card-border);
+  white-space: nowrap;
 }
 
 .admin-table td {
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 0.85rem;
   border-bottom: 1px solid var(--admin-card-border);
   color: var(--admin-text-main);
   vertical-align: middle;
@@ -541,6 +577,7 @@ html, body, #root {
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.6rem 1.1rem;
   border-radius: 8px;
@@ -550,6 +587,8 @@ html, body, #root {
   border: none;
   transition: var(--admin-transition);
   text-decoration: none;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .btn-primary {
@@ -579,25 +618,131 @@ html, body, #root {
 }
 
 .btn-sm {
-  padding: 0.35rem 0.7rem;
+  padding: 0.35rem 0.75rem;
   font-size: 0.8rem;
+  height: 34px;
 }
 
 .form-control {
   width: 100%;
-  padding: 0.65rem 0.9rem;
+  height: 42px;
+  padding: 0.6rem 0.85rem;
   background-color: #0f172a;
   border: 1px solid var(--admin-card-border);
   border-radius: 8px;
   color: var(--admin-text-main);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   outline: none;
   transition: var(--admin-transition);
+  box-sizing: border-box;
 }
 
 .form-control:focus {
   border-color: var(--admin-primary);
   box-shadow: 0 0 0 2px var(--admin-primary-light);
+}
+
+/* Search Input Component */
+.search-input-wrapper {
+  position: relative;
+  width: 260px;
+  max-width: 100%;
+  flex: 0 1 260px;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--admin-text-muted);
+  pointer-events: none;
+}
+
+.search-input-field {
+  padding-left: 2.35rem !important;
+  padding-right: 2.1rem !important;
+  height: 42px !important;
+  width: 100% !important;
+}
+
+.search-input-clear {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--admin-text-muted);
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input-clear:hover {
+  color: var(--admin-text-main);
+}
+
+/* Schedules Live Search Form Grid */
+.schedules-search-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(180px, 1.2fr) minmax(160px, 1fr) auto;
+  gap: 1rem;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.schedules-input-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.schedules-input-label {
+  font-size: 0.775rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+  color: var(--admin-text-main);
+}
+
+.schedules-btn-group {
+  display: flex;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.schedules-fetch-btn {
+  height: 42px;
+  padding: 0 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .schedules-search-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .schedules-btn-group {
+    grid-column: span 2;
+  }
+  .schedules-fetch-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 580px) {
+  .schedules-search-form {
+    grid-template-columns: 1fr;
+  }
+  .schedules-btn-group {
+    grid-column: span 1;
+  }
 }
 
 .form-group {
@@ -624,6 +769,7 @@ html, body, #root {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 .badge-primary { background: var(--admin-primary-light); color: var(--admin-primary); }

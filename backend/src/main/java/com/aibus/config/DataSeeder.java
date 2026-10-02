@@ -1,6 +1,6 @@
 package com.aibus.config;
 
-import com.aibus.entity.*;
+import com.aibus.entity.Admin;
 import com.aibus.repository.*;
 import com.aibus.util.PasswordEncoder;
 import org.slf4j.Logger;
@@ -8,12 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -26,7 +20,11 @@ public class DataSeeder implements CommandLineRunner {
     private final SeatRepository seatRepository;
     private final BusScheduleRepository busScheduleRepository;
     private final ScheduleSeatRepository scheduleSeatRepository;
-
+    private final BookingRepository bookingRepository;
+    private final BookingPassengerRepository bookingPassengerRepository;
+    private final GdsBookingRepository gdsBookingRepository;
+    private final GdsBookingPassengerRepository gdsBookingPassengerRepository;
+    private final PaymentRepository paymentRepository;
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -36,6 +34,11 @@ public class DataSeeder implements CommandLineRunner {
                       SeatRepository seatRepository,
                       BusScheduleRepository busScheduleRepository,
                       ScheduleSeatRepository scheduleSeatRepository,
+                      BookingRepository bookingRepository,
+                      BookingPassengerRepository bookingPassengerRepository,
+                      GdsBookingRepository gdsBookingRepository,
+                      GdsBookingPassengerRepository gdsBookingPassengerRepository,
+                      PaymentRepository paymentRepository,
                       AdminRepository adminRepository,
                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -44,6 +47,11 @@ public class DataSeeder implements CommandLineRunner {
         this.seatRepository = seatRepository;
         this.busScheduleRepository = busScheduleRepository;
         this.scheduleSeatRepository = scheduleSeatRepository;
+        this.bookingRepository = bookingRepository;
+        this.bookingPassengerRepository = bookingPassengerRepository;
+        this.gdsBookingRepository = gdsBookingRepository;
+        this.gdsBookingPassengerRepository = gdsBookingPassengerRepository;
+        this.paymentRepository = paymentRepository;
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -52,16 +60,7 @@ public class DataSeeder implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         seedAdminAccount();
-        seedUser();
-        List<Route> routes = seedRoutes();
-        List<Bus> buses = seedBuses();
-
-        for (Bus bus : buses) {
-            seedSeatsForBus(bus);
-        }
-
-        seedSchedulesAndScheduleSeats(routes, buses);
-        updateExistingSchedulesBoardingPointIfMissing();
+        purgeDummyData();
     }
 
     private void seedAdminAccount() {
@@ -73,188 +72,27 @@ public class DataSeeder implements CommandLineRunner {
             admin.setRole("ADMIN");
             admin.setActive(true);
             adminRepository.save(admin);
-            logger.info("Seeded default development admin account: admin@aibus.com / admin123");
+            logger.info("Initialized default admin account: admin@aibus.com / admin123");
         }
     }
 
-    private void seedUser() {
-        if (!userRepository.existsByMobile("9876543210")) {
-            User user = new User();
-            user.setMobile("9876543210");
-            user.setName("AIBus User");
-            userRepository.save(user);
-            logger.info("Seeded default test user 9876543210");
-        }
-    }
-
-    private List<Route> seedRoutes() {
-        List<Route> routes = new ArrayList<>();
-        routes.add(createRouteIfAbsent("Pune", "Mumbai"));
-        routes.add(createRouteIfAbsent("Mumbai", "Pune"));
-        routes.add(createRouteIfAbsent("Pune", "Nashik"));
-        routes.add(createRouteIfAbsent("Nashik", "Pune"));
-        routes.add(createRouteIfAbsent("Pune", "Goa"));
-        routes.add(createRouteIfAbsent("Mumbai", "Goa"));
-        return routes;
-    }
-
-    private Route createRouteIfAbsent(String source, String destination) {
-        return routeRepository.findBySourceIgnoreCaseAndDestinationIgnoreCase(source, destination)
-                .orElseGet(() -> routeRepository.save(new Route(source, destination, true)));
-    }
-
-    private List<Bus> seedBuses() {
-        List<Bus> buses = new ArrayList<>();
-        buses.add(createBusIfAbsent("AI001", "AIBus Express", BusType.AC_SEATER, 20));
-        buses.add(createBusIfAbsent("AI002", "AIBus Travels", BusType.NON_AC_SEATER, 20));
-        buses.add(createBusIfAbsent("AI003", "AIBus Premium", BusType.AC_SLEEPER, 16));
-        return buses;
-    }
-
-    private Bus createBusIfAbsent(String busNumber, String busName, BusType busType, int totalSeats) {
-        return busRepository.findByBusNumber(busNumber)
-                .orElseGet(() -> busRepository.save(new Bus(busNumber, busName, busType, totalSeats, true)));
-    }
-
-    private void seedSeatsForBus(Bus bus) {
-        List<Seat> existing = seatRepository.findByBusIdOrderByRowNumberAscColumnNumberAsc(bus.getId());
-        if (!existing.isEmpty()) {
-            return;
-        }
-
-        List<Seat> seats = new ArrayList<>();
-        if (bus.getBusType() == BusType.AC_SLEEPER) {
-            // 16 sleeper seats (L1-L8 Lower, U1-U8 Upper)
-            String[] rows = {"L", "U"};
-            for (String level : rows) {
-                SeatType type = level.equals("L") ? SeatType.LOWER : SeatType.UPPER;
-                for (int i = 1; i <= 8; i++) {
-                    String seatNo = level + i;
-                    SeatType specificType = (i % 2 == 1) ? SeatType.WINDOW : SeatType.AISLE;
-                    seats.add(new Seat(bus, seatNo, specificType, level.equals("L") ? 1 : 2, i, true));
-                }
-            }
-        } else {
-            // 20 seater seats (A1-A4, B1-B4, C1-C4, D1-D4, E1-E4)
-            char[] rows = {'A', 'B', 'C', 'D', 'E'};
-            for (int r = 0; r < rows.length; r++) {
-                for (int c = 1; c <= 4; c++) {
-                    String seatNo = "" + rows[r] + c;
-                    SeatType type = (c == 1 || c == 4) ? SeatType.WINDOW : SeatType.AISLE;
-                    seats.add(new Seat(bus, seatNo, type, r + 1, c, true));
-                }
-            }
-        }
-        seatRepository.saveAll(seats);
-        logger.info("Seeded {} seats for bus {}", seats.size(), bus.getBusNumber());
-    }
-
-    private void seedSchedulesAndScheduleSeats(List<Route> routes, List<Bus> buses) {
-        LocalDate today = LocalDate.now();
-        LocalDate tomorrow = today.plusDays(1);
-        LocalDate targetDate = LocalDate.of(2026, 9, 25);
-
-        List<LocalDate> dates = List.of(today, tomorrow, targetDate);
-
-        for (LocalDate date : dates) {
-            for (Route route : routes) {
-                for (Bus bus : buses) {
-                    createScheduleAndSeatsIfAbsent(route, bus, date);
-                }
-            }
-        }
-    }
-
-    private void createScheduleAndSeatsIfAbsent(Route route, Bus bus, LocalDate date) {
-        // Create 1 schedule per bus & route & date combination if absent
-        List<BusSchedule> existing = busScheduleRepository
-                .findByRouteSourceIgnoreCaseAndRouteDestinationIgnoreCaseAndJourneyDateAndStatus(
-                        route.getSource(), route.getDestination(), date, ScheduleStatus.SCHEDULED
-                );
-
-        boolean exists = existing.stream().anyMatch(s -> s.getBus().getId().equals(bus.getId()));
-        if (exists) {
-            return;
-        }
-
-        BusSchedule schedule = new BusSchedule();
-        schedule.setBus(bus);
-        schedule.setRoute(route);
-        schedule.setJourneyDate(date);
-        schedule.setDepartureTime(LocalTime.of(8, 0));
-        schedule.setArrivalTime(LocalTime.of(12, 0));
-        setBoardingPointInfo(schedule, route.getSource());
-        schedule.setDroppingPoint(route.getDestination() + " Main Bus Stand");
-        schedule.setBaseFare(bus.getBusType() == BusType.AC_SLEEPER ? new BigDecimal("850.00") : new BigDecimal("500.00"));
-        schedule.setStatus(ScheduleStatus.SCHEDULED);
-
-        BusSchedule savedSchedule = busScheduleRepository.save(schedule);
-
-        List<Seat> busSeats = seatRepository.findByBusIdOrderByRowNumberAscColumnNumberAsc(bus.getId());
-        List<ScheduleSeat> scheduleSeats = new ArrayList<>();
-        for (Seat seat : busSeats) {
-            scheduleSeats.add(new ScheduleSeat(savedSchedule, seat, SeatStatus.AVAILABLE));
-        }
-        scheduleSeatRepository.saveAll(scheduleSeats);
-    }
-
-    private void updateExistingSchedulesBoardingPointIfMissing() {
-        List<BusSchedule> allSchedules = busScheduleRepository.findAll();
-        for (BusSchedule schedule : allSchedules) {
-            if (schedule.getBoardingPointAddress() == null || schedule.getBoardingPointLatitude() == null) {
-                String source = schedule.getRoute() != null ? schedule.getRoute().getSource() : "Pune";
-                setBoardingPointInfo(schedule, source);
-                busScheduleRepository.save(schedule);
-            }
-        }
-    }
-
-    private void setBoardingPointInfo(BusSchedule schedule, String source) {
-        String city = source != null ? source.trim().toLowerCase() : "";
-        switch (city) {
-            case "pune":
-                schedule.setBoardingPoint("Shivajinagar Bus Stand");
-                schedule.setBoardingPointAddress("Shivajinagar, Pune, Maharashtra 411005");
-                schedule.setBoardingPointLandmark("Near Main Bus Stand Gate, Opp Metro Station");
-                schedule.setBoardingPointLatitude(18.5308);
-                schedule.setBoardingPointLongitude(73.8475);
-                break;
-            case "mumbai":
-                schedule.setBoardingPoint("Dadar TT Circle Bus Stop");
-                schedule.setBoardingPointAddress("Dadar East, Mumbai, Maharashtra 400014");
-                schedule.setBoardingPointLandmark("Near Swaminarayan Temple, Flyover Pillar 24");
-                schedule.setBoardingPointLatitude(19.0178);
-                schedule.setBoardingPointLongitude(72.8478);
-                break;
-            case "nashik":
-                schedule.setBoardingPoint("CBS Bus Stand (Thakkar Bazaar)");
-                schedule.setBoardingPointAddress("Thakkar Bazaar, Nashik, Maharashtra 422002");
-                schedule.setBoardingPointLandmark("Near Main Entrance, Counter No. 3");
-                schedule.setBoardingPointLatitude(19.9975);
-                schedule.setBoardingPointLongitude(73.7898);
-                break;
-            case "goa":
-                schedule.setBoardingPoint("Panjim Kadamba Bus Terminal");
-                schedule.setBoardingPointAddress("Patto Plaza, Panaji, Goa 403001");
-                schedule.setBoardingPointLandmark("Near KTC Central Office Gate");
-                schedule.setBoardingPointLatitude(15.4989);
-                schedule.setBoardingPointLongitude(73.8370);
-                break;
-            case "bengaluru":
-            case "bangalore":
-                schedule.setBoardingPoint("Majestic Kempegowda Bus Station");
-                schedule.setBoardingPointAddress("Gubbi Thotadappa Rd, Majestic, Bengaluru, Karnataka 560009");
-                schedule.setBoardingPointLandmark("Opposite Sangam Theatre, Platform 3");
-                schedule.setBoardingPointLatitude(12.9778);
-                schedule.setBoardingPointLongitude(77.5713);
-                break;
-            default:
-                schedule.setBoardingPoint(source + " Central Bus Station");
-                schedule.setBoardingPointAddress(source + " Central Bus Terminal, Station Road");
-                schedule.setBoardingPointLandmark("Near Main Ticket Counter");
-                schedule.setBoardingPointLatitude(18.5204);
-                schedule.setBoardingPointLongitude(73.8567);
-                break;
+    private void purgeDummyData() {
+        try {
+            logger.info("Purging all dummy and mock data from database...");
+            gdsBookingPassengerRepository.deleteAll();
+            gdsBookingRepository.deleteAll();
+            paymentRepository.deleteAll();
+            bookingPassengerRepository.deleteAll();
+            bookingRepository.deleteAll();
+            scheduleSeatRepository.deleteAll();
+            busScheduleRepository.deleteAll();
+            seatRepository.deleteAll();
+            busRepository.deleteAll();
+            routeRepository.deleteAll();
+            userRepository.deleteAll();
+            logger.info("Database dummy data successfully removed. Only live API data will be displayed.");
+        } catch (Exception e) {
+            logger.warn("Error while cleaning dummy data: {}", e.getMessage());
         }
     }
 }

@@ -30,8 +30,8 @@ function TravellerDetails() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const busId = searchParams.get("busId") || "1";
-  const seatsParam = searchParams.get("seats") || "8D, 9D";
+  const busId = searchParams.get("busId");
+  const seatsParam = searchParams.get("seats") || "";
   const from = searchParams.get("from");
   const to = searchParams.get("to");
   const date = searchParams.get("date");
@@ -41,7 +41,7 @@ function TravellerDetails() {
 
   const [selectedBus, setSelectedBus] = useState(null);
   const [loading, setLoading] = useState(true);
-  const selectedSeats = seatsParam ? seatsParam.split(",").map((s) => s.trim()) : ["8D", "9D"];
+  const selectedSeats = seatsParam ? seatsParam.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
   // Automatically generate passenger forms = selectedSeats.length
   const [travellers, setTravellers] = useState(() =>
@@ -267,9 +267,9 @@ function TravellerDetails() {
     navigate(`/booking-confirmation?${params.toString()}`);
   };
 
-  const displayFrom = from || selectedBus.from || "Bengaluru";
-  const displayTo = to || selectedBus.to || "Pune";
-  const displayDate = formatTripDate(date || selectedBus.date);
+  const displayFrom = from || selectedBus?.from || "";
+  const displayTo = to || selectedBus?.to || "";
+  const displayDate = formatTripDate(date || selectedBus?.date);
   const totalFare = getSeatsTotal(selectedBus, selectedSeats);
 
   return (

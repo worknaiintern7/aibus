@@ -122,10 +122,17 @@ function BookingSuccess() {
   const passengerList =
     booking.travellers && booking.travellers.length > 0
       ? booking.travellers
-      : [{ seat: booking.seats.join(", "), ...booking.traveller }];
+      : [
+          {
+            seat: Array.isArray(booking.seats)
+              ? booking.seats.join(", ")
+              : booking.seats || "",
+            ...(booking.traveller || {}),
+          },
+        ];
 
   const contactMobile =
-    booking.userMobile || booking.traveller?.mobile || "9876543210";
+    booking.userMobile || booking.traveller?.mobile || "";
   const displayDate = formatTripDate(booking.bus?.date);
   const arrivalDateStr = getArrivalDateStr(
     booking.bus?.date,
@@ -161,7 +168,7 @@ function BookingSuccess() {
           {/* Booking ID Pill Box */}
           <div className="booking-id-pill-box">
             <span className="id-label">Booking ID:</span>
-            <strong className="id-val">{booking.bookingId}</strong>
+            <strong className="id-val">{booking.bookingId || booking.bookingReference}</strong>
             <button
               type="button"
               className="copy-id-btn"
@@ -196,35 +203,35 @@ function BookingSuccess() {
             <div className="grid-info-rows">
               <div className="info-row">
                 <span className="info-label">Operator</span>
-                <strong className="info-value">{booking.bus.operator}</strong>
+                <strong className="info-value">{booking.bus?.operator || "--"}</strong>
               </div>
               <div className="info-row">
                 <span className="info-label">Bus Type</span>
-                <strong className="info-value">{booking.bus.busType}</strong>
+                <strong className="info-value">{booking.bus?.busType || "--"}</strong>
               </div>
               <div className="info-row">
                 <span className="info-label">Route</span>
                 <strong className="info-value">
-                  {booking.bus.from} → {booking.bus.to}
+                  {booking.bus?.from || "--"} → {booking.bus?.to || "--"}
                 </strong>
               </div>
               <div className="info-row">
                 <span className="info-label">Departure</span>
                 <strong className="info-value">
-                  {booking.bus.departureTime}{" "}
-                  <span className="meta-date-inline">({displayDate})</span>
+                  {booking.bus?.departureTime || "--"}{" "}
+                  {displayDate ? <span className="meta-date-inline">({displayDate})</span> : null}
                 </strong>
               </div>
               <div className="info-row">
                 <span className="info-label">Arrival</span>
                 <strong className="info-value">
-                  {booking.bus.arrivalTime}{" "}
-                  <span className="meta-date-inline">({arrivalDateStr})</span>
+                  {booking.bus?.arrivalTime || "--"}{" "}
+                  {arrivalDateStr ? <span className="meta-date-inline">({arrivalDateStr})</span> : null}
                 </strong>
               </div>
               <div className="info-row">
                 <span className="info-label">Duration</span>
-                <strong className="info-value">{booking.bus.duration}</strong>
+                <strong className="info-value">{booking.bus?.duration || "--"}</strong>
               </div>
             </div>
           </div>
@@ -313,11 +320,21 @@ function BookingSuccess() {
             <div className="grid-info-rows">
               <div className="info-row">
                 <span className="info-label">Selected Seats</span>
-                <strong className="info-value">{booking.seats.join(", ")}</strong>
+                <strong className="info-value">
+                  {Array.isArray(booking.seats)
+                    ? booking.seats.join(", ")
+                    : booking.seats || "--"}
+                </strong>
               </div>
               <div className="info-row">
                 <span className="info-label">Total Seats</span>
-                <strong className="info-value">{booking.seats.length}</strong>
+                <strong className="info-value">
+                  {Array.isArray(booking.seats)
+                    ? booking.seats.length
+                    : booking.seats
+                    ? 1
+                    : 0}
+                </strong>
               </div>
             </div>
           </div>
@@ -331,7 +348,7 @@ function BookingSuccess() {
               <div className="info-row align-center">
                 <span className="info-label">Total Amount</span>
                 <strong className="info-value price-highlight">
-                  ₹{booking.totalAmount.toLocaleString("en-IN")}
+                  ₹{Number(booking.totalAmount || 0).toLocaleString("en-IN")}
                 </strong>
               </div>
               <div className="info-row align-center">

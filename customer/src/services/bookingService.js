@@ -42,8 +42,8 @@ function calculateDuration(depTime, arrTime) {
 }
 
 function mapBackendBooking(b) {
-  const depTime = b.departureTime ? b.departureTime.toString().slice(0, 5) : "08:00";
-  const arrTime = b.arrivalTime ? b.arrivalTime.toString().slice(0, 5) : "12:00";
+  const depTime = b.departureTime ? b.departureTime.toString().slice(0, 5) : "";
+  const arrTime = b.arrivalTime ? b.arrivalTime.toString().slice(0, 5) : "";
   const passengers = (b.passengers || []).map((p) => ({
     seat: p.seatNumber,
     name: p.name,
@@ -71,11 +71,11 @@ function mapBackendBooking(b) {
     userMobile: b.contactMobile || b.user?.mobile || primaryPassenger.mobile || "",
     bus: {
       id: b.scheduleId,
-      operator: b.busName || "AIBus Travels",
-      busNumber: b.busNumber || "AI001",
+      operator: b.busName || "",
+      busNumber: b.busNumber || "",
       busType: formatBusType(b.busType),
-      from: b.source,
-      to: b.destination,
+      from: b.source || "",
+      to: b.destination || "",
       departureTime: depTime,
       arrivalTime: arrTime,
       duration: calculateDuration(depTime, arrTime),
@@ -83,7 +83,7 @@ function mapBackendBooking(b) {
     },
     travellers: passengers,
     traveller: {
-      name: primaryPassenger.name || "Passenger",
+      name: primaryPassenger.name || "",
       age: primaryPassenger.age || "",
       mobile: primaryPassenger.mobile || b.user?.mobile || "",
     },
@@ -178,33 +178,21 @@ export const bookingService = {
       name: t.name || `Passenger ${idx + 1}`,
       age: parseInt(t.age, 10) || 25,
       gender: t.gender || "Male",
-      seatNumber: t.seat || seats[idx] || "A1",
-      mobile: t.mobile || userMobile || "9876543210",
+      seatNumber: t.seat || seats[idx] || "",
+      mobile: t.mobile || userMobile || "",
     }));
 
     const payload = {
-      userId: userId || 1,
-      scheduleId: bus.scheduleId || bus.id || 1,
+      userId: userId || null,
+      scheduleId: bus.scheduleId || bus.id,
       selectedSeats: seats,
       passengers: passengersList,
     };
 
-    let createdBooking = null;
-
-    try {
-      const response = await api.post("/api/bookings", payload);
-      createdBooking = response.data?.data;
-    } catch (err) {
-      console.warn("Backend booking API call failed, generating local confirmed booking:", err.message);
-      // Fallback booking object if backend is unreachable
-      const generatedRef = "AIBUS-" + Math.floor(100000 + Math.random() * 900000);
-      createdBooking = {
-        bookingReference: generatedRef,
-        totalAmount,
-        status: "CONFIRMED",
-        selectedSeats: seats,
-        passengers: passengersList,
-      };
+    const response = await api.post("/api/bookings", payload);
+    const createdBooking = response.data?.data;
+    if (!createdBooking) {
+      throw new Error(response.data?.message || "Failed to create booking on server.");
     }
 
     bookingService.clearSeatLock();
@@ -218,18 +206,18 @@ export const bookingService = {
       passengers: createdBooking.passengers || passengersList,
       travellers: passengersList,
       traveller: passengersList[0] || {},
-      userMobile: userMobile || "9876543210",
+      userMobile: userMobile || "",
       bus: {
         id: bus.id,
-        operator: bus.operator || bus.busName || "AIBus Travels",
-        busNumber: bus.busNumber || "AI001",
+        operator: bus.operator || bus.busName || "",
+        busNumber: bus.busNumber || "",
         busType: formatBusType(bus.busType),
-        from: bus.from || "Delhi",
-        to: bus.to || "Jaipur",
-        departureTime: bus.departureTime || "08:00",
-        arrivalTime: bus.arrivalTime || "12:00",
-        duration: bus.duration || "4h 00m",
-        date: bus.date || new Date().toISOString().split("T")[0],
+        from: bus.from || "",
+        to: bus.to || "",
+        departureTime: bus.departureTime || "",
+        arrivalTime: bus.arrivalTime || "",
+        duration: bus.duration || "",
+        date: bus.date || "",
       },
       bookingDate: new Date().toISOString(),
       isGuest,
@@ -370,20 +358,7 @@ export const bookingService = {
       }
       return result;
     } catch (err) {
-      // A live ticket is only cancelled when the operator says so: never fake it locally
-      if (!guestCopy || guestCopy.isLive) {
-        throw err;
-      }
-
-      // Local guest booking cancellation
-      const updated = guestList.map((b) =>
-        (b.bookingId || b.bookingReference) === bookingReference
-          ? { ...b, status: "Cancelled" }
-          : b
-      );
-      localStorage.setItem(GUEST_BOOKINGS_KEY, JSON.stringify(updated));
-      window.dispatchEvent(new Event("guestBookingsChanged"));
-      return { status: "CANCELLED" };
+      throw err;
     }
   },
 };

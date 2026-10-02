@@ -37,9 +37,12 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            echo "🐳 Building and starting Docker containers..."
+            echo "🐳 Cleaning up any conflicting containers..."
+            docker rm -f aibus-customer aibus-admin aibus-agent aibus-backend aibus-postgres 2>/dev/null || true
             docker compose down --remove-orphans || true
-            docker compose up -d --build
+
+            echo "🐳 Building and starting Docker containers..."
+            docker compose up -d --build --force-recreate
 
             echo "🧹 Cleaning up dangling Docker images..."
             docker image prune -f

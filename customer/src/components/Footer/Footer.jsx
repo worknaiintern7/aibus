@@ -25,7 +25,7 @@ function Footer() {
   };
 
   return (
-    <footer className="app-footer">
+    <footer className="app-footer" id="support">
       <div className="footer-container">
         {/* Main Grid: 4 Clean Columns */}
         <div className="footer-grid">

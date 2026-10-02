@@ -87,7 +87,7 @@
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 14px;
 }
 
 .my-bookings-link,
@@ -109,6 +109,9 @@
   color: #996515;
   background: rgba(212, 175, 55, 0.08);
 }
+
+.home-nav-link { color: #ad7600; position: relative; }
+.home-nav-link::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -23px; height: 2px; background: #f6b900; }
 
 .nav-link-gds {
   text-decoration: none;
@@ -185,7 +188,7 @@
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  padding: 9px 24px;
+  padding: 8px 20px;
   border: none;
   border-radius: 24px;
   background: linear-gradient(180deg, #E0BB45 0%, #D4AF37 100%);
@@ -195,6 +198,7 @@
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   transition: all 0.25s ease;
+  gap: 7px;
 }
 
 .login-button:hover {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Bus, Sparkles } from "lucide-react";
+import { Bus, CircleUserRound } from "lucide-react";
 import authService from "../../services/authService";
 import "./Header.css";
 
@@ -42,12 +42,15 @@ function Header() {
         </Link>
 
         <nav className="header-nav">
+          <Link to="/" className="nav-link-item home-nav-link">Home</Link>
           <Link to="/pnr-status" className="nav-link-item">
             Track PNR
           </Link>
           <Link to="/my-bookings" className="nav-link-item">
             My Bookings
           </Link>
+          <a href="#offers-and-more" className="nav-link-item">Offers</a>
+          <a href="#support" className="nav-link-item">Support</a>
 
           {user ? (
             <div className="user-logged-nav">
@@ -74,9 +77,7 @@ function Header() {
               </button>
             </div>
           ) : (
-            <Link to="/login" className="login-button">
-              Sign In
-            </Link>
+            <Link to="/login" className="login-button"><CircleUserRound size={18} /><span>Sign In</span></Link>
           )}
         </nav>
       </div>
